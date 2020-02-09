@@ -1,0 +1,28 @@
+{
+  "name": "react-native-head-tab-view",
+  "version": "1.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yu zou <zouyu123007@163.com>",
+  "license": "ISC",
+  "keywords": [
+    "react-native-component",
+    "react-component",
+    "react-native",
+    "ios",
+    "android",
+    "tab",
+    "swipe",
+    "scrollable",
+    "tabview",
+    "head",
+    "stick",
+    "scrollview"
+  ],
+  "dependencies": {
+    "@react-native-community/viewpager": "^3.3.0"
+  },
+  "description": "Tab view component for React Native"
+}
