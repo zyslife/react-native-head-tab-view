@@ -1,5 +1,5 @@
 # React Native Head Tab View
-带有头部组件，可以整体上下滑动的标签页组件
+带有头部组件，可以整体上下滑动的标签页组件  
 点击跳转[博客文章](https://www.jianshu.com/p/222716d8a0a2)
 
 ## 功能
