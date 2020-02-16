@@ -20,30 +20,31 @@
 ![demo_android.gif](https://github.com/zyslife/react-native-head-tab-view/blob/master/demoGIF/demo_android.gif)  
 
 ## 运行Example  
-拉取node_modules
 ```sh
 cd Example
 yarn or npm install
-```
-### 运行iOS  
-
-```sh
-//在Example目录
+//运行 Android 
+react-native run-android
+//运行 iOS 
 cd ios
 pod install
+cd ../
 react-native run-ios
-```  
-### 运行Android 
-由于使用了@react-native-community/viewpager库 ，该库作为依赖dependencies时，不能自动链接成功，请点击下方链接[手动链接](https://github.com/react-native-community/react-native-viewpager#manual-linking)该库  
-https://github.com/react-native-community/react-native-viewpager#manual-linking  
-链接完成可以直接运行
+```
 
 ## 添加到自己项目  
 
+一、
 ```sh
 yarn add react-native-head-tab-view
 or  
 npm install react-native-head-tab-view --save
+```
+二、
+```sh
+yarn add @react-native-community/viewpager
+or
+npm install @react-native-community/viewpager --save
 ```
 
 ## 简例  
@@ -116,7 +117,7 @@ Example:
 ```js
 <TabView
     tabs={['tab1','tab2','tab3']}
-    
+    averageTab={true|false}
 />
 ```
 
