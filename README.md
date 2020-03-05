@@ -23,8 +23,10 @@
 ```sh
 cd Example
 yarn or npm install
+
 //运行 Android 
 react-native run-android
+
 //运行 iOS 
 cd ios
 pod install
@@ -45,7 +47,19 @@ npm install react-native-head-tab-view --save
 yarn add @react-native-community/viewpager
 or
 npm install @react-native-community/viewpager --save
-```
+```  
+
+## Linking  
+由于依赖了 @react-native-community/viewpager，请按以下方式[自动或者手动进行链接](https://github.com/react-native-community/react-native-viewpager#Linking)  
+
+https://github.com/react-native-community/react-native-viewpager#Linking  
+
+## Versions (@react-native-community/viewpager)
+以下为@react-native-community/viewpager的版本，请自行选择
+| 1.x              | 2.x              | 3.x
+| ---------------- | -------------    | -------------    |
+|                  | iOS support      | iOS support      |
+| Android support  | Android support  | AndroidX support  |
 
 ## 简例  
 
