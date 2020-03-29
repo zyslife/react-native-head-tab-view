@@ -11,13 +11,11 @@
 
 ## Demo
 
-#### iOS效果图  
+iOS效果图  
+![demo_ios.gif](https://upload-images.jianshu.io/upload_images/12315720-41574602ff40764c.gif?imageMogr2/auto-orient/strip)    
 
-![demo_ios.gif](https://github.com/zyslife/react-native-head-tab-view/blob/master/demoGIF/demo_ios.gif)    
-
-#### Android效果图：  
-
-![demo_android.gif](https://github.com/zyslife/react-native-head-tab-view/blob/master/demoGIF/demo_android.gif)
+Android效果图：  
+![demo_android.gif](https://upload-images.jianshu.io/upload_images/12315720-ab9642ade86244d5.gif?imageMogr2/auto-orient/strip)
 
 ## 使用  
 
@@ -65,7 +63,7 @@ render() {
     }
 ```
 
-更加完善的例子请点击[Example](https://github.com/zyslife/react-native-head-tab-view/blob/master/Example/src/Example.tsx)  
+更加完善的demo请点击demo
 
 #### Props
 
