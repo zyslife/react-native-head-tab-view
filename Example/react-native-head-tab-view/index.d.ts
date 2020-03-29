@@ -150,6 +150,11 @@ export interface TabViewProperties<TabItemT> extends TabProps<TabItemT> {
      */
     renderHeader?: React.ComponentType<any> | React.ReactElement | null;
     /**
+     * 头部是否能响应事件(如果设置为true，则头部不能响应上下互动事件)
+     * 默认值 false
+     */
+    headerRespond?:boolean;
+    /**
      * 渲染底部组件
      */
     renderFooter?: React.ComponentType<any> | React.ReactElement | null;

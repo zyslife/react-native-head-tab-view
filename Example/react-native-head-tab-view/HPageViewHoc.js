@@ -149,7 +149,7 @@ export default HPageViewHoc = (WrappedComponent) => {
             const { expectHeight, faultHeight } = this.props;
             const containerHeight = expectHeight + faultHeight;
 
-            if (contentHeight < containerHeight) {//添加占位高度 placeHeight
+            if (Math.floor(contentHeight) < Math.floor(containerHeight)) {//添加占位高度 placeHeight
                 const newPlaceHeight = placeHeight + containerHeight - contentHeight;
                 this.setState({ placeHeight: newPlaceHeight })
             } else {

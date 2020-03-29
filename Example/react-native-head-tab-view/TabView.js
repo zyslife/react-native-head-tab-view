@@ -23,7 +23,8 @@ export default class TabView extends React.PureComponent {
         tabs: [],
         initialPage: 0,
         preInitSceneNum: 0,
-        faultHeight: 0,
+        faultHeight: 2,
+        headerRespond: false
     }
 
     constructor(props) {
@@ -88,13 +89,15 @@ export default class TabView extends React.PureComponent {
     }
 
     render() {
+        const { headerRespond } = this.props
         return (
             <View style={{ flex: 1 }} onLayout={this.containerOnLayout}>
-                {this._renderScrollHead()}
+                {headerRespond ? null : this._renderScrollHead()}
                 {this._renderTabBar()}
                 {this._renderHeader()}
                 {this._renderContent()}
                 {this._renderFooter()}
+                {headerRespond ? this._renderScrollHead() : null}
             </View>
         )
     }

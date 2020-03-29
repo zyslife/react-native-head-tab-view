@@ -15,6 +15,7 @@ export const TabViewProps = {
   renderHeader: PropTypes.func, //渲染头部 参数{item,index}
   renderFooter: PropTypes.func, //渲染尾部 参数{item,index}
   tabbarStyle: PropTypes.any, //tabbar style
+  headerRespond: PropTypes.bool, //头部是否能响应
 };
 
 
