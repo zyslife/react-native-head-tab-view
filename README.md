@@ -182,6 +182,13 @@ Example:
     makeHeaderHeight={() => { return 180 }}
 />
 ```
+##### `headerRespond` _(boolean)_
+头部是否能响应事件(如果设置为true，则头部不能响应上下滑动事件)。默认值 false
+```js
+<TabView
+    headerRespond={true}
+/>
+```
 
 ##### `makeHeaderHeight` (`如果有renderScrollHeader时，必须实现此方法`)
 
