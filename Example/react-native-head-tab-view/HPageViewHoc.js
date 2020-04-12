@@ -9,7 +9,6 @@ import { TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER } from './TabViewProps'
 export default HPageViewHoc = (WrappedComponent) => {
 
     const AnimatePageView = Animated.createAnimatedComponent(WrappedComponent)
-
     class HPageView extends React.Component {
         static propTypes = {
             containerTrans: PropTypes.any.isRequired, //
@@ -60,30 +59,55 @@ export default HPageViewHoc = (WrappedComponent) => {
         }
 
         componentDidMount() {
+            if (!this.needHandleScroll()) {
+                console.warn(`
+【react-native-head-tab-view】 warning:
+请确保已经将renderScene(sceneProps)=>{} 中的sceneProps传递给高阶组件。如下：
+const HScrollView = HPageViewHoc(ScrollView)
+_renderScene = (sceneProps) => {
+    return <HScrollView {...sceneProps}/>
+}
+                `)
+            }
             this.didMount = true;
             this.addListener()
         }
 
         componentWillUnmount() {
+            if (!this.needHandleScroll()) return;
             this.removeListener()
         }
 
         addListener() {
             const { addListener, containerTrans } = this.props
-            addListener(this, TABVIEW_TABDIDCLICK, this.tabDidClick)
-            addListener(this, TABVIEW_BECOME_RESPONDER, this.becomeResponder)
-            containerTrans && containerTrans.addListener(this.updateView);
+
+            if (addListener !== undefined) {
+                addListener(this, TABVIEW_TABDIDCLICK, this.tabDidClick)
+                addListener(this, TABVIEW_BECOME_RESPONDER, this.becomeResponder)
+            }
+
+            if (containerTrans !== undefined) {
+                containerTrans && containerTrans.addListener(this.updateView);
+            }
+
         }
         removeListener() {
             const { removeListener, containerTrans } = this.props
-            removeListener(this, TABVIEW_TABDIDCLICK, this.tabDidClick)
-            removeListener(this, TABVIEW_BECOME_RESPONDER, this.becomeResponder)
-            containerTrans && containerTrans.removeListener(this.updateView);
+
+
+            if (addListener !== undefined) {
+                removeListener(this, TABVIEW_TABDIDCLICK, this.tabDidClick)
+                removeListener(this, TABVIEW_BECOME_RESPONDER, this.becomeResponder)
+            }
+
+            if (containerTrans !== undefined) {
+                containerTrans && containerTrans.removeListener(this.updateView);
+            }
         }
 
         onScrollBeginDrag() {
             const { scenePageDidDrag, index } = this.props;
-            scenePageDidDrag(index)
+            scenePageDidDrag && scenePageDidDrag(index)
         }
 
 
@@ -130,6 +154,7 @@ export default HPageViewHoc = (WrappedComponent) => {
             if (this.didMount) {
                 this.didMount = false;
                 const { containerTrans, makeHeaderHeight } = this.props
+                if (containerTrans === undefined) return;
                 const scrollValue = containerTrans._value > makeHeaderHeight() ? makeHeaderHeight() : containerTrans._value
 
                 this.scrollTo({ y: scrollValue })
@@ -167,10 +192,21 @@ export default HPageViewHoc = (WrappedComponent) => {
 
         }
 
+        needHandleScroll() {
+            const { children, containerTrans, makeHeaderHeight, forwardedRef, addListener } = this.props;
+            if (containerTrans === undefined || makeHeaderHeight === undefined || addListener === undefined) return false;
+            return true;
+        }
+
+
         render() {
             const { children, containerTrans, makeHeaderHeight, forwardedRef, ...rest } = this.props;
             const { placeHeight } = this.state
             const headerHeight = makeHeaderHeight()
+            if (!this.needHandleScroll()) {
+                return <WrappedComponent ref={forwardedRef} {...this.props} />
+            }
+
             return <AnimatePageView
                 ref={_ref => {
                     this._scrollView = _ref

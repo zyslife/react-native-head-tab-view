@@ -31,6 +31,8 @@ interface EState {
     tabs: Array<string>,
 }
 
+const HEAD_HEIGHT = 180
+
 export default class Example extends React.PureComponent<any, EState> {
     private statusHeight: number = isiOS() ? (isiPhoneX() ? 34 : 20) : StatusBar.currentHeight || 20;
     private headHeight: number = 44 + this.statusHeight;
@@ -41,7 +43,7 @@ export default class Example extends React.PureComponent<any, EState> {
 
     private _renderScrollHeader = () => {
         return (
-            <ImageBackground source={require('../resource/header_img.png')} resizeMode={'stretch'} style={{ backgroundColor: '#c44078', width: '100%', height: 180 }}>
+            <ImageBackground source={require('../resource/header_img.png')} resizeMode={'stretch'} style={{ backgroundColor: '#c44078', width: '100%', height: HEAD_HEIGHT }}>
                 <Image source={require('../resource/header_icon.png')} style={{ position: 'absolute', left: 35, top: 30, width: 100, height: 74 }} />
             </ImageBackground>
         )
@@ -95,7 +97,7 @@ export default class Example extends React.PureComponent<any, EState> {
                     <TabView
                         tabs={this.state.tabs}
                         renderScene={this._renderScene}
-                        makeHeaderHeight={() => { return 180 }}
+                        makeHeaderHeight={() => { return HEAD_HEIGHT }}
                         renderScrollHeader={this._renderScrollHeader}
                         onChangeTab={this.onChangeTab}
                     />
