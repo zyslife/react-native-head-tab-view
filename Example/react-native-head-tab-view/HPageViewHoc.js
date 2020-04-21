@@ -95,7 +95,7 @@ _renderScene = (sceneProps) => {
             const { removeListener, containerTrans } = this.props
 
 
-            if (addListener !== undefined) {
+            if (removeListener !== undefined) {
                 removeListener(this, TABVIEW_TABDIDCLICK, this.tabDidClick)
                 removeListener(this, TABVIEW_BECOME_RESPONDER, this.becomeResponder)
             }
