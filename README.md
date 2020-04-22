@@ -182,6 +182,16 @@ Example:
     makeHeaderHeight={() => { return 180 }}
 />
 ```
+##### `frozeTop` _(number)_
+
+滑动头部冻结高度，可以让tabbar和子页面滚动到距离顶部frozeTop距离
+
+```js
+<TabView
+    frozeTop={50}
+/>
+```
+
 ##### `headerRespond` _(boolean)_
 头部是否能响应事件(如果设置为true，则头部不能响应上下滑动事件)。默认值 false
 ```js
