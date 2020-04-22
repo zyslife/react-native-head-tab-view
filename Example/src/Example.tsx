@@ -100,6 +100,7 @@ export default class Example extends React.PureComponent<any, EState> {
                         makeHeaderHeight={() => { return HEAD_HEIGHT }}
                         renderScrollHeader={this._renderScrollHeader}
                         onChangeTab={this.onChangeTab}
+                        frozeTop={50}
                     />
                 </View>
             </View>

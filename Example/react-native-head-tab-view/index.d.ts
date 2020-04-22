@@ -58,6 +58,10 @@ export interface TabViewItemInfo<TabItemT> {
      */
     makeHeaderHeight?: () => number;
     /**
+     * 顶部冻结高度
+     */
+    frozeTop?:number;
+    /**
      * 标签页添加整个组件的事件监听方法，instance：this , eventName：事件名，callback：事件回调
      */
     addListener?: (instance: any, eventName: string, callback: function) => void;

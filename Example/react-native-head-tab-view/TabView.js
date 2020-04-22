@@ -24,7 +24,8 @@ export default class TabView extends React.PureComponent {
         initialPage: 0,
         preInitSceneNum: 0,
         faultHeight: 2,
-        headerRespond: false
+        headerRespond: false,
+        frozeTop: 0
     }
 
     constructor(props) {
@@ -92,6 +93,7 @@ export default class TabView extends React.PureComponent {
         const { headerRespond } = this.props
         return (
             <View style={{ flex: 1 }} onLayout={this.containerOnLayout}>
+                {this._renderFrozeView()}
                 {headerRespond ? null : this._renderScrollHead()}
                 {this._renderTabBar()}
                 {this._renderHeader()}
@@ -101,10 +103,16 @@ export default class TabView extends React.PureComponent {
             </View>
         )
     }
+
+    _renderFrozeView() {
+        const { frozeTop } = this.props
+        if (frozeTop === undefined) return null
+        return <View style={{ height: frozeTop, backgroundColor: 'transparent' }} />
+    }
     //渲染头部
     _renderHeader() {
-        const { renderHeader, makeHeaderHeight } = this.props
-        const headerHeight = makeHeaderHeight()
+        const { renderHeader, makeHeaderHeight, frozeTop } = this.props
+        const headerHeight = makeHeaderHeight() - frozeTop
         if (!renderHeader) return null
         return (
             <Animated.View style={{
@@ -128,10 +136,10 @@ export default class TabView extends React.PureComponent {
 
     //渲染可滑动头部
     _renderScrollHead() {
-        const { renderScrollHeader, makeHeaderHeight } = this.props
+        const { renderScrollHeader, makeHeaderHeight, frozeTop } = this.props
         if (!renderScrollHeader) return null
         const { containerTrans, sceneWidth } = this.state;
-        const headerHeight = makeHeaderHeight()
+        const headerHeight = makeHeaderHeight() - frozeTop
 
         return (
             <Animated.View style={{
@@ -442,13 +450,13 @@ export default class TabView extends React.PureComponent {
      * 组装子页面的参数
      */
     makeSceneParams(item, index) {
-        const { makeHeaderHeight, faultHeight, renderScrollHeader } = this.props;
+        const { makeHeaderHeight, faultHeight, renderScrollHeader, frozeTop } = this.props;
         if (!renderScrollHeader) {
             return { item, index }
         }
         const { currentIndex, containerTrans, tabviewHeight, tabbarHeight } = this.state;
 
-        const params = { item, index, isActive: currentIndex == index, containerTrans, makeHeaderHeight, faultHeight };
+        const params = { item, index, isActive: currentIndex == index, containerTrans, makeHeaderHeight, faultHeight, frozeTop };
         params.addListener = this.addListener;
         params.removeListener = this.removeListener;
         params.scenePageDidDrag = this.scenePageDidDrag;
@@ -461,7 +469,8 @@ export default class TabView extends React.PureComponent {
      * 组装给tabbar的参数
      */
     makeTabParams() {
-        const props = this.props
+        const props = this.props;
+        const { tabbarStyle, renderScrollHeader, makeHeaderHeight, frozeTop } = this.props
         const params = {}
 
         Object.keys(TabProps).forEach(function (key) {
@@ -475,11 +484,11 @@ export default class TabView extends React.PureComponent {
         params.activeIndex = this.state.currentIndex
         params.scrollValue = this.state.scrollValue
         params.style = {}
-        if (this.props.tabbarStyle) {
-            params.style = this.props.tabbarStyle
+        if (tabbarStyle) {
+            params.style = tabbarStyle
         }
-        if (this.props.renderScrollHeader) {
-            const headerHeight = props.makeHeaderHeight()
+        if (renderScrollHeader) {
+            const headerHeight = makeHeaderHeight() - frozeTop
             params.style.transform = [{
                 translateY: this.state.containerTrans.interpolate({
                     inputRange: [0, headerHeight, headerHeight + 1],

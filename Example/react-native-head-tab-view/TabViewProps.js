@@ -16,6 +16,7 @@ export const TabViewProps = {
   renderFooter: PropTypes.func, //渲染尾部 参数{item,index}
   tabbarStyle: PropTypes.any, //tabbar style
   headerRespond: PropTypes.bool, //头部是否能响应
+  frozeTop: PropTypes.number, //顶部冻结高度
 };
 
 

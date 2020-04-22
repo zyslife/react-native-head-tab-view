@@ -17,6 +17,7 @@ export default HPageViewHoc = (WrappedComponent) => {
 
         static defaultProps = {
             makeHeaderHeight: () => { },
+            frozeTop: 0
         }
 
         constructor(props) {
@@ -117,12 +118,12 @@ _renderScene = (sceneProps) => {
          */
         updateView(e) {
             if (this.stopScroll) return;
-            const { makeHeaderHeight, isActive } = this.props
-
+            const { makeHeaderHeight, isActive, frozeTop } = this.props
+            const headHeight = makeHeaderHeight() - frozeTop
             if (isActive) return;
-            if (e.value > makeHeaderHeight()) {
-                if (this.scrollTop < makeHeaderHeight()) {
-                    this.scrollTo({ y: makeHeaderHeight() })
+            if (e.value > headHeight) {
+                if (this.scrollTop < headHeight) {
+                    this.scrollTo({ y: headHeight })
                 }
                 return
             }
@@ -153,9 +154,10 @@ _renderScene = (sceneProps) => {
         tryScroll() {
             if (this.didMount) {
                 this.didMount = false;
-                const { containerTrans, makeHeaderHeight } = this.props
+                const { containerTrans, makeHeaderHeight, frozeTop } = this.props
                 if (containerTrans === undefined) return;
-                const scrollValue = containerTrans._value > makeHeaderHeight() ? makeHeaderHeight() : containerTrans._value
+                const headHeight = makeHeaderHeight() - frozeTop
+                const scrollValue = containerTrans._value > headHeight ? headHeight : containerTrans._value
 
                 this.scrollTo({ y: scrollValue })
 
@@ -200,9 +202,10 @@ _renderScene = (sceneProps) => {
 
 
         render() {
-            const { children, containerTrans, makeHeaderHeight, forwardedRef, ...rest } = this.props;
+            const { children, containerTrans, makeHeaderHeight, frozeTop, forwardedRef, ...rest } = this.props;
             const { placeHeight } = this.state
-            const headerHeight = makeHeaderHeight()
+            const headerHeight = makeHeaderHeight() - frozeTop
+
             if (!this.needHandleScroll()) {
                 return <WrappedComponent ref={forwardedRef} {...this.props} />
             }
