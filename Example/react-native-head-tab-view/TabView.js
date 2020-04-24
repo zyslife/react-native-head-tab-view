@@ -460,7 +460,7 @@ export default class TabView extends React.PureComponent {
         params.addListener = this.addListener;
         params.removeListener = this.removeListener;
         params.scenePageDidDrag = this.scenePageDidDrag;
-        params.expectHeight = parseInt(makeHeaderHeight()) + tabviewHeight - tabbarHeight;
+        params.expectHeight = parseInt(makeHeaderHeight()) + tabviewHeight - tabbarHeight - frozeTop * 2;
 
         return params;
     }

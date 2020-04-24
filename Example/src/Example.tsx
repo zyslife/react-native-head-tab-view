@@ -29,15 +29,18 @@ const HSectionList = HPageViewHoc(SectionList)
 
 interface EState {
     tabs: Array<string>,
+    scrollValue: Animated.Value
 }
 
 const HEAD_HEIGHT = 180
+const FROZE_TOP = 50
 
 export default class Example extends React.PureComponent<any, EState> {
     private statusHeight: number = isiOS() ? (isiPhoneX() ? 34 : 20) : StatusBar.currentHeight || 20;
     private headHeight: number = 44 + this.statusHeight;
     state = {
-        tabs: ['ScrollView', 'FlatList', 'SectionList']
+        tabs: ['ScrollView', 'FlatList', 'SectionList'],
+        scrollValue: new Animated.Value(0)
     }
 
 
@@ -79,9 +82,32 @@ export default class Example extends React.PureComponent<any, EState> {
             </Animated.View>
         )
     }
+    private _renderCustomView(): React.ReactElement {
+        const { scrollValue } = this.state;
+        return <Animated.View style={{
+            justifyContent: 'center', alignItems: 'center', 
+            opacity: scrollValue.interpolate({
+                inputRange: [0, HEAD_HEIGHT - FROZE_TOP],
+                outputRange: [0, 1],
+            }),
+            width:G_WIN_WIDTH, 
+            height:FROZE_TOP,
+            backgroundColor:'#FFD321',
+            position: 'absolute',
+            top:this.headHeight,
+            left:0
+        }}>
+            <Text>{'这里是自定义View'}</Text>
+        </Animated.View>
+    }
 
     private onChangeTab = (e: { from: number, curIndex: number }) => {
 
+    }
+
+    private _makeScrollTrans = (scrollValue: Animated.Value) => {
+        //可以根据
+        this.setState({ scrollValue })
     }
 
 
@@ -100,9 +126,11 @@ export default class Example extends React.PureComponent<any, EState> {
                         makeHeaderHeight={() => { return HEAD_HEIGHT }}
                         renderScrollHeader={this._renderScrollHeader}
                         onChangeTab={this.onChangeTab}
-                        frozeTop={50}
+                        frozeTop={FROZE_TOP}
+                        makeScrollTrans={this._makeScrollTrans}
                     />
                 </View>
+                {this._renderCustomView()}
             </View>
         )
     }

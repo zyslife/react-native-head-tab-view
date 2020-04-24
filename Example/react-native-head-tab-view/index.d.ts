@@ -58,10 +58,6 @@ export interface TabViewItemInfo<TabItemT> {
      */
     makeHeaderHeight?: () => number;
     /**
-     * 顶部冻结高度
-     */
-    frozeTop?:number;
-    /**
      * 标签页添加整个组件的事件监听方法，instance：this , eventName：事件名，callback：事件回调
      */
     addListener?: (instance: any, eventName: string, callback: function) => void;
@@ -146,6 +142,14 @@ export interface TabViewProperties<TabItemT> extends TabProps<TabItemT> {
      */
     makeHeaderHeight?: () => number;
     /**
+     * 顶部冻结高度
+     */
+    frozeTop?: number;
+    /**
+     * 获取整体
+     */
+    makeScrollTrans?: (scrollValue: Animated.Value) => void;
+    /**
      * 渲染垂直滚动头部组件
      */
     renderScrollHeader?: React.ComponentType<any> | React.ReactElement | null;
@@ -157,7 +161,7 @@ export interface TabViewProperties<TabItemT> extends TabProps<TabItemT> {
      * 头部是否能响应事件(如果设置为true，则头部不能响应上下滑动事件)
      * 默认值 false
      */
-    headerRespond?:boolean;
+    headerRespond?: boolean;
     /**
      * 渲染底部组件
      */

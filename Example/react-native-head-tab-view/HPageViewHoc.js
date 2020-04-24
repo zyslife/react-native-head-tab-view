@@ -174,21 +174,27 @@ _renderScene = (sceneProps) => {
         _onContentSizeChange(contentWidth, contentHeight) {
             const { placeHeight } = this.state;
             const { expectHeight, faultHeight } = this.props;
-            const containerHeight = expectHeight + faultHeight;
+            const intContainerHeight = Math.floor(expectHeight + faultHeight);
+            const intContentHeight = Math.floor(contentHeight)
 
-            if (Math.floor(contentHeight) < Math.floor(containerHeight)) {//添加占位高度 placeHeight
-                const newPlaceHeight = placeHeight + containerHeight - contentHeight;
-                this.setState({ placeHeight: newPlaceHeight })
+            if (intContentHeight < intContainerHeight) {//添加占位高度 placeHeight
+                const newPlaceHeight = placeHeight + intContainerHeight - intContentHeight;
+                setTimeout(() => {
+                    this.setState({ placeHeight: newPlaceHeight })
+                }, 0);
             } else {
                 this.tryScroll();
+                if (placeHeight <= 0) return //占位高度小于等于0 ，不处理
 
-                if (placeHeight > 0) {//有占位高，考虑减少占位高
+                const moreHeight = intContentHeight - intContainerHeight
+                if (moreHeight < faultHeight) return // 容错距离内，不处理
+                const newPlaceHeight = moreHeight > placeHeight ? 0 : placeHeight - moreHeight
 
-                    const moreHeight = contentHeight - containerHeight
-                    const newPlaceHeight = moreHeight > placeHeight ? 0 : placeHeight - moreHeight
-                    if (newPlaceHeight != placeHeight) {
+                if (newPlaceHeight != placeHeight) {
+
+                    setTimeout(() => {
                         this.setState({ placeHeight: newPlaceHeight })
-                    }
+                    }, 0);
                 }
             }
 
