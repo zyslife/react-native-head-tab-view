@@ -4,7 +4,7 @@ import {
     Animated,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER } from './TabViewProps'
+import { TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER, TABVIEW_HEADER_GRANT, TABVIEW_HEADER_RELEASE } from './TabViewProps'
 
 export default HPageViewHoc = (WrappedComponent) => {
 
@@ -57,6 +57,7 @@ export default HPageViewHoc = (WrappedComponent) => {
 
         becomeResponder = (index) => {
             this.stopScroll = false
+            this.headerCanControl = false
         }
 
         componentDidMount() {
@@ -80,31 +81,72 @@ _renderScene = (sceneProps) => {
         }
 
         addListener() {
-            const { addListener, containerTrans } = this.props
+            const { addListener, containerTrans, headerTrans } = this.props
 
             if (addListener !== undefined) {
                 addListener(this, TABVIEW_TABDIDCLICK, this.tabDidClick)
                 addListener(this, TABVIEW_BECOME_RESPONDER, this.becomeResponder)
+                addListener(this, TABVIEW_HEADER_GRANT, this.headerGrant)
+                addListener(this, TABVIEW_HEADER_RELEASE, this.headerRelease)
+
             }
 
             if (containerTrans !== undefined) {
                 containerTrans && containerTrans.addListener(this.updateView);
             }
+            if (headerTrans !== undefined) {
+                headerTrans && headerTrans.addListener(this.updateHeaderView);
+            }
 
         }
         removeListener() {
-            const { removeListener, containerTrans } = this.props
-
+            const { removeListener, containerTrans, headerTrans } = this.props
 
             if (removeListener !== undefined) {
                 removeListener(this, TABVIEW_TABDIDCLICK, this.tabDidClick)
                 removeListener(this, TABVIEW_BECOME_RESPONDER, this.becomeResponder)
+                removeListener(this, TABVIEW_HEADER_GRANT, this.headerGrant)
+                removeListener(this, TABVIEW_HEADER_RELEASE, this.headerRelease)
             }
 
             if (containerTrans !== undefined) {
                 containerTrans && containerTrans.removeListener(this.updateView);
             }
+            if (headerTrans !== undefined) {
+                headerTrans && headerTrans.removeListener(this.updateHeaderView);
+            }
         }
+
+        headerGrant = () => {
+            this.headerCanControl = true
+            this.stopScroll = false
+            this.baseTranY = this.props.containerTrans._value
+        }
+
+        headerRelease = (gestureState) => {}
+
+        updateHeaderView = (e) => {
+
+            const { isActive } = this.props
+            if (!isActive) return;
+            let value = e.value;
+            if (value > 0) {
+                value = -value
+            } else {
+                value = Math.abs(value)
+            }
+            if (!this.headerCanControl) return;
+            const tran = value + this.baseTranY
+            
+            if (tran < 0){
+                this.scrollTo({ y: 0 })
+                this.props.headerTrans.stopAnimation(() => { })
+            }else{
+                this.scrollTo({ y: tran })
+            }
+            
+        }
+
 
         onScrollBeginDrag() {
             const { scenePageDidDrag, index } = this.props;

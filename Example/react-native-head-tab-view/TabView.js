@@ -4,9 +4,11 @@ import {
     View,
     Animated,
     Platform,
+    PanResponder
 } from 'react-native';
-import { TabViewProps, TabProps, TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER } from './TabViewProps'
+import { TabViewProps, TabProps, TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER, TABVIEW_HEADER_GRANT, TABVIEW_HEADER_RELEASE } from './TabViewProps'
 import Tabbar from './Tabbar'
+import ScrollHeader from './ScrollHeader'
 
 import ViewPagerAndroid from "@react-native-community/viewpager";
 
@@ -49,7 +51,8 @@ export default class TabView extends React.PureComponent {
             displayKeys: this.getDisplayScene(props.tabs, props.initialPage), //所有页面是否需要显示和更新
             scrollValue: new Animated.Value(this.props.initialPage), //当前左右滑动的动画对象
             tabs: props.tabs, //所有tab
-            containerTrans: new Animated.Value(0) //整体上下滑动的动画对象
+            containerTrans: new Animated.Value(0), //整体上下滑动的动画对象
+            headerTrans: new Animated.Value(0),
         }
 
         this.scrollOnMountCalled = false
@@ -57,6 +60,7 @@ export default class TabView extends React.PureComponent {
         this.observers = {} //观察者
         this.handleScrollValue()
         this.makeScrollTrans()
+
     }
 
     componentDidMount() {
@@ -134,15 +138,25 @@ export default class TabView extends React.PureComponent {
         return renderFooter(this.makeParams())
     }
 
+    onPanResponderGrant = () => {
+        this.emitListener(TABVIEW_HEADER_GRANT);
+    }
+    
+    stopHeaderAnimation = () => {
+        this.state.headerTrans.stopAnimation(() => { })
+    }
+
     //渲染可滑动头部
     _renderScrollHead() {
+
         const { renderScrollHeader, makeHeaderHeight, frozeTop } = this.props
         if (!renderScrollHeader) return null
         const { containerTrans, sceneWidth } = this.state;
         const headerHeight = makeHeaderHeight() - frozeTop
-
-        return (
-            <Animated.View style={{
+        return <ScrollHeader
+            headerTrans={this.state.headerTrans}
+            onPanResponderGrant={this.onPanResponderGrant}
+            style={{
                 position: 'absolute',
                 top: 0,
                 width: sceneWidth,
@@ -152,10 +166,10 @@ export default class TabView extends React.PureComponent {
                         outputRange: [0, -headerHeight, -headerHeight]
                     })
                 }]
-            }}>
-                {renderScrollHeader()}
-            </Animated.View>
-        )
+            }} >
+            {renderScrollHeader()}
+        </ScrollHeader>
+
     }
 
     /**
@@ -255,6 +269,7 @@ export default class TabView extends React.PureComponent {
     */
     goToPage(index) {
         this.emitListener(TABVIEW_TABDIDCLICK);
+        this.stopHeaderAnimation()
         if (Platform.OS === 'ios') {
             const offset = this.state.sceneWidth * index;
             this.scrollView && this.scrollView.getNode() && this.scrollView.getNode().scrollTo({ x: offset, y: 0, animated: true })
@@ -392,6 +407,7 @@ export default class TabView extends React.PureComponent {
      * @param {number} index 标签页的序号
      */
     scenePageDidDrag(index) {
+        this.stopHeaderAnimation()
         this.emitListener(TABVIEW_BECOME_RESPONDER, index)
     }
 
@@ -454,9 +470,9 @@ export default class TabView extends React.PureComponent {
         if (!renderScrollHeader) {
             return { item, index }
         }
-        const { currentIndex, containerTrans, tabviewHeight, tabbarHeight } = this.state;
+        const { currentIndex, containerTrans, tabviewHeight, tabbarHeight, headerTrans } = this.state;
 
-        const params = { item, index, isActive: currentIndex == index, containerTrans, makeHeaderHeight, faultHeight, frozeTop };
+        const params = { item, index, isActive: currentIndex == index, containerTrans, makeHeaderHeight, faultHeight, frozeTop, headerTrans };
         params.addListener = this.addListener;
         params.removeListener = this.removeListener;
         params.scenePageDidDrag = this.scenePageDidDrag;
