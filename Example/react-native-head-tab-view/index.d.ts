@@ -54,6 +54,10 @@ export interface TabViewItemInfo<TabItemT> {
      */
     containerTrans?: Animated.Value;
     /**
+     * 头部的动画对象
+     */
+    headerTrans?: Animated.Value;
+    /**
      * 获取renderScrollHeader的高度方法
      */
     makeHeaderHeight?: () => number;
@@ -69,6 +73,14 @@ export interface TabViewItemInfo<TabItemT> {
      * 标签页页面被拖拽时回调方法
      */
     scenePageDidDrag?: (index: number) => void;
+    /**
+     * 容错高度
+     */
+    faultHeight?: number;
+    /**
+     * 冻结高度
+     */
+    frozeTop?: number
     /**
      * 整个组件上下滑动时，期望标签页所拥有的内容高度（用于`HPageViewHoc`中计算补位视图高度）
      */
@@ -87,17 +99,17 @@ interface TabItemInfo<TabItemT> {
 
 export interface TabbarProps<TabItemT> extends TabProps<TabItemT> {
     /**
-     * 未选中文本样式
-     */
-    activeIndex: number;
-    /**
      * 是否隐藏下划线
      */
     underLineHidden?: boolean;
     /**
-     * 下划线样式
+     * 下划线容器样式
      */
     underlineStyle?: StyleProp<ViewStyle>;
+    /**
+     * 下划线样式
+     */
+    lineStyle?: StyleProp<ViewStyle>;
     /**
      * Tabbar样式
      */

@@ -8,18 +8,13 @@ import {
     Text,
     FlatList,
     SectionList,
-    Dimensions,
-    ActivityIndicator,
     ImageBackground,
     TouchableWithoutFeedback,
     Alert
 } from 'react-native';
 
-import { HPageViewHoc, TabView, Tabbar } from 'react-native-head-tab-view'
+import { HPageViewHoc, TabView } from 'react-native-head-tab-view'
 import { default as staticData } from '../configData/staticData.js'
-
-const G_WIN_WIDTH = Dimensions.get('window').width;
-const G_WIN_HEIGHT = Dimensions.get('window').height;
 
 const HScrollView = HPageViewHoc(ScrollView)
 const HFlatList = HPageViewHoc(FlatList)
@@ -32,7 +27,6 @@ interface EState {
 const HEAD_HEIGHT = 180
 
 export default class Example1 extends React.PureComponent<any, EState> {
-    private headHeight: number = 44;
     state = {
         tabs: ['ScrollView', 'FlatList', 'SectionList'],
     }

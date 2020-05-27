@@ -25,6 +25,7 @@ export default class Tabbar extends React.PureComponent {
         style: PropTypes.object, //tabbar样式
         tabItemStyle: ViewPropTypes.style, //tab样式
         underlineStyle: ViewPropTypes.style, //tab样式
+        lineStyle: ViewPropTypes.style, //tab样式
         renderTabItem: PropTypes.func, //自定义tabbar
         scrollValue: PropTypes.object, //滚动状态
         tabSize: PropTypes.array,  //预留字段
@@ -191,7 +192,7 @@ export default class Tabbar extends React.PureComponent {
     * 渲染tabbar中间部分
     */
     renderTabBar() {
-        const { tabs, underLineHidden, activeIndex } = this.props
+        const { tabs, underLineHidden, activeIndex, underlineStyle, lineStyle } = this.props
         const { widthUnderline, leftUnderline } = this.state;
         //如果有传滚动状态，用滚动状态更新下滑线
         const left = this.props.scrollValue ? leftUnderline : this.getItemWidth() * activeIndex
@@ -221,10 +222,10 @@ export default class Tabbar extends React.PureComponent {
                             style={[
                                 styles.tabUnderlineStyle,
                                 { width: widthUnderline, left: left },
-                                this.props.underlineStyle,
+                                underlineStyle,
                             ]}
                         >
-                            <View style={styles.lineStyle} />
+                            <View style={[styles.lineStyle, lineStyle]} />
                         </Animated.View>}
                     </View>
                 </ScrollView>

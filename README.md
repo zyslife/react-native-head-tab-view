@@ -102,21 +102,21 @@ render() {
 
 
 ---
-
-
-#### Props
+## Common Props
 
 ##### `tabs` (`required`) _(tabs :string[])_
 
 此组件的数据源，为各个标签页的名字组成的数组
-可配合`tabNameConvert`使用
-
+可配合`tabNameConvert`使用  
 Example:
 
 ```js
 <TabView
     tabs={['tab1','tab2','tab3']}
     
+/>
+<Tabbar
+    tabs={['tab1','tab2','tab3']}
 />
 ```
 
@@ -134,6 +134,22 @@ Example:
     averageTab={true|false}
 />
 ```
+
+##### tabNameConvert _((tabname: string) => string) 
+可以再tabs中设置["a","b","c"],然后通过此方法转换成想要显示在tabbar上的文字
+
+##### tabsContainerStyle _(StyleProp<ViewStyle>)_  
+tabbar容器的样式
+
+##### activeTextStyle _(StyleProp<ViewStyle>)_  
+tabbar item选中的样式
+
+##### inactiveTextStyle _(StyleProp<ViewStyle>)_  
+tabbar item未选中的样式
+
+
+
+## TabView Props  - (extends  Common Props)
 
 ##### `renderScene` (`required`) _(renderScene :(info: TabViewItemInfo<TabItemT>) => React.ReactElement | null | undefined)_  
 渲染各个标签子页面的方法，传入参数遵从TabViewItemInfo协议包含以下参数
@@ -235,4 +251,24 @@ tabbar的样式
 ##### `extraData` _(any)_ 
 用于重新渲染组件  
 
+
+## Tabbar Props  - (extends  Common Props)
+##### style _(StyleProp<ViewStyle>)_ 
+tabbar样式
+##### underLineHidden _(boolean)_  
+是否隐藏下划线  
+##### underlineStyle _(StyleProp<ViewStyle>)_  
+下划线容器样式
+##### lineStyle _(StyleProp<ViewStyle>)_  
+下划线样式
+##### tabItemStyle _(StyleProp<ViewStyle>)_  
+tabItem样式
+##### renderTabItem  _(React.ComponentType<any> | React.ReactElement | null)_
+渲染tabbarItem方法  
+##### scrollValue  _(Animated.Value)_  
+当前滚动的距离/总共可滚动距离（水平方向）
+##### renderLeftView _(React.ComponentType<any> | React.ReactElement | null)_
+渲染Tabbar左边组件  
+##### renderRightView _(React.ComponentType<any> | React.ReactElement | null)_
+渲染Tabbar右边组件
 

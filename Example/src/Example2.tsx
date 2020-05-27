@@ -6,7 +6,6 @@ import {
     ScrollView,
     View,
     Text,
-    StatusBar,
     FlatList,
     SectionList,
     Dimensions,
@@ -16,7 +15,7 @@ import {
     Alert
 } from 'react-native';
 
-import { HPageViewHoc, TabView, Tabbar } from 'react-native-head-tab-view'
+import { HPageViewHoc, TabView } from 'react-native-head-tab-view'
 import { default as staticData } from '../configData/staticData.js'
 
 const G_WIN_WIDTH = Dimensions.get('window').width;
@@ -36,7 +35,6 @@ const FROZE_TOP = 100
 const HEAD_DATA = [{ title: '我是第一个', show: 'hello,我是第一个' }, { title: '我是第二个', show: 'hello,我是第二个' }, { title: '我是第三个', show: 'hello,我是第三个' }, { title: '我是第四个', show: 'hello,我是第四个' }]
 
 export default class Example2 extends React.PureComponent<any, EState> {
-    private headHeight: number = 44;
     state = {
         tabs: ['ScrollView', 'FlatList', 'SectionList'],
         scrollValue: new Animated.Value(0)
@@ -73,16 +71,22 @@ export default class Example2 extends React.PureComponent<any, EState> {
         const { scrollValue } = this.state;
         return <Animated.View style={{
             justifyContent: 'center', alignItems: 'center',
-            opacity: scrollValue.interpolate({
-                inputRange: [0, HEAD_HEIGHT - FROZE_TOP],
-                outputRange: [0, 1],
-            }),
             width: G_WIN_WIDTH,
             height: FROZE_TOP,
             backgroundColor: '#FFD321',
             position: 'absolute',
-            top: 0,
-            left: 0
+            top: -FROZE_TOP,
+            left: 0,
+            opacity: scrollValue.interpolate({
+                inputRange: [0, HEAD_HEIGHT - FROZE_TOP],
+                outputRange: [0, 1],
+            }),
+            transform: [{
+                translateY: scrollValue.interpolate({
+                    inputRange: [50, 100, 101],
+                    outputRange: [0, FROZE_TOP, FROZE_TOP]
+                })
+            }]
         }}>
             <Text>{'这里是自定义View'}</Text>
         </Animated.View>
