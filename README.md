@@ -193,7 +193,7 @@ Example:
 ```
 
 ##### `headerRespond` _(boolean)_
-头部是否能响应事件(如果设置为true，则头部不能响应上下滑动事件)。默认值 false
+头部是否能响应事件 。默认值 false (如果设置为true，头部会相应滑动事件，在debug模式下可能会有卡顿的感觉)
 ```js
 <TabView
     headerRespond={true}
