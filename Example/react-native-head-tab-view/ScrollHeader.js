@@ -18,10 +18,17 @@ export default class ScrollHeader extends React.PureComponent {
 
         const { headerTrans, onPanResponderGrant } = props
         this.mPanResponder = PanResponder.create({
+            onStartShouldSetPanResponderCapture: (evt, gestureState) => {
+                headerTrans.stopAnimation()
+                return false
+            },
             onMoveShouldSetPanResponder: (evt, gestureState) => {
+                if (Math.abs(gestureState.dx) < 10 && Math.abs(gestureState.dy) < 10) {
+                    return false;
+                }
                 if (!this.canResponder) {
                     headerTrans.stopAnimation(() => {
-                        this.canResponder = true;
+                        this.canResponder = Math.abs(gestureState.dy) > Math.abs(gestureState.dx);
                     })
                     return false;
                 }
