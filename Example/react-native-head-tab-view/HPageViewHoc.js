@@ -123,7 +123,7 @@ _renderScene = (sceneProps) => {
             this.baseTranY = this.props.containerTrans._value
         }
 
-        headerRelease = (gestureState) => {}
+        headerRelease = (gestureState) => { }
 
         updateHeaderView = (e) => {
 
@@ -137,14 +137,14 @@ _renderScene = (sceneProps) => {
             }
             if (!this.headerCanControl) return;
             const tran = value + this.baseTranY
-            
-            if (tran < 0){
+
+            if (tran < 0) {
                 this.scrollTo({ y: 0 })
                 this.props.headerTrans.stopAnimation(() => { })
-            }else{
+            } else {
                 this.scrollTo({ y: tran })
             }
-            
+
         }
 
 
@@ -176,9 +176,9 @@ _renderScene = (sceneProps) => {
 
         scrollTo(e) {
 
-            if (this._scrollView && this._scrollView.getNode && this._scrollView.getNode()) {
-                const elementNode = this._scrollView.getNode()
-
+            if (this.getScrollNode()) {
+                const elementNode = this.getScrollNode()
+                
                 if (this.canScroll('scrollTo')) {
                     elementNode.scrollTo({ x: 0, y: e.y, animated: false });
                 } else if (this.canScroll('scrollToOffset')) {
@@ -187,6 +187,13 @@ _renderScene = (sceneProps) => {
                     elementNode.scrollToLocation({ itemIndex: 0, sectionIndex: 0, viewOffset: -e.y, animated: false });
                 }
             }
+        }
+
+        getScrollNode() {
+            if (this._scrollView.scrollTo || this._scrollView.scrollToOffset || this._scrollView.scrollToLocation) {
+                return this._scrollView
+            }
+            return this._scrollView && this._scrollView.getNode ? this._scrollView.getNode() : null
         }
 
         canScroll(scrollName) {

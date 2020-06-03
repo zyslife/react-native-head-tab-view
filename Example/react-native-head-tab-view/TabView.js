@@ -141,7 +141,7 @@ export default class TabView extends React.PureComponent {
     onPanResponderGrant = () => {
         this.emitListener(TABVIEW_HEADER_GRANT);
     }
-    
+
     stopHeaderAnimation = () => {
         this.state.headerTrans.stopAnimation(() => { })
     }
@@ -272,12 +272,13 @@ export default class TabView extends React.PureComponent {
         this.stopHeaderAnimation()
         if (Platform.OS === 'ios') {
             const offset = this.state.sceneWidth * index;
-            this.scrollView && this.scrollView.getNode() && this.scrollView.getNode().scrollTo({ x: offset, y: 0, animated: true })
+            this.getScrollNode() && this.getScrollNode().scrollTo({ x: offset, y: 0, animated: true })
         } else {
-            this.androidPager && this.androidPager.getNode() && this.androidPager.getNode().setPage(index);
+            this.getPagerNode() && this.getPagerNode().setPage(index);
         }
         this.sceneWillShow(index)
     }
+
     /**
     * 动画停止
     */
@@ -450,6 +451,19 @@ export default class TabView extends React.PureComponent {
         } else {
             this.observers[eventName] = [{ instance, callback }]
         }
+    }
+    
+    getScrollNode() {
+        if (this.scrollView.scrollTo) {
+            return this.scrollView
+        }
+        return this.scrollView && this.scrollView.getNode ? this.scrollView.getNode() : null
+    }
+    getPagerNode() {
+        if (this.androidPager.setPage) {
+            return this.androidPager
+        }
+        return this.androidPager && this.androidPager.getNode ? this.androidPager.getNode() : null
     }
     /**
     * renderHeader和renderFooter的参数装配
