@@ -2,6 +2,7 @@
 import React from 'react';
 import {
     Animated,
+    Platform
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER, TABVIEW_HEADER_GRANT, TABVIEW_HEADER_RELEASE, TABVIEW_HEADER_START, TABVIEW_HEADER_START_CAPTURE, TABVIEW_HEADER_MOVE } from './TabViewProps'
@@ -155,10 +156,10 @@ _renderScene = (sceneProps) => {
             const tran = value + this.baseTranY
 
             if (tran < 0) {
-                this.scrollTo({ y: 0 })
+                this.scrollTo({ y: 0 }, Platform.OS === 'ios' ? false : true)
                 this.props.headerTrans.stopAnimation(() => { })
             } else {
-                this.scrollTo({ y: tran }, true)
+                this.scrollTo({ y: tran }, Platform.OS === 'ios' ? false : true)
             }
 
         }
