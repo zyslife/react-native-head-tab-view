@@ -4,7 +4,7 @@ import {
     Animated,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER, TABVIEW_HEADER_GRANT, TABVIEW_HEADER_RELEASE } from './TabViewProps'
+import { TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER, TABVIEW_HEADER_GRANT, TABVIEW_HEADER_RELEASE, TABVIEW_HEADER_START, TABVIEW_HEADER_START_CAPTURE, TABVIEW_HEADER_MOVE } from './TabViewProps'
 
 export default HPageViewHoc = (WrappedComponent) => {
 
@@ -86,7 +86,10 @@ _renderScene = (sceneProps) => {
             if (addListener !== undefined) {
                 addListener(this, TABVIEW_TABDIDCLICK, this.tabDidClick)
                 addListener(this, TABVIEW_BECOME_RESPONDER, this.becomeResponder)
+                addListener(this, TABVIEW_HEADER_START, this.headerStart)
+                addListener(this, TABVIEW_HEADER_START_CAPTURE, this.headerStartCapture)
                 addListener(this, TABVIEW_HEADER_GRANT, this.headerGrant)
+                addListener(this, TABVIEW_HEADER_MOVE, this.headerMove)
                 addListener(this, TABVIEW_HEADER_RELEASE, this.headerRelease)
 
             }
@@ -105,7 +108,10 @@ _renderScene = (sceneProps) => {
             if (removeListener !== undefined) {
                 removeListener(this, TABVIEW_TABDIDCLICK, this.tabDidClick)
                 removeListener(this, TABVIEW_BECOME_RESPONDER, this.becomeResponder)
+                removeListener(this, TABVIEW_HEADER_START, this.headerStart)
+                removeListener(this, TABVIEW_HEADER_START_CAPTURE, this.headerStartCapture)
                 removeListener(this, TABVIEW_HEADER_GRANT, this.headerGrant)
+                removeListener(this, TABVIEW_HEADER_MOVE, this.headerMove)
                 removeListener(this, TABVIEW_HEADER_RELEASE, this.headerRelease)
             }
 
@@ -117,11 +123,21 @@ _renderScene = (sceneProps) => {
             }
         }
 
+        headerStart = () => { }
+
+        headerStartCapture = () => {
+            if (this.props.isActive) {
+                this.scrollTo({ y: this.scrollTop }, true)
+            }
+        }
+
         headerGrant = () => {
             this.headerCanControl = true
             this.stopScroll = false
             this.baseTranY = this.props.containerTrans._value
         }
+
+        headerMove = () => { }
 
         headerRelease = (gestureState) => { }
 
@@ -142,7 +158,7 @@ _renderScene = (sceneProps) => {
                 this.scrollTo({ y: 0 })
                 this.props.headerTrans.stopAnimation(() => { })
             } else {
-                this.scrollTo({ y: tran })
+                this.scrollTo({ y: tran }, true)
             }
 
         }
@@ -174,17 +190,16 @@ _renderScene = (sceneProps) => {
         }
 
 
-        scrollTo(e) {
-
+        scrollTo(e, animated = false) {
             if (this.getScrollNode()) {
                 const elementNode = this.getScrollNode()
-                
+
                 if (this.canScroll('scrollTo')) {
-                    elementNode.scrollTo({ x: 0, y: e.y, animated: false });
+                    elementNode.scrollTo({ x: 0, y: e.y, animated });
                 } else if (this.canScroll('scrollToOffset')) {
-                    elementNode.scrollToOffset({ offset: e.y, animated: false });
+                    elementNode.scrollToOffset({ offset: e.y, animated });
                 } else if (this.canScroll('scrollToLocation')) {
-                    elementNode.scrollToLocation({ itemIndex: 0, sectionIndex: 0, viewOffset: -e.y, animated: false });
+                    elementNode.scrollToLocation({ itemIndex: 0, sectionIndex: 0, viewOffset: -e.y, animated });
                 }
             }
         }
@@ -250,7 +265,7 @@ _renderScene = (sceneProps) => {
         }
 
         needHandleScroll() {
-            const { children, containerTrans, makeHeaderHeight, forwardedRef, addListener } = this.props;
+            const { containerTrans, makeHeaderHeight, addListener } = this.props;
             if (containerTrans === undefined || makeHeaderHeight === undefined || addListener === undefined) return false;
             return true;
         }

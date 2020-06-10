@@ -6,7 +6,7 @@ import {
     Platform,
     PanResponder
 } from 'react-native';
-import { TabViewProps, TabProps, TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER, TABVIEW_HEADER_GRANT, TABVIEW_HEADER_RELEASE } from './TabViewProps'
+import { TabViewProps, TabProps, TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER, TABVIEW_HEADER_GRANT, TABVIEW_HEADER_RELEASE, TABVIEW_HEADER_START,TABVIEW_HEADER_START_CAPTURE, TABVIEW_HEADER_MOVE } from './TabViewProps'
 import Tabbar from './Tabbar'
 import ScrollHeader from './ScrollHeader'
 
@@ -125,7 +125,7 @@ export default class TabView extends React.PureComponent {
                         inputRange: [0, headerHeight, headerHeight + 1],
                         outputRange: [headerHeight, 0, 0]
                     })
-                }]
+                }], zIndex: 10
             }}>
                 {renderHeader(this.makeParams())}
             </Animated.View>
@@ -142,6 +142,19 @@ export default class TabView extends React.PureComponent {
         this.emitListener(TABVIEW_HEADER_GRANT);
     }
 
+    headerStartResponder = () => {
+        this.emitListener(TABVIEW_HEADER_START);
+    }
+    headerStartCaptureResponder = () => {
+        this.emitListener(TABVIEW_HEADER_START_CAPTURE);
+    }
+    headerMoveResponder = () => {
+        this.emitListener(TABVIEW_HEADER_MOVE);
+    }
+    headerReleaseResponder = () => {
+        this.emitListener(TABVIEW_HEADER_RELEASE);
+    }
+
     stopHeaderAnimation = () => {
         this.state.headerTrans.stopAnimation(() => { })
     }
@@ -156,6 +169,10 @@ export default class TabView extends React.PureComponent {
         return <ScrollHeader
             headerTrans={this.state.headerTrans}
             onPanResponderGrant={this.onPanResponderGrant}
+            headerStartResponder={this.headerStartResponder}
+            headerStartCaptureResponder={this.headerStartCaptureResponder}
+            headerMoveResponder={this.headerMoveResponder}
+            headerReleaseResponder={this.headerReleaseResponder}
             style={{
                 position: 'absolute',
                 top: 0,
@@ -452,7 +469,7 @@ export default class TabView extends React.PureComponent {
             this.observers[eventName] = [{ instance, callback }]
         }
     }
-    
+
     getScrollNode() {
         if (this.scrollView.scrollTo) {
             return this.scrollView

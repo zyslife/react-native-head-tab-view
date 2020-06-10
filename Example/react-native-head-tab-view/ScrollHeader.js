@@ -16,24 +16,14 @@ export default class ScrollHeader extends React.PureComponent {
         super(props)
         this.canResponder = false
 
-        const { headerTrans, onPanResponderGrant } = props
+        const { headerTrans, onPanResponderGrant, headerStartResponder, headerStartCaptureResponder } = props
         this.mPanResponder = PanResponder.create({
             onStartShouldSetPanResponderCapture: (evt, gestureState) => {
+                headerStartCaptureResponder && headerStartCaptureResponder()
                 headerTrans.stopAnimation()
                 return false
             },
-            onMoveShouldSetPanResponder: (evt, gestureState) => {
-                if (Math.abs(gestureState.dx) < 10 && Math.abs(gestureState.dy) < 10) {
-                    return false;
-                }
-                if (!this.canResponder) {
-                    headerTrans.stopAnimation(() => {
-                        this.canResponder = Math.abs(gestureState.dy) > Math.abs(gestureState.dx);
-                    })
-                    return false;
-                }
-                return true;
-            },
+            onMoveShouldSetPanResponder: this.panResponderOnMove,
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
                 return this.canResponder
             },
@@ -46,24 +36,48 @@ export default class ScrollHeader extends React.PureComponent {
                 this.canResponder = false
                 headerTrans.setValue(dy)
             },
-            onPanResponderTerminationRequest: (evt, gestureState) => true,
-            onPanResponderRelease: (evt, gestureState) => {
-                if (Math.abs(gestureState.dy) < 2 || gestureState.vy == 0) return;
-                Animated.decay(
-                    headerTrans,
-                    {
-                        velocity: gestureState.vy,
-                        deceleration: 0.998,
-                        useNativeDriver: true,
-                    },
-                ).start();
 
+            onPanResponderTerminationRequest: (evt, gestureState) => {
+                this.panResponderRelease(evt, gestureState)
+                return true;
             },
+            onPanResponderTerminate: this.panResponderRelease,
+            onPanResponderRelease: this.panResponderRelease,
 
             onShouldBlockNativeResponder: (evt, gestureState) => {
                 return true;
             },
         });
+    }
+
+    panResponderOnMove = (evt, gestureState) => {
+        const { headerTrans, headerMoveResponder } = this.props
+        if (Math.abs(gestureState.dx) < 10 && Math.abs(gestureState.dy) < 10) {
+            headerMoveResponder && headerMoveResponder()
+            return false;
+        }
+        if (!this.canResponder) {
+            headerTrans.stopAnimation(() => {
+                this.canResponder = Math.abs(gestureState.dy) > Math.abs(gestureState.dx);
+            })
+            return false;
+        }
+        return true;
+    }
+
+    panResponderRelease = (evt, gestureState) => {
+        const { headerTrans, headerReleaseResponder } = this.props
+        headerReleaseResponder && headerReleaseResponder()
+
+        if (Math.abs(gestureState.dy) < 2 || gestureState.vy == 0) return;
+        Animated.decay(
+            headerTrans,
+            {
+                velocity: gestureState.vy,
+                deceleration: 0.998,
+                useNativeDriver: true,
+            },
+        ).start();
     }
 
     render() {
