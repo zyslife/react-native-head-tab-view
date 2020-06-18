@@ -6,7 +6,7 @@ import {
     Platform,
     PanResponder
 } from 'react-native';
-import { TabViewProps, TabProps, TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER, TABVIEW_HEADER_GRANT, TABVIEW_HEADER_RELEASE, TABVIEW_HEADER_START,TABVIEW_HEADER_START_CAPTURE, TABVIEW_HEADER_MOVE } from './TabViewProps'
+import { TabViewProps, TabProps, TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER, TABVIEW_HEADER_GRANT, TABVIEW_HEADER_RELEASE, TABVIEW_HEADER_START, TABVIEW_HEADER_START_CAPTURE, TABVIEW_HEADER_MOVE } from './TabViewProps'
 import Tabbar from './Tabbar'
 import ScrollHeader from './ScrollHeader'
 
@@ -115,8 +115,8 @@ export default class TabView extends React.PureComponent {
     }
     //渲染头部
     _renderHeader() {
-        const { renderHeader, makeHeaderHeight, frozeTop } = this.props
-        const headerHeight = makeHeaderHeight() - frozeTop
+        const { renderHeader, frozeTop } = this.props
+        const headerHeight = this.getHeaderHeight() - frozeTop
         if (!renderHeader) return null
         return (
             <Animated.View style={{
@@ -162,10 +162,10 @@ export default class TabView extends React.PureComponent {
     //渲染可滑动头部
     _renderScrollHead() {
 
-        const { renderScrollHeader, makeHeaderHeight, frozeTop } = this.props
+        const { renderScrollHeader, frozeTop } = this.props
         if (!renderScrollHeader) return null
         const { containerTrans, sceneWidth } = this.state;
-        const headerHeight = makeHeaderHeight() - frozeTop
+        const headerHeight = this.getHeaderHeight() - frozeTop
         return <ScrollHeader
             headerTrans={this.state.headerTrans}
             onPanResponderGrant={this.onPanResponderGrant}
@@ -507,7 +507,7 @@ export default class TabView extends React.PureComponent {
         params.addListener = this.addListener;
         params.removeListener = this.removeListener;
         params.scenePageDidDrag = this.scenePageDidDrag;
-        params.expectHeight = parseInt(makeHeaderHeight()) + tabviewHeight - tabbarHeight - frozeTop * 2;
+        params.expectHeight = this.getHeaderHeight() + tabviewHeight - tabbarHeight - frozeTop * 2;
 
         return params;
     }
@@ -517,7 +517,7 @@ export default class TabView extends React.PureComponent {
      */
     makeTabParams() {
         const props = this.props;
-        const { tabbarStyle, renderScrollHeader, makeHeaderHeight, frozeTop } = this.props
+        const { tabbarStyle, renderScrollHeader, frozeTop } = this.props
         const params = {}
 
         Object.keys(TabProps).forEach(function (key) {
@@ -535,7 +535,7 @@ export default class TabView extends React.PureComponent {
             params.style = tabbarStyle
         }
         if (renderScrollHeader) {
-            const headerHeight = makeHeaderHeight() - frozeTop
+            const headerHeight = this.getHeaderHeight() - frozeTop
             params.style.transform = [{
                 translateY: this.state.containerTrans.interpolate({
                     inputRange: [0, headerHeight, headerHeight + 1],
@@ -546,6 +546,13 @@ export default class TabView extends React.PureComponent {
 
 
         return params;
+    }
+
+    getHeaderHeight() {
+        if (this.props.makeHeaderHeight) {
+            return Math.floor(this.props.makeHeaderHeight())
+        }
+        return 0;
     }
 }
 

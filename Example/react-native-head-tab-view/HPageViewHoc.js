@@ -70,6 +70,7 @@ const HScrollView = HPageViewHoc(ScrollView)
 _renderScene = (sceneProps) => {
     return <HScrollView {...sceneProps}/>
 }
+(如果不需要使用renderScrollHeader，请避免使用HPageViewHoc包裹滑动组件)
                 `)
             }
             this.didMount = true;
