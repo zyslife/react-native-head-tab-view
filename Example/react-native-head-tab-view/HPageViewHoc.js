@@ -196,11 +196,11 @@ _renderScene = (sceneProps) => {
             if (this.getScrollNode()) {
                 const elementNode = this.getScrollNode()
 
-                if (this.canScroll('scrollTo')) {
+                if (this.isScrollView()) {
                     elementNode.scrollTo({ x: 0, y: e.y, animated });
-                } else if (this.canScroll('scrollToOffset')) {
+                } else if (this.isFlatList()) {
                     elementNode.scrollToOffset({ offset: e.y, animated });
-                } else if (this.canScroll('scrollToLocation')) {
+                } else if (this.isSectionList()) {
                     elementNode.scrollToLocation({ itemIndex: 0, sectionIndex: 0, viewOffset: -e.y, animated });
                 }
             }
@@ -211,10 +211,6 @@ _renderScene = (sceneProps) => {
                 return this._scrollView
             }
             return this._scrollView && this._scrollView.getNode ? this._scrollView.getNode() : null
-        }
-
-        canScroll(scrollName) {
-            return WrappedComponent.prototype.hasOwnProperty(scrollName)
         }
 
         tryScroll() {
@@ -308,6 +304,21 @@ _renderScene = (sceneProps) => {
                 {children}
             </AnimatePageView>
 
+        }
+
+        isScrollView() {
+            if (WrappedComponent.prototype && WrappedComponent.prototype.hasOwnProperty('scrollTo')) return true
+            return WrappedComponent.name === 'ScrollView' || WrappedComponent.displayName === 'ScrollView'
+        }
+
+        isFlatList() {
+            if (WrappedComponent.prototype && WrappedComponent.prototype.hasOwnProperty('scrollToOffset')) return true
+            return WrappedComponent.name === 'FlatList' || WrappedComponent.displayName === 'FlatList'
+        }
+
+        isSectionList(){
+            if (WrappedComponent.prototype && WrappedComponent.prototype.hasOwnProperty('scrollToLocation')) return true
+            return WrappedComponent.name === 'SectionList' || WrappedComponent.displayName === 'SectionList'
         }
     };
 
