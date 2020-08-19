@@ -54,7 +54,7 @@ npm install @react-native-community/viewpager --save
 
 https://github.com/react-native-community/react-native-viewpager#Linking  
 
-## Versions (@react-native-community/viewpager) **【建议将版本固定为3.3，参考这个issues https://github.com/zyslife/react-native-head-tab-view/issues/28】**
+## Versions (@react-native-community/viewpager) **【建议将版本固定为3.3，[参考issues28](https://github.com/zyslife/react-native-head-tab-view/issues/28)】**
 以下为@react-native-community/viewpager的版本，请自行选择
 | 1.x              | 2.x              | 3.x
 | ---------------- | -------------    | -------------    |
