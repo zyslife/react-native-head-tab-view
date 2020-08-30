@@ -37,6 +37,12 @@ export default HPageViewHoc = (WrappedComponent) => {
             this.didMount = false
         }
 
+        componentDidUpdate(prevProps) {
+            if (prevProps.expectHeight !== this.props.expectHeight) {
+                this._onContentSizeChange(0, this.contentHeight)
+            }
+        }
+
         getOnScroll() {
             const { containerTrans, isActive } = this.props
 
@@ -234,10 +240,13 @@ _renderScene = (sceneProps) => {
          *  根据contentSize决定占位视图高度
          */
         _onContentSizeChange(contentWidth, contentHeight) {
+
             const { placeHeight } = this.state;
             const { expectHeight, faultHeight } = this.props;
+
             const intContainerHeight = Math.floor(expectHeight + faultHeight);
             const intContentHeight = Math.floor(contentHeight)
+            this.contentHeight = contentHeight
 
             if (intContentHeight < intContainerHeight) {//添加占位高度 placeHeight
                 const newPlaceHeight = placeHeight + intContainerHeight - intContentHeight;
@@ -316,7 +325,7 @@ _renderScene = (sceneProps) => {
             return WrappedComponent.name === 'FlatList' || WrappedComponent.displayName === 'FlatList'
         }
 
-        isSectionList(){
+        isSectionList() {
             if (WrappedComponent.prototype && WrappedComponent.prototype.hasOwnProperty('scrollToLocation')) return true
             return WrappedComponent.name === 'SectionList' || WrappedComponent.displayName === 'SectionList'
         }
