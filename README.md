@@ -2,12 +2,16 @@
 带有头部组件，可以整体上下滑动的标签页组件  
 点击跳转[博客文章](https://www.jianshu.com/p/222716d8a0a2)
 
+**最新版本v2.0如果不稳定，可以退回上一个版本v1.1.6**
+
 ## 功能
 
 - 左右滑动标签页
 - 可定制的Tabbar
 - 标签页可以添加头部，并且整体上下滑动
 - 兼容iOS和Android
+- 头部可控制整个组件上下滚动
+- **新增各个标签页下拉刷新功能（v2.0~）**
 
 ## Demo
 
@@ -36,23 +40,20 @@ react-native run-ios
 
 ## 添加到自己项目  
 
-一、
 ```sh
-yarn add react-native-head-tab-view
+yarn add react-native-head-tab-view react-native-gesture-handler @react-native-community/viewpager
 or  
-npm install react-native-head-tab-view --save
+npm install react-native-head-tab-view react-native-gesture-handler @react-native-community/viewpager --save
 ```
-二、
-```sh
-yarn add @react-native-community/viewpager
-or
-npm install @react-native-community/viewpager --save
-```  
+
 
 ## Linking  
-由于依赖了 @react-native-community/viewpager，请按以下方式[自动或者手动进行链接](https://github.com/react-native-community/react-native-viewpager#Linking)  
+1. 依赖了 @react-native-community/viewpager  [自动或者手动进行链接](https://github.com/react-native-community/react-native-viewpager#Linking)  
+ 
 
 https://github.com/react-native-community/react-native-viewpager#Linking  
+
+2. 依赖了react-native-gesture-handler [自动或者手动进行链接](https://github.com/software-mansion/react-native-gesture-handler)
 
 ## Versions (@react-native-community/viewpager) **【建议将版本固定为3.3，[参考issues28](https://github.com/zyslife/react-native-head-tab-view/issues/28)】**
 以下为@react-native-community/viewpager的版本，请自行选择
@@ -148,6 +149,20 @@ tabbar item选中的样式
 tabbar item未选中的样式
 
 
+## HPageViewHoc Props  （标签页的props）
+
+##### `isRefreshing`  _(boolean)_   
+标签页是否处于下拉刷新状态  
+##### `onStartRefresh`  _(() => void)_   
+开始下拉刷新 回调方法  
+##### `renderRefreshControl`  _(() => React.ReactElement)_   
+自定义下拉刷新 组件
+##### `refreshHeight`  _(number)_   
+下拉刷新的高度 （默认100） 
+##### `overflowPull`  _(number)_   
+下拉的距离超过 下拉刷新组件的高度 （默认50）
+
+
 
 ## TabView Props  - (extends  Common Props)
 
@@ -156,17 +171,6 @@ tabbar item未选中的样式
 
 - item _(string)_ : 标签的名字（`tabs`数组的其中一个元素）  
 - index _(number)_ : 标签页的序号 ，从0开始排序  
-
-*下面的参数是使用了`renderScrollHeader`才有（这些参数一般都用不上，只需要全部传递给HPageViewHoc）*  
-- isActive _(boolean)_ : 是否是当前活跃标签页  
-- containerTrans _(Animated.Value)_ : 统管全局纵向动画对象
-- makeHeaderHeight _(() => number)_ : 获取renderScrollHeader的高度方法
-- addListener _((instance: any, eventName: string, callback: function) => void)_ : 标签页添加整个组件的事件监听方法，instance：this , eventName：事件名，callback：事件回调
-- removeListener _((instance: any, eventName: string, callback: function) => void)_ :  标签页移除整个组件的事件监听方法
-- scenePageDidDrag _((index:number)=>void)_ : 标签页页面被拖拽时回调方法
-- expectHeight _(number)_ : 整个组件上下滑动时，期望标签页所拥有的内容高度（用于`HPageViewHoc`中计算补位视图高度）
-
-
 
 
 Example:
