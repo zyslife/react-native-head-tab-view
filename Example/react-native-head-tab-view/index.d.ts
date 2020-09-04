@@ -1,15 +1,20 @@
 
 
 import * as React from 'react';
-import { Animated, ScrollViewProps, ViewStyle, TextStyle, StyleProp, LayoutChangeEvent } from 'react-native';
+import { Animated, ScrollViewProps, ViewStyle, TextStyle, StyleProp, LayoutChangeEvent, ScrollView, FlatList, SectionList } from 'react-native';
 
 declare class TabViewPageComponent extends React.Component { }
 
-interface TabProps<TabItemT> {
+export interface TabItemInfo<T> {
+    item: T;
+    index: number;
+    onLayoutTab: (e: LayoutChangeEvent, index: number) => void;
+}
+interface TabProps<T> {
     /**
      * 数据源，每个标签页的标题（可配合tabNameConvert使用）
      */
-    tabs: string[];
+    tabs: Array<T>;
     /**
      * 是否平分tab宽度
      * 默认值： true.
@@ -20,7 +25,7 @@ interface TabProps<TabItemT> {
      * 例:
      * tabNameConvert={(tabname)=>return tabname+'_aguai'}
      */
-    tabNameConvert?: (tabname: string) => string;
+    tabNameConvert?: (tabname: T) => string;
     /**
      * tabbar容器的样式
      */
@@ -35,73 +40,109 @@ interface TabProps<TabItemT> {
     inactiveTextStyle?: StyleProp<TextStyle>;
 }
 
-export interface TabViewItemInfo<TabItemT> {
+export interface TabbarInfo<T> extends TabProps<T> {
+    goToPage: (page: number) => void;
+    activeIndex: number;
+    scrollValue: Animated.Value;
+    style: StyleProp<ViewStyle>;
+}
+
+type SceneItem<T> = {
     /**
-     * 标签的名字（`tabs`数组的其中一个元素） 
-     */
-    item: string;
+    * 标签的名字（`tabs`数组的其中一个元素） 
+    */
+    item: T;
     /**
      * 标签页的序号 ，从0开始排序  
      */
     index: number;
-    //当使用了renderScrollHeader时会有以下参数
+}
+
+interface HPageViewHocNU<T> {
     /**
-     * 是否是当前活跃标签页  
+     * 冻结高度
      */
-    isActive?: boolean;
+    frozeTop: number;
+    /**
+     * 整个组件上下滑动时，期望标签页所拥有的内容高度（用于`HPageViewHoc`中计算补位视图高度）
+     */
+    expectHeight: number;
+    /**
+    * 是否是当前活跃标签页  
+    */
+    isActive: boolean;
     /**
      * 统管全局纵向动画对象
      */
-    containerTrans?: Animated.Value;
+    containerTrans: Animated.Value;
     /**
      * 头部的动画对象
      */
-    headerTrans?: Animated.Value;
+    headerTrans: Animated.Value;
+    /**
+     * 下拉刷新的动画对象
+     */
+    refreshTrans: Animated.Value;
+    /**
+     * 实际滑动距离动画对象
+     */
+    scrollYTrans: Animated.Value;
+    /**
+     * 拖拽的动画对象
+     */
+    dragY: Animated.Value;
+    /**
+     * 子页面ref
+     */
+    childRefs: Array<React.LegacyRef<any>>;
+    /**添加监听 */
+    addListener: (instance: any, eventName: string, callback: any) => void;
+    /**移除监听 */
+    removeListener: (instance: any, eventName: string, callback: any) => void;
+    /**屏幕被拖拽 */
+    scenePageDidDrag: (index: number) => void;
+    /**
+     * 容错高度
+     */
+    faultHeight: number;
+}
+
+
+export type HPageViewHocProps = {
+    /**
+     * 是否是下拉刷新状态
+     */
+    isRefreshing?: boolean;
+    /**
+     * 开始下拉刷新 回调方法
+     */
+    onStartRefresh?: () => void;
+    /**
+     * 自定义下拉刷新 组件
+     */
+    renderRefreshControl?: () => React.ReactElement
     /**
      * 获取renderScrollHeader的高度方法
      */
     makeHeaderHeight?: () => number;
     /**
-     * 标签页添加整个组件的事件监听方法，instance：this , eventName：事件名，callback：事件回调
+     * 下拉刷新的高度 （默认100）
      */
-    addListener?: (instance: any, eventName: string, callback: function) => void;
+    refreshHeight?: number;
     /**
-     * 标签页移除整个组件的事件监听方法
+     * 下拉的距离超过 下拉刷新组件的高度 （默认50）
      */
-    removeListener?: (instance: any, eventName: string, callback: function) => void;
-    /**
-     * 标签页页面被拖拽时回调方法
-     */
-    scenePageDidDrag?: (index: number) => void;
-    /**
-     * 容错高度
-     */
-    faultHeight?: number;
-    /**
-     * 冻结高度
-     */
-    frozeTop?: number
-    /**
-     * 整个组件上下滑动时，期望标签页所拥有的内容高度（用于`HPageViewHoc`中计算补位视图高度）
-     */
-    expectHeight?: number;
+    overflowPull?: number;
 }
 
+export type PageViewHocProps<T> = HPageViewHocProps & HPageViewHocNU<T> & SceneItem<T>;
 
-interface TabItemInfo<TabItemT> {
-    item: string;
-    index: number;
-    /**
-     * 此处index == 上一个index
-     */
-    onLayoutTab: (e: LayoutChangeEvent, index: number) => void;
-}
 
-export interface TabbarProps<TabItemT> extends TabProps<TabItemT> {
+export interface TabbarProps<T> extends TabbarInfo<T> {
     /**
      * 是否隐藏下划线
      */
-    underLineHidden?: boolean;
+    underLineHidden: boolean;
     /**
      * 下划线容器样式
      */
@@ -111,44 +152,28 @@ export interface TabbarProps<TabItemT> extends TabProps<TabItemT> {
      */
     lineStyle?: StyleProp<ViewStyle>;
     /**
-     * Tabbar样式
-     */
-    style?: StyleProp<ViewStyle>;
-    /**
      * Tabbar Item样式
      */
     tabItemStyle?: StyleProp<ViewStyle>;
     /**
      * Tabbar Item的渲染方法
      */
-    renderTabItem?: (info: TabItemInfo<TabItemT>) => React.ReactElement;
-    /**
-     * 当前滚动的距离/总共可滚动距离（水平方向）
-     */
-    scrollValue?: number;
+    renderTabItem?: (info: TabItemInfo<T>) => React.ReactElement;
     /**
      * 渲染Tabbar左边组件
      */
-    renderLeftView?: React.ComponentType<any> | React.ReactElement | null;
+    renderLeftView?: () => React.ComponentType<any> | React.ReactElement | null;
     /**
      * 渲染Tabbar右边组件
      */
-    renderRightView?: React.ComponentType<any> | React.ReactElement | null;
+    renderRightView?: () => React.ComponentType<any> | React.ReactElement | null;
 }
 
-export interface TabbarInfo<TabItemT> extends TabProps<TabItemT> {
-    goToPage: (page: number) => void;
-    activeIndex: number;
-    scrollValue: number;
-    style: StyleProp<ViewStyle>;
-}
-
-export interface TabViewProperties<TabItemT> extends TabProps<TabItemT> {
-
+export interface TabViewProps<T> extends TabProps<T> {
     /**
      * 渲染每个标签页的方法
      */
-    renderScene: (info: TabViewItemInfo<TabItemT>) => React.ReactElement | null | undefined;
+    renderScene: (info: PageViewHocProps<T> | SceneItem<T>) => React.ReactElement | null | undefined;
     /**
      * 获取头部的高度
      */
@@ -164,11 +189,11 @@ export interface TabViewProperties<TabItemT> extends TabProps<TabItemT> {
     /**
      * 渲染垂直滚动头部组件
      */
-    renderScrollHeader?: React.ComponentType<any> | React.ReactElement | null;
+    renderScrollHeader?: () => React.ComponentType<any> | React.ReactElement | null;
     /**
      * 渲染头部组件
      */
-    renderHeader?: React.ComponentType<any> | React.ReactElement | null;
+    renderHeader?: (params: { item: T, index: number } | null) => React.ComponentType<any> | React.ReactElement | null;
     /**
      * 头部是否能响应事件(如果设置为true，则头部不能响应上下滑动事件)
      * 默认值 false
@@ -177,7 +202,7 @@ export interface TabViewProperties<TabItemT> extends TabProps<TabItemT> {
     /**
      * 渲染底部组件
      */
-    renderFooter?: React.ComponentType<any> | React.ReactElement | null;
+    renderFooter?: (params: { item: T, index: number } | null) => React.ComponentType<any> | React.ReactElement | null;
     /**
      * 初始页面序号 (默认是0)
      */
@@ -189,7 +214,7 @@ export interface TabViewProperties<TabItemT> extends TabProps<TabItemT> {
     /**
      * tabbar渲染方法
      */
-    renderTabBar?: (props: TabbarInfo<TabItemT>) => React.ReactElement | null | undefined;
+    renderTabBar?: (props: TabbarInfo<T>) => React.ReactElement | null | undefined;
     /**
      * 切换tab回调方法
      */
@@ -219,15 +244,24 @@ export interface TabViewProperties<TabItemT> extends TabProps<TabItemT> {
     faultHeight?: number;
 }
 
-export class TabView<TabItemT> extends React.Component<TabViewProperties<TabItemT>> {
 
-
-}
-export class Tabbar<TabItemT> extends React.Component<TabbarProps<TabItemT>>{
+export class TabView<T> extends React.Component<TabViewProps<T>> {
 
 }
 
-declare function HPageViewHoc<T>(component: T): T;
+export class Tabbar<T> extends React.Component<TabbarProps<T>>{
+
+}
+
+export class RefreshControlAnimated extends React.PureComponent{
+
+}
+
+type HighHocFunc = typeof ScrollView | typeof FlatList | typeof SectionList
+
+declare class PageViewHocComponent<T> extends React.Component<PageViewHocProps<T>>{}
+
+export function HPageViewHoc(component: HighHocFunc ): any;
 
 
 export interface ChangeTabProperties {
@@ -236,3 +270,7 @@ export interface ChangeTabProperties {
     // 当前页
     curIndex: number;
 }
+
+export type RefreshObserverType = (progress: number) => void;
+
+export type RefreshType = 'RefreshTypePrepare' | 'RefreshTypeEnough' | 'RefreshTypeRefreshing'

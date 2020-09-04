@@ -10,11 +10,14 @@ import {
     SectionList,
     ImageBackground,
     TouchableWithoutFeedback,
-    Alert
+    Alert,
 } from 'react-native';
 
 import { HPageViewHoc, TabView } from 'react-native-head-tab-view'
 import { default as staticData } from '../configData/staticData.js'
+import TestScrollView from './component/TestScrollView'
+
+const TIMECOUNT = 3000
 
 const HScrollView = HPageViewHoc(ScrollView)
 const HFlatList = HPageViewHoc(FlatList)
@@ -26,7 +29,7 @@ interface EState {
 
 const HEAD_HEIGHT = 180
 
-export default class Example1 extends React.PureComponent<any, EState> {
+export default class ExampleWithPullRefresh extends React.PureComponent<any, EState> {
     state = {
         tabs: ['ScrollView', 'FlatList', 'SectionList'],
     }
@@ -60,23 +63,56 @@ export default class Example1 extends React.PureComponent<any, EState> {
         return (
             <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                 <TabView
+
                     tabs={this.state.tabs}
                     renderScene={this._renderScene}
                     makeHeaderHeight={() => { return HEAD_HEIGHT }}
                     renderScrollHeader={this._renderScrollHeader}
+                    headerRespond={true}
                 />
             </View>
         )
     }
 }
 
-class Page1 extends React.PureComponent {
+interface State {
+    isRefreshing: boolean
+    signOfRefresh?: boolean
+    data?: Array<any>
+}
+class Page1 extends React.PureComponent<any, State> {
+    private mTimer?: number
+    constructor(props: any) {
+        super(props)
+        this.state = {
+            isRefreshing: false,
+            signOfRefresh: true
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.mTimer) {
+            clearInterval(this.mTimer)
+        }
+    }
+
+    onStartRefresh = () => {
+        this.setState({ isRefreshing: true })
+
+        this.mTimer = setTimeout(() => {
+            this.setState({ isRefreshing: false, signOfRefresh: !this.state.signOfRefresh })
+        }, TIMECOUNT);
+    }
 
     render() {
+        const { signOfRefresh } = this.state;
         return (
-            <HScrollView {...this.props}>
+            <HScrollView
+                {...this.props}
+                onStartRefresh={this.onStartRefresh}
+                isRefreshing={this.state.isRefreshing}>
 
-                {staticData.Page1Data.map((item, index) => {
+                {signOfRefresh ? staticData.Page1Data.map((item, index) => {
                     return (
                         <View style={{ width: '100%', alignItems: 'center' }} key={'Page1_' + index}>
                             <View style={{ height: 40, width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFF' }}>
@@ -85,17 +121,13 @@ class Page1 extends React.PureComponent {
                             <Image style={{ width: '100%', height: 200 }} resizeMode={'cover'} source={item.image} />
                         </View>
                     )
-                })}
+                }) : <TestScrollView />}
             </HScrollView>
         )
     }
 }
 
 
-interface IState {
-    data: Array<any>,
-    loading: boolean
-}
 
 interface FlatListItemInfo {
     image: any;
@@ -105,31 +137,71 @@ interface FlatListItemInfo {
     imgSize: number;
 }
 
-class Page2 extends React.PureComponent<any, IState> {
+class Page2 extends React.PureComponent<any, State> {
+    private mTimer?: number
+    constructor(props: any) {
+        super(props)
+        this.state = {
+            isRefreshing: false,
+            signOfRefresh: true,
+            data: staticData.Page2Data1
+        }
+    }
+    componentWillUnmount() {
+        if (this.mTimer) {
+            clearInterval(this.mTimer)
+        }
+    }
 
     private renderItem = (itemInfo: { item: FlatListItemInfo }) => {
         const { item } = itemInfo
         return (
             <View style={[styles.flatItem, { height: item.height }]}>
-                {item.image ? <Image style={{ width: item.imgSize, height: item.imgSize, marginRight: 10, borderRadius: 5 }} source={item.image} /> : null}
+                {this.state.signOfRefresh ? <Image style={{ width: item.imgSize, height: item.imgSize, marginRight: 10, borderRadius: 5 }} source={item.image} /> : null}
                 <Text>{item.text}</Text>
+                {this.state.signOfRefresh ? null : <Image style={{ width: item.imgSize, height: item.imgSize, marginRight: 10, borderRadius: 5 }} source={item.image} />}
             </View>
         )
     }
+
+    onStartRefresh = () => {
+        this.setState({ isRefreshing: true })
+
+        this.mTimer = setTimeout(() => {
+            this.setState({ isRefreshing: false, signOfRefresh: !this.state.signOfRefresh })
+        }, TIMECOUNT);
+    }
+
+    keyExtractor = (item: any, index: number) => index.toString()
 
     render() {
         return (
             <HFlatList
                 {...this.props}
-                data={staticData.Page2Data}
+                isRefreshing={this.state.isRefreshing}
+                onStartRefresh={this.onStartRefresh}
+                data={this.state.data}
                 renderItem={this.renderItem.bind(this)}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={this.keyExtractor}
             />
         )
     }
 }
 
-class Page3 extends React.PureComponent {
+class Page3 extends React.PureComponent<any, State> {
+    private mTimer?: number
+    constructor(props: any) {
+        super(props)
+        this.state = {
+            isRefreshing: false
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.mTimer) {
+            clearInterval(this.mTimer)
+        }
+    }
 
     private renderItem = (itemInfo: { item: string }) => {
         const { item } = itemInfo;
@@ -151,15 +223,27 @@ class Page3 extends React.PureComponent {
     private getItemLayout = (data: any, index: number) => {
         return { length: 50, offset: index * 50, index };
     }
+
+    onStartRefresh = () => {
+        this.setState({ isRefreshing: true })
+        this.mTimer = setTimeout(() => {
+            this.setState({ isRefreshing: false })
+        }, TIMECOUNT);
+    }
+
+    keyExtractor = (item: any, index: number) => index.toString()
+
     render() {
         return (
             <HSectionList
                 {...this.props}
                 renderItem={this.renderItem}
+                isRefreshing={this.state.isRefreshing}
+                onStartRefresh={this.onStartRefresh}
                 renderSectionHeader={this.renderSectionHeader}
                 stickySectionHeadersEnabled={false}
                 sections={staticData.Page3Data}
-                keyExtractor={(item, index) => item + index}
+                keyExtractor={this.keyExtractor}
                 getItemLayout={this.getItemLayout}
             />
         )
@@ -177,11 +261,12 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     flatItem: {
-        paddingLeft: 15,
+        paddingHorizontal: 30,
         borderBottomWidth: 1,
         borderBottomColor: '#EAEAEA',
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'space-between'
     },
     sectionItem: {
         height: 50,

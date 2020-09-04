@@ -1,6 +1,6 @@
 {
   "name": "react-native-head-tab-view",
-  "version": "1.1.6",
+  "version": "2.0.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -27,7 +27,8 @@
     "scrollview"
   ],
   "peerDependencies": {
-    "@react-native-community/viewpager": "^3.3.0"
+    "@react-native-community/viewpager": "^3.3.0",
+    "react-native-gesture-handler": "^1.6.1"
   },
   "description": "Tab view component for React Native"
 }

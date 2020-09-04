@@ -10,11 +10,9 @@ import PropTypes from 'prop-types';
 
 export default class Button extends Component {
     static propTypes = {
-        preventDoubleClick: PropTypes.bool,
         onPress: PropTypes.func
     }
     static defaultProps = {
-        preventDoubleClick: true,
         onPress: () => { }
     }
     constructor(props) {
@@ -38,10 +36,7 @@ export default class Button extends Component {
 
     _onPress() {
         const { onPress } = this.props;
-        if (!this.props.preventDoubleClick) { 
-            onPress()
-            return
-        }
+
         const currentTime = new Date();
         if (this.lastTime) {
             const diff = currentTime.getTime() - this.lastTime.getTime();
@@ -97,7 +92,6 @@ export default class Button extends Component {
         return (
             <TouchableWithoutFeedback
                 {...restProps}
-
                 onPress={this._onPress.bind(this)}
                 onPressIn={this._onPressIn.bind(this)}
                 onPressOut={this._onPressOut.bind(this)}

@@ -293,7 +293,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 8J26DXDH2A;
+						DevelopmentTeam = 37FHP4D56G;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -634,7 +634,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 8J26DXDH2A;
+				DEVELOPMENT_TEAM = 37FHP4D56G;
 				INFOPLIST_FILE = TabBarTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -642,7 +642,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.test.TabBarTestDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.test.TabBarTestDemoApp;
 				PRODUCT_NAME = TabBarTest;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -654,7 +654,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8J26DXDH2A;
+				DEVELOPMENT_TEAM = 37FHP4D56G;
 				INFOPLIST_FILE = TabBarTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -662,7 +662,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.test.TabBarTestDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.test.TabBarTestDemoApp;
 				PRODUCT_NAME = TabBarTest;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

@@ -5,15 +5,15 @@ import { createStackNavigator, HeaderBackButton } from '@react-navigation/stack'
 import getScreenOptions from './config/getScreenOptions';
 import { navigationRef } from './config/NavigationService';
 import MainScreen from './MainScreen'
-import Example1 from './Example1'
-import Example2 from './Example2'
+import ExampleNoPullRefresh from './ExampleNoPullRefresh'
+import ExampleWithPullRefresh from './ExampleWithPullRefresh'
+import ExampleFullFunctions from './ExampleFullFunctions'
 
 const Stack = createStackNavigator();
 
 export default class Example extends React.PureComponent {
 
     render() {
-        // return (<View style={{ flex: 1 }} />)
         return (
             <NavigationContainer
                 ref={navigationRef}>
@@ -27,13 +27,18 @@ export default class Example extends React.PureComponent {
                         options={{ title: 'MainScreen' }}
                     />
                     <Stack.Screen
-                        name="Example1"
-                        component={Example1}
-                        options={{ title: 'Example1' }}
+                        name="ExampleNoPullRefresh"
+                        component={ExampleNoPullRefresh}
+                        options={{ title: 'ExampleNoPullRefresh' }}
                     />
                     <Stack.Screen
-                        name="Example2"
-                        component={Example2}
+                        name="ExampleWithPullRefresh"
+                        component={ExampleWithPullRefresh}
+                        options={{ title: 'ExampleWithPullRefresh' }}
+                    />
+                    <Stack.Screen
+                        name="ExampleFullFunctions"
+                        component={ExampleFullFunctions}
                     />
                 </Stack.Navigator>
             </NavigationContainer>

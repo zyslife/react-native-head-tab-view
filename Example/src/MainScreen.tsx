@@ -10,24 +10,31 @@ interface Props {
 }
 export default class MainScreen extends React.PureComponent<Props> {
 
-    jumpToExample1 = () => {
-        this.props.navigation.navigate('Example1')
+    jumpToExampleNoPullRefresh = () => {
+        this.props.navigation.navigate('ExampleNoPullRefresh')
+    }
+    jumpToExampleWithPullRefresh = () => {
+        this.props.navigation.navigate('ExampleWithPullRefresh')
     }
 
-    jumpToExample2 = () => {
-        this.props.navigation.navigate('Example2')
+    jumpToExampleFullFunctions = () => {
+        this.props.navigation.navigate('ExampleFullFunctions')
     }
 
     render() {
         return (
             <SafeAreaView
                 style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <TouchableOpacity style={{ height: 40, justifyContent: 'center', alignItems: 'center' }} onPress={this.jumpToExample1}>
-                    <Text>Jump to Example1.</Text>
-                    <Text style={{ fontSize: 13, color: '#999' }}>A simple example.</Text>
+                <TouchableOpacity style={{ height: 40, justifyContent: 'center', alignItems: 'center' }} onPress={this.jumpToExampleNoPullRefresh}>
+                    <Text>Jump to ExampleNoPullRefresh.</Text>
+                    <Text style={{ fontSize: 13, color: '#999' }}>An example with no pull-down refresh</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{ marginTop: 80, justifyContent: 'center', alignItems: 'center' }} onPress={this.jumpToExample2}>
-                    <Text>Jump to Example2.</Text>
+                <TouchableOpacity style={{ marginTop: 80,height: 40, justifyContent: 'center', alignItems: 'center' }} onPress={this.jumpToExampleWithPullRefresh}>
+                    <Text>Jump to ExampleWithPullRefresh.</Text>
+                    <Text style={{ fontSize: 13, color: '#999' }}>An example with pull-down refresh.</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ marginTop: 80, justifyContent: 'center', alignItems: 'center' }} onPress={this.jumpToExampleFullFunctions}>
+                    <Text>Jump to ExampleFullFunctions.</Text>
                     <Text style={{ fontSize: 13, color: '#999' }}>Header clicks are available</Text>
                     <Text style={{ fontSize: 13, color: '#999' }}>And the head can slide under control</Text>
                 </TouchableOpacity>

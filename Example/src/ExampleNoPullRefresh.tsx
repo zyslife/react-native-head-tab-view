@@ -8,50 +8,34 @@ import {
     Text,
     FlatList,
     SectionList,
-    Dimensions,
-    ActivityIndicator,
-    Animated,
-    TouchableOpacity,
-    Alert
+    ImageBackground,
+    TouchableWithoutFeedback,
+    Alert,
 } from 'react-native';
 
-import { HPageViewHoc, TabView } from 'react-native-head-tab-view'
+import { HPageViewHoc, TabView, Tabbar } from 'react-native-head-tab-view'
 import { default as staticData } from '../configData/staticData.js'
-
-const G_WIN_WIDTH = Dimensions.get('window').width;
-const G_WIN_HEIGHT = Dimensions.get('window').height;
 
 const HScrollView = HPageViewHoc(ScrollView)
 const HFlatList = HPageViewHoc(FlatList)
 const HSectionList = HPageViewHoc(SectionList)
 
 interface EState {
-    tabs: Array<string>,
-    scrollValue: Animated.Value
+    tabs: Array<string>
 }
 
-const HEAD_HEIGHT = G_WIN_HEIGHT * 0.6
-const FROZE_TOP = 100
-const HEAD_DATA = [{ title: '我是第一个', show: 'hello,我是第一个' }, { title: '我是第二个', show: 'hello,我是第二个' }, { title: '我是第三个', show: 'hello,我是第三个' }, { title: '我是第四个', show: 'hello,我是第四个' }]
+const HEAD_HEIGHT = 180
 
-export default class Example2 extends React.PureComponent<any, EState> {
+export default class ExampleNoPullRefresh extends React.PureComponent<any, EState> {
     state = {
         tabs: ['ScrollView', 'FlatList', 'SectionList'],
-        scrollValue: new Animated.Value(0)
     }
 
     private _renderScrollHeader = () => {
         return (
-            <View style={{ backgroundColor: '#c44078', width: '100%', height: HEAD_HEIGHT }}>
-                {HEAD_DATA.map((item, index) => {
-                    return (
-                        <TouchableOpacity key={'header_' + index} style={styles.cell} onPress={() => { Alert.alert(item.show) }}>
-                            <Text>{item.title}</Text>
-                        </TouchableOpacity>
-                    )
-                })}
-
-            </View>
+            <ImageBackground source={require('../resource/header_img.png')} resizeMode={'stretch'} style={{ backgroundColor: '#c44078', width: '100%', height: HEAD_HEIGHT }}>
+            
+            </ImageBackground>
         )
     }
 
@@ -66,57 +50,17 @@ export default class Example2 extends React.PureComponent<any, EState> {
         }
         return null;
     }
-
-    private _renderCustomView(): React.ReactElement {
-        const { scrollValue } = this.state;
-        return <Animated.View style={{
-            justifyContent: 'center', alignItems: 'center',
-            width: G_WIN_WIDTH,
-            height: FROZE_TOP,
-            backgroundColor: '#FFD321',
-            position: 'absolute',
-            top: -FROZE_TOP,
-            left: 0,
-            opacity: scrollValue.interpolate({
-                inputRange: [0, HEAD_HEIGHT - FROZE_TOP],
-                outputRange: [0, 1],
-            }),
-            transform: [{
-                translateY: scrollValue.interpolate({
-                    inputRange: [50, 100, 101],
-                    outputRange: [0, FROZE_TOP, FROZE_TOP]
-                })
-            }]
-        }}>
-            <Text>{'这里是自定义View'}</Text>
-        </Animated.View>
-    }
-
-    private onChangeTab = (e: { from: number, curIndex: number }) => {
-
-    }
-
-    private _makeScrollTrans = (scrollValue: Animated.Value) => {
-        //可以根据
-        this.setState({ scrollValue })
-    }
-
+    makeHeaderHeight = () => HEAD_HEIGHT
 
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: '#FFF' }}>
-
                 <TabView
                     tabs={this.state.tabs}
                     renderScene={this._renderScene}
-                    makeHeaderHeight={() => { return HEAD_HEIGHT }}
+                    makeHeaderHeight={this.makeHeaderHeight}
                     renderScrollHeader={this._renderScrollHeader}
-                    onChangeTab={this.onChangeTab}
-                    frozeTop={FROZE_TOP}
-                    makeScrollTrans={this._makeScrollTrans}
-                    headerRespond={true}
                 />
-                {this._renderCustomView()}
             </View>
         )
     }
@@ -125,8 +69,10 @@ export default class Example2 extends React.PureComponent<any, EState> {
 class Page1 extends React.PureComponent {
 
     render() {
+
         return (
-            <HScrollView {...this.props}>
+            <HScrollView
+                {...this.props}>
 
                 {staticData.Page1Data.map((item, index) => {
                     return (
@@ -159,11 +105,7 @@ interface FlatListItemInfo {
 
 class Page2 extends React.PureComponent<any, IState> {
 
-    state = {
-        data: [],
-        loading: true,
-    }
-    private mFlatlist: any;
+
 
     private renderItem = (itemInfo: { item: FlatListItemInfo }) => {
         const { item } = itemInfo
@@ -175,55 +117,35 @@ class Page2 extends React.PureComponent<any, IState> {
         )
     }
 
-    componentDidMount() {
-        this.setState({ loading: true })
-        setTimeout(() => {
-            this.setState({ data: staticData.Page2Data, loading: false })
-        }, 1000);
-    }
 
-    private renderFooterComponent = () => {
-        return (
-            <TouchableOpacity onPress={() => {
-                if (this.mFlatlist) {
-                    this.mFlatlist.getNode().scrollToOffset({ offset: 0, animated: true })
-                }
-            }}>
-                <View style={{ height: 50, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={styles.titleStyle}>回到顶部</Text>
-                </View>
-            </TouchableOpacity>
-        )
-    }
 
     render() {
-        const { loading, data } = this.state;
         return (
             <HFlatList
                 {...this.props}
-                ref={_ref => this.mFlatlist = _ref}
-                data={data}
+                data={staticData.Page2Data1}
                 renderItem={this.renderItem.bind(this)}
                 keyExtractor={(item, index) => index.toString()}
-                ListHeaderComponent={loading ? <ActivityIndicator style={{ marginTop: 20 }} /> : null}
-                ListFooterComponent={loading ? null : this.renderFooterComponent}
             />
         )
     }
 }
 
 class Page3 extends React.PureComponent {
-
+    constructor(props) {
+        super(props)
+        this.state = {
+            isRefreshing: false
+        }
+    }
     private renderItem = (itemInfo: { item: string }) => {
         const { item } = itemInfo;
-
         return (
             <View style={[styles.sectionItem, { backgroundColor: '#FFF' }]}>
                 <Text style={styles.titleStyle}>{item}</Text>
             </View>
         )
     }
-
     private renderSectionHeader = (sectionInfo: { section: any }) => {
         const { section } = sectionInfo;
         const { title } = section;
@@ -233,10 +155,10 @@ class Page3 extends React.PureComponent {
             </View>
         )
     }
-
     private getItemLayout = (data: any, index: number) => {
         return { length: 50, offset: index * 50, index };
     }
+
 
     render() {
         return (
@@ -276,11 +198,6 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         borderBottomWidth: 1,
         borderBottomColor: '#EAEAEA',
-    },
-    cell: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
     }
 });
 

@@ -2,85 +2,86 @@ import React from 'react';
 import {
     View,
     ScrollView,
-    ViewPropTypes,
     StyleSheet,
     Animated,
-    Text,
-    Dimensions
+    Dimensions,
+    LayoutChangeEvent
 } from 'react-native';
 
-import PropTypes from 'prop-types';
-import { TabProps } from './TabViewProps'
+import { TabbarProps, TabItemInfo, TabbarState } from './types'
 import Button from './Button';
 
 const G_WIN_WIDTH = Dimensions.get('window').width;
 
 const TABBAR_HEIGHT = 50
+const defaultProps = {
+    underLineHidden: false,
+    style: {},
+    tabItemStyle: {},
+    activeTextStyle: {
+        fontSize: 14,
+        color: '#4D4D4D',
+        fontWeight: 'bold',
+    },
+    inactiveTextStyle: {
+        fontSize: 14,
+        color: '#848484',
+        fontWeight: 'bold',
 
-export default class Tabbar extends React.PureComponent {
-    static propTypes = {
-        ...TabProps,
-        activeIndex: PropTypes.number.isRequired,//选中tab
-        underLineHidden: PropTypes.bool, //是否隐藏下划线
-        style: PropTypes.object, //tabbar样式
-        tabItemStyle: ViewPropTypes.style, //tab样式
-        underlineStyle: ViewPropTypes.style, //tab样式
-        lineStyle: ViewPropTypes.style, //tab样式
-        renderTabItem: PropTypes.func, //自定义tabbar
-        scrollValue: PropTypes.object, //滚动状态
-        tabSize: PropTypes.array,  //预留字段
-        renderLeftView: PropTypes.func, //左边视图
-        renderRightView: PropTypes.func, //右边视图
-        goToPage: PropTypes.func, //切换tab方法
-    }
+    },
+    underlineStyle: {},
+    tabs: [],
+    averageTab: true,
+}
 
-    static defaultProps = {
-        underLineHidden: false,
-        style: {},
-        tabsContainerStyle: {},
-        tabItemStyle: {},
-        activeTextStyle: {
-            fontSize: 14,
-            color: '#4D4D4D',
-            fontWeight: 'bold',
+export interface LayoutRectangle {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+export interface TabbarItemI {
+    left: number;
+    right: number;
+    width: number;
+    height: number;
+}
 
-        },
-        inactiveTextStyle: {
-            fontSize: 14,
-            color: '#848484',
-            fontWeight: 'bold',
+export default class Tabbar<T> extends React.PureComponent<TabbarProps<T> , TabbarState> {
 
-        },
-        underlineStyle: {},
-        tabs: [],
-        averageTab: true,
-    }
+    static defaultProps = defaultProps
+    private tabFrames: Array<TabbarItemI> = []
+    private tabbarFrame?: LayoutRectangle
+    private scrollX: number = 0
+    private scrollValueEvent: string = ''
+    private _scrollView: any
+    private leftUnderline: Animated.Value = new Animated.Value(0)
+    private widthUnderline: Animated.Value = new Animated.Value(0)
 
-
-    constructor(props) {
+    constructor(props: TabbarProps<T> & typeof defaultProps) {
         super(props)
         this.renderTabItem = this.renderTabItem.bind(this)
         this.updateView = this.updateView.bind(this)
         this.measureTab = this.measureTab.bind(this)
         this.tabOnLayout = this.tabOnLayout.bind(this)
         this.state = {
-            leftUnderline: new Animated.Value(0),
-            widthUnderline: new Animated.Value(0),
+            tabbarWidth: 0
         }
-        this.tabFrames = []
-        this.scrollX = 0
-
     }
 
     componentDidMount() {
-        this.props.scrollValue && this.props.scrollValue.addListener(this.updateView);
+        if (this.props.scrollValue) {
+            this.scrollValueEvent = this.props.scrollValue.addListener(this.updateView);
+        }
     }
 
     componentWillUnmount() {
-        this.props.scrollValue && this.props.scrollValue.removeListener(this.updateView);
+        if (this.props.scrollValue) {
+            this.props.scrollValue.removeListener(this.scrollValueEvent)
+        }
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps: TabbarProps<T> & typeof defaultProps) {
         if (prevProps.activeIndex != this.props.activeIndex) {
             this.needsScrollTab()
         }
@@ -119,14 +120,14 @@ export default class Tabbar extends React.PureComponent {
     /**
     * tabbar的scrollview横着滚动多少
     */
-    toScrollTab(scrollX) {
+    toScrollTab(scrollX: number) {
         this._scrollView && this._scrollView.scrollTo({ x: scrollX, y: 0, animated: true, });
     }
 
     /**
     * 更新视图
     */
-    updateView(offset) {
+    updateView(offset: { value: number }) {
 
         const pageNum = this.props.tabs.length;
         const value = offset.value
@@ -140,7 +141,7 @@ export default class Tabbar extends React.PureComponent {
         this.updateUnderLine(floorPosition, pageOffset, ceilPosition)
     }
 
-    updateUnderLine(floorPosition, pageOffset, ceilPosition) {
+    updateUnderLine(floorPosition: number, pageOffset: number, ceilPosition: number) {
         const itemLeft = this.tabFrames[floorPosition].left
         const itemRight = this.tabFrames[floorPosition].right
 
@@ -151,8 +152,8 @@ export default class Tabbar extends React.PureComponent {
             const line_left = (itemRight - itemLeft) * pageOffset + itemLeft
             const line_width = (itemrightW - itemleftW) * pageOffset + itemleftW
 
-            this.state.leftUnderline.setValue(line_left)
-            this.state.widthUnderline.setValue(line_width)
+            this.leftUnderline.setValue(line_left)
+            this.widthUnderline.setValue(line_width)
 
         }
 
@@ -162,7 +163,7 @@ export default class Tabbar extends React.PureComponent {
     /**
     * 渲染tabItem
     */
-    renderTabItem({ item, index, onLayoutTab }) {
+    renderTabItem({ item, index, onLayoutTab }: TabItemInfo<T>) {
         if (!this.state.tabbarWidth) {
             return null
         }
@@ -180,7 +181,7 @@ export default class Tabbar extends React.PureComponent {
 
         return <Button key={'tabbar' + index} style={[tabItemWidth, styles.tabItem, tabItemStyle]}
             onPress={() => goToPage(index)}
-            onLayout={(e) => { onLayoutTab && onLayoutTab(e, index) }}
+            onLayout={(e: LayoutChangeEvent) => { onLayoutTab && onLayoutTab(e, index) }}
         >
             <Animated.Text style={[textStytle, { opacity }]}>
                 {tabNameConvert ? tabNameConvert(item) : item}
@@ -193,9 +194,9 @@ export default class Tabbar extends React.PureComponent {
     */
     renderTabBar() {
         const { tabs, underLineHidden, activeIndex, underlineStyle, lineStyle } = this.props
-        const { widthUnderline, leftUnderline } = this.state;
+
         //如果有传滚动状态，用滚动状态更新下滑线
-        const left = this.props.scrollValue ? leftUnderline : this.getItemWidth() * activeIndex
+        const left = this.props.scrollValue ? this.leftUnderline : this.tabFrames[activeIndex].left
 
         if (!tabs.length) return null
         return (
@@ -221,7 +222,7 @@ export default class Tabbar extends React.PureComponent {
                         {underLineHidden ? null : <Animated.View
                             style={[
                                 styles.tabUnderlineStyle,
-                                { width: widthUnderline, left: left },
+                                { width: this.widthUnderline, left: left },
                                 underlineStyle,
                             ]}
                         >
@@ -256,7 +257,7 @@ export default class Tabbar extends React.PureComponent {
     makeTabStyle() {
         const { averageTab } = this.props
         if (averageTab) {
-            return { width: this.getItemWidth() }
+            return { width: this.getItemWidth(0) }
         } else {
             return { paddingLeft: 20, paddingRight: 20 }
         }
@@ -276,7 +277,7 @@ export default class Tabbar extends React.PureComponent {
     /**
     * 透明度outRange
     */
-    getOutRange(index) {
+    getOutRange(index: number) {
         const array = this.getInputRange()
         const outRange = []
         for (let i = 0; i < array.length; i++) {
@@ -293,8 +294,8 @@ export default class Tabbar extends React.PureComponent {
     /**
     * 获取一个tabItem的宽度
     */
-    getItemWidth(index) {
-        const { tabs, tabsContainerStyle, averageTab } = this.props
+    getItemWidth(index: number) {
+        const { tabs, tabsContainerStyle = {}, averageTab } = this.props
         if (averageTab) {
             const tabW = tabsContainerStyle.width || this.state.tabbarWidth || G_WIN_WIDTH
             if (!tabs.length) return tabW
@@ -309,7 +310,7 @@ export default class Tabbar extends React.PureComponent {
     /**
     * tabbar的layout方法
     */
-    tabOnLayout(event) {
+    tabOnLayout(event: LayoutChangeEvent) {
         this.tabbarFrame = event.nativeEvent.layout
         if (this.state.tabbarWidth != this.tabbarFrame.width) {
             this.setState({ tabbarWidth: this.tabbarFrame.width })
@@ -320,7 +321,7 @@ export default class Tabbar extends React.PureComponent {
         }
     }
 
-    measureTab(event, page) {
+    measureTab(event: LayoutChangeEvent, page: number) {
         const { x, width, height, } = event.nativeEvent.layout;
         this.tabFrames[page] = { left: x, right: x + width, width, height, };
 
