@@ -121,6 +121,17 @@ Example:
 />
 ```
 
+##### `imageSrc` _(src[])_
+
+List of Image Sources (Require or URI)
+Example:
+
+```js
+<TabView
+    imageSrc={[require('/Example/resource/img2.jpeg'), require('/Example/resource/img3.jpeg'), require('/Example/resource/img4.jpeg')]}
+/>
+```
+
 ##### `averageTab`  _(boolean)_
 
 Tabbar组件内元素是否平分  
@@ -147,6 +158,12 @@ tabbar item选中的样式
 
 ##### inactiveTextStyle _(StyleProp<ViewStyle>)_  
 tabbar item未选中的样式
+
+##### activeIconStyle _(StyleProp<ImageStyle>)_  
+tabbar icon选中的样式
+
+##### inactiveIconStyle _(StyleProp<ImageStyle>)_  
+tabbar icon未选中的样式
 
 
 ## HPageViewHoc Props  （标签页的props）

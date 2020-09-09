@@ -603,14 +603,17 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
      */
     makeTabParams() {
 
-        const { tabbarStyle, renderScrollHeader, frozeTop, tabs, tabNameConvert, averageTab, tabsContainerStyle, activeTextStyle, inactiveTextStyle } = this.props
+        const { tabbarStyle, renderScrollHeader, frozeTop, tabs, imageSrc, tabNameConvert, averageTab, tabsContainerStyle, activeTextStyle, inactiveTextStyle, activeIconStyle, inactiveIconStyle } = this.props
         const params: TabbarInfo<T> = {
             tabs,
+            imageSrc,
             tabNameConvert,
             averageTab,
             tabsContainerStyle,
             activeTextStyle,
             inactiveTextStyle,
+            activeIconStyle,
+            inactiveIconStyle,
             goToPage: this.goToPage,
             activeIndex: this.state.currentIndex,
             scrollValue: this.state.scrollValue,

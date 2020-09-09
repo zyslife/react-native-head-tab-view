@@ -5,7 +5,8 @@ import {
     StyleSheet,
     Animated,
     Dimensions,
-    LayoutChangeEvent
+    LayoutChangeEvent,
+    Image,
 } from 'react-native';
 
 import { TabbarProps, TabItemInfo, TabbarState } from './types'
@@ -27,10 +28,26 @@ const defaultProps = {
         fontSize: 14,
         color: '#848484',
         fontWeight: 'bold',
-
+    },
+    activeIconStyle: {
+        height: 16,
+        width: 16,
+        resizeMode: 'contain',
+        alignSelf: 'center',
+        marginRight: 5,
+        tintColor: '#4D4D4D'
+    },
+    inactiveIconStyle: {
+        height: 16,
+        width: 16,
+        resizeMode: 'contain',
+        alignSelf: 'center',
+        marginRight: 5,
+        tintColor: '#848484'
     },
     underlineStyle: {},
     tabs: [],
+    imageSrc: [],
     averageTab: true,
 }
 
@@ -163,11 +180,11 @@ export default class Tabbar<T> extends React.PureComponent<TabbarProps<T> , Tabb
     /**
     * 渲染tabItem
     */
-    renderTabItem({ item, index, onLayoutTab }: TabItemInfo<T>) {
+    renderTabItem({ item, index, onLayoutTab, iconSrc }: TabItemInfo<T>) {
         if (!this.state.tabbarWidth) {
             return null
         }
-        const { activeIndex, activeTextStyle, goToPage, inactiveTextStyle, scrollValue, tabItemStyle, tabNameConvert, tabs } = this.props;
+        const { activeIndex, activeTextStyle, activeIconStyle, goToPage, inactiveTextStyle, inactiveIconStyle, scrollValue, tabItemStyle, tabNameConvert, tabs } = this.props;
 
         const opacity = scrollValue && scrollValue.interpolate && tabs.length > 1 ? scrollValue.interpolate({
             inputRange: this.getInputRange(),
@@ -177,12 +194,14 @@ export default class Tabbar<T> extends React.PureComponent<TabbarProps<T> , Tabb
 
         const isActive = index == activeIndex
         const textStytle = isActive ? activeTextStyle : inactiveTextStyle
+        const iconStyle = isActive ? activeIconStyle : inactiveIconStyle
         const tabItemWidth = this.makeTabStyle()
 
         return <Button key={'tabbar' + index} style={[tabItemWidth, styles.tabItem, tabItemStyle]}
             onPress={() => goToPage(index)}
             onLayout={(e: LayoutChangeEvent) => { onLayoutTab && onLayoutTab(e, index) }}
         >
+            {iconSrc !== undefined ? <Image source={iconSrc} style={iconStyle}/> : null}
             <Animated.Text style={[textStytle, { opacity }]}>
                 {tabNameConvert ? tabNameConvert(item) : item}
             </Animated.Text>
@@ -193,7 +212,7 @@ export default class Tabbar<T> extends React.PureComponent<TabbarProps<T> , Tabb
     * 渲染tabbar中间部分
     */
     renderTabBar() {
-        const { tabs, underLineHidden, activeIndex, underlineStyle, lineStyle } = this.props
+        const { tabs, imageSrc, underLineHidden, activeIndex, underlineStyle, lineStyle } = this.props
 
         //如果有传滚动状态，用滚动状态更新下滑线
         const left = this.props.scrollValue ? this.leftUnderline : this.tabFrames[activeIndex].left
@@ -217,7 +236,8 @@ export default class Tabbar<T> extends React.PureComponent<TabbarProps<T> , Tabb
                     <View style={styles.tabContainer}>
                         {tabs.map((item, index) => {
                             const renderTabItem = this.props.renderTabItem || this.renderTabItem;
-                            return renderTabItem({ item, index, onLayoutTab: this.measureTab })
+                            const iconSrc = imageSrc[index];
+                            return renderTabItem({ item, index, iconSrc, onLayoutTab: this.measureTab })
                         })}
                         {underLineHidden ? null : <Animated.View
                             style={[
@@ -361,6 +381,7 @@ const styles = StyleSheet.create({
         height: 40,
         justifyContent: 'center',
         alignItems: 'center',
+        flexDirection: 'row',
     },
     tabContainer: {
         flexDirection: 'row',
