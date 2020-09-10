@@ -1,9 +1,16 @@
 import React from 'react';
 import { Animated, ScrollViewProps, ViewStyle, TextStyle, StyleProp, LayoutChangeEvent } from 'react-native';
 
-export interface TabItemInfo<T> {
+interface TabItemBase<T> {
     item: T;
     index: number;
+}
+
+export interface TabItemButtonInfo<T> extends TabItemBase<T> {
+    isActive: boolean;
+}
+
+export interface TabItemInfo<T> extends TabItemButtonInfo<T> {
     onLayoutTab: (e: LayoutChangeEvent, index: number) => void;
 }
 
@@ -33,6 +40,7 @@ export interface TabbarProps<T> extends TabbarInfo<T> {
     lineStyle?: StyleProp<ViewStyle>;
     tabItemStyle?: StyleProp<ViewStyle>;
     renderTabItem?: (info: TabItemInfo<T>) => React.ReactElement;
+    renderTabItemButton?: (info: TabItemButtonInfo<T>) => React.ReactElement;
     renderLeftView?: () => React.ComponentType<any> | React.ReactElement | null;
     renderRightView?: () => React.ComponentType<any> | React.ReactElement | null;
 }

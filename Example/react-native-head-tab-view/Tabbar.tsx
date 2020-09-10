@@ -47,7 +47,7 @@ export interface TabbarItemI {
     height: number;
 }
 
-export default class Tabbar<T> extends React.PureComponent<TabbarProps<T> , TabbarState> {
+export default class Tabbar<T> extends React.PureComponent<TabbarProps<T>, TabbarState> {
 
     static defaultProps = defaultProps
     private tabFrames: Array<TabbarItemI> = []
@@ -167,7 +167,7 @@ export default class Tabbar<T> extends React.PureComponent<TabbarProps<T> , Tabb
         if (!this.state.tabbarWidth) {
             return null
         }
-        const { activeIndex, activeTextStyle, goToPage, inactiveTextStyle, scrollValue, tabItemStyle, tabNameConvert, tabs } = this.props;
+        const { activeIndex, activeTextStyle, goToPage, inactiveTextStyle, scrollValue, tabItemStyle, tabNameConvert, tabs, renderTabItemButton } = this.props;
 
         const opacity = scrollValue && scrollValue.interpolate && tabs.length > 1 ? scrollValue.interpolate({
             inputRange: this.getInputRange(),
@@ -183,9 +183,9 @@ export default class Tabbar<T> extends React.PureComponent<TabbarProps<T> , Tabb
             onPress={() => goToPage(index)}
             onLayout={(e: LayoutChangeEvent) => { onLayoutTab && onLayoutTab(e, index) }}
         >
-            <Animated.Text style={[textStytle, { opacity }]}>
+            {renderTabItemButton ? renderTabItemButton({ item, index ,isActive}) : <Animated.Text style={[textStytle, { opacity }]}>
                 {tabNameConvert ? tabNameConvert(item) : item}
-            </Animated.Text>
+            </Animated.Text>}
         </Button>
     }
 

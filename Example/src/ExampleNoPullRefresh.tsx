@@ -13,7 +13,7 @@ import {
     Alert,
 } from 'react-native';
 
-import { HPageViewHoc, TabView, Tabbar } from 'react-native-head-tab-view'
+import { HPageViewHoc, TabView, Tabbar, TabbarInfo, TabItemInfo, TabItemButtonInfo } from 'react-native-head-tab-view'
 import { default as staticData } from '../configData/staticData.js'
 
 const HScrollView = HPageViewHoc(ScrollView)
@@ -27,14 +27,18 @@ interface EState {
 const HEAD_HEIGHT = 180
 
 export default class ExampleNoPullRefresh extends React.PureComponent<any, EState> {
-    state = {
-        tabs: ['ScrollView', 'FlatList', 'SectionList'],
+
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            tabs: ['ScrollView', 'FlatList', 'SectionList'],
+        }
     }
 
     private _renderScrollHeader = () => {
         return (
             <ImageBackground source={require('../resource/header_img.png')} resizeMode={'stretch'} style={{ backgroundColor: '#c44078', width: '100%', height: HEAD_HEIGHT }}>
-            
+
             </ImageBackground>
         )
     }
@@ -52,6 +56,36 @@ export default class ExampleNoPullRefresh extends React.PureComponent<any, EStat
     }
     makeHeaderHeight = () => HEAD_HEIGHT
 
+    _renderTabItemButton = (tabBtnInfo: TabItemButtonInfo<string>) => {
+        const { item, index, isActive } = tabBtnInfo
+        const tabImage = staticData.TabData[index]
+        const activeTextStyle = {
+            fontSize: 14,
+            color: '#4D4D4D',
+            fontWeight: 'bold'
+        }
+        const inActiveTextStyle = {
+            fontSize: 14,
+            color: '#848484',
+            fontWeight: 'bold'
+        }
+        const textStyle = isActive ? activeTextStyle : inActiveTextStyle
+
+        return (
+            <View style={styles.tabbarBtn}>
+                <Image style={styles.tabbarImage} source={tabImage} />
+                <Text style={textStyle}>{item}</Text>
+            </View>
+        )
+    }
+
+    _renderTabBar = (tabbarProps: TabbarInfo) => {
+        return <Tabbar
+            {...tabbarProps}
+            renderTabItemButton={this._renderTabItemButton}
+        />
+    }
+
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: '#FFF' }}>
@@ -60,6 +94,7 @@ export default class ExampleNoPullRefresh extends React.PureComponent<any, EStat
                     renderScene={this._renderScene}
                     makeHeaderHeight={this.makeHeaderHeight}
                     renderScrollHeader={this._renderScrollHeader}
+                    renderTabBar={this._renderTabBar}
                 />
             </View>
         )
@@ -198,6 +233,14 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         borderBottomWidth: 1,
         borderBottomColor: '#EAEAEA',
+    },
+    tabbarBtn: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    tabbarImage: {
+        width: 15,
+        height: 15
     }
 });
 

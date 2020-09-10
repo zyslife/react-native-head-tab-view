@@ -198,7 +198,7 @@ _renderScene = (sceneProps) => {
                 this.dragYEvent = dragY.addListener(this.tabviewDidDrag);
             }
             if (refreshTrans !== undefined) {
-                this.refreshTransEvent = refreshTrans.addListener(this.refreshTransDidUpdagte);
+                this.refreshTransEvent = refreshTrans.addListener(this.refreshTransDidUpdate);
             }
         }
         removeListener() {
@@ -260,6 +260,7 @@ _renderScene = (sceneProps) => {
         //header responder start
         headerGrant = () => {
             this.baseHeaderTranY = this.props.containerTrans._value
+
             this.stopScroll = false
         }
 
@@ -337,6 +338,7 @@ _renderScene = (sceneProps) => {
             if (value <= 0) return false;
 
             if (this.startRefresh) {
+
                 this.props.refreshTrans.setValue(value - this.startDragY)
                 return true
             } else if (this.shouldStartRefresh) {
@@ -421,7 +423,7 @@ _renderScene = (sceneProps) => {
             }
         }
 
-        refreshTransDidUpdagte = (e: { value: number }) => { this.refreshTransValue = e.value }
+        refreshTransDidUpdate = (e: { value: number }) => { this.refreshTransValue = e.value }
 
         /************************************************ fit scene size *************************************************/
         tryScroll() {

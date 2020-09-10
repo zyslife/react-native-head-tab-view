@@ -5,9 +5,16 @@ import { Animated, ScrollViewProps, ViewStyle, TextStyle, StyleProp, LayoutChang
 
 declare class TabViewPageComponent extends React.Component { }
 
-export interface TabItemInfo<T> {
+interface TabItemBase<T> {
     item: T;
     index: number;
+}
+
+export interface TabItemButtonInfo<T> extends TabItemBase<T> {
+    isActive: boolean;
+}
+
+export interface TabItemInfo<T> extends TabItemButtonInfo<T> {
     onLayoutTab: (e: LayoutChangeEvent, index: number) => void;
 }
 interface TabProps<T> {
@@ -40,7 +47,7 @@ interface TabProps<T> {
     inactiveTextStyle?: StyleProp<TextStyle>;
 }
 
-export interface TabbarInfo<T> extends TabProps<T> {
+export interface TabbarInfo {
     goToPage: (page: number) => void;
     activeIndex: number;
     scrollValue: Animated.Value;
@@ -138,11 +145,11 @@ export type HPageViewHocProps = {
 export type PageViewHocProps<T> = HPageViewHocProps & HPageViewHocNU<T> & SceneItem<T>;
 
 
-export interface TabbarProps<T> extends TabbarInfo<T> {
+export interface TabbarProps<T> extends TabbarInfo {
     /**
      * 是否隐藏下划线
      */
-    underLineHidden: boolean;
+    underLineHidden?: boolean;
     /**
      * 下划线容器样式
      */
@@ -159,6 +166,10 @@ export interface TabbarProps<T> extends TabbarInfo<T> {
      * Tabbar Item的渲染方法
      */
     renderTabItem?: (info: TabItemInfo<T>) => React.ReactElement;
+    /**
+     * Tabbar Item 按钮内容的渲染方法
+     */
+    renderTabItemButton?: (info: TabItemButtonInfo<T>) => React.ReactElement;
     /**
      * 渲染Tabbar左边组件
      */
@@ -214,7 +225,7 @@ export interface TabViewProps<T> extends TabProps<T> {
     /**
      * tabbar渲染方法
      */
-    renderTabBar?: (props: TabbarInfo<T>) => React.ReactElement | null | undefined;
+    renderTabBar?: (props: TabbarInfo) => React.ReactElement | null | undefined;
     /**
      * 切换tab回调方法
      */

@@ -268,6 +268,8 @@ tabbar样式
 ##### tabItemStyle _(StyleProp<ViewStyle>)_  
 tabItem样式
 ##### renderTabItem  _(React.ComponentType<any> | React.ReactElement | null)_
+渲染tabItem的按钮
+##### renderTabItemButton _(React.ComponentType<any> | React.ReactElement | null)_
 渲染tabbarItem方法  
 ##### scrollValue  _(Animated.Value)_  
 当前滚动的距离/总共可滚动距离（水平方向）

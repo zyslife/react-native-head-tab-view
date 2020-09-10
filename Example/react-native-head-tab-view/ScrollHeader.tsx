@@ -3,7 +3,8 @@ import React from 'react';
 import {
     Animated,
     StyleProp,
-    ViewStyle
+    ViewStyle,
+    Platform
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {
@@ -21,7 +22,7 @@ interface Props {
     headerReleaseResponder: (e: PanGestureHandlerStateChangeEvent) => void;
     headerRef: React.RefObject<any>
 }
-
+const isIOS = Platform.OS === "ios";
 export default class ScrollHeader extends React.PureComponent<Props> {
     private tapRef: React.RefObject<any> = React.createRef();
     static propTypes = {
@@ -45,7 +46,8 @@ export default class ScrollHeader extends React.PureComponent<Props> {
     _onHandlerStateChange = (e: PanGestureHandlerStateChangeEvent) => {
         const { onPanResponderGrant } = this.props
         const { nativeEvent } = e
-        if (nativeEvent.state === State.ACTIVE) {
+        
+        if ((isIOS && nativeEvent.state === State.BEGAN) || (!isIOS && nativeEvent.state === State.ACTIVE)) {
             onPanResponderGrant && onPanResponderGrant()
         } else if (nativeEvent.oldState === State.ACTIVE) {
             const { headerReleaseResponder } = this.props
