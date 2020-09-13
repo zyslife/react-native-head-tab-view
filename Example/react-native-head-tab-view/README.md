@@ -250,6 +250,8 @@ renderScrollHeader={()=><View style={{height:180,backgroundColor:'red'}}/>}
 当前标签页左右滑动的进度回调，value:当前滚动的距离/总共可滚动距离
 ##### `locked` _(boolean)_  
 是否允许水平滑动  
+##### `scrollEnabled` _(boolean)_
+是否允许标签页滑动
 ##### `tabbarStyle` _(StyleProp<ViewStyle>)_  
 tabbar的样式
 ##### `extraData` _(any)_ 

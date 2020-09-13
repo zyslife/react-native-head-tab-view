@@ -17,7 +17,8 @@ import {
 import { HPageViewHoc, TabView, RefreshControlAnimated } from 'react-native-head-tab-view'
 import { default as staticData } from '../configData/staticData.js'
 import Carousel from 'react-native-snap-carousel';
-const title = 'Hello World!'
+const TITLE = 'Hello World!'
+const SUBTITLE = 'Click here to change the value of scrollEnabled.'
 const G_WIN_WIDTH = Dimensions.get('window').width;
 const G_WIN_HEIGHT = Dimensions.get('window').height;
 
@@ -28,9 +29,10 @@ const HFlatList = HPageViewHoc(FlatList)
 const HSectionList = HPageViewHoc(SectionList)
 
 interface EState {
-    tabs: Array<string>,
-    scrollValue: Animated.Value,
+    tabs: Array<string>
+    scrollValue: Animated.Value
     entries: Array<any>
+    scrollEnabled: boolean
 }
 
 const HEAD_HEIGHT = G_WIN_HEIGHT * 0.4
@@ -43,7 +45,8 @@ export default class ExampleFullFunctions extends React.PureComponent<any, EStat
         this.state = {
             tabs: ['ScrollView', 'FlatList', 'SectionList'],
             scrollValue: new Animated.Value(0),
-            entries: staticData.BannerData
+            entries: staticData.BannerData,
+            scrollEnabled: true
         }
     }
 
@@ -69,8 +72,9 @@ export default class ExampleFullFunctions extends React.PureComponent<any, EStat
                     itemWidth={G_WIN_WIDTH - 30}
                 />
 
-                <TouchableOpacity style={styles.cell} onPress={() => { Alert.alert('Click Title') }}>
-                    <Text style={styles.headerTitle}>{title}</Text>
+                <TouchableOpacity style={styles.cell} onPress={() => { this.setState({ scrollEnabled: !this.state.scrollEnabled }) }}>
+                    <Text style={styles.headerTitle}>{TITLE}</Text>
+                    <Text style={styles.subTitle}>{SUBTITLE}</Text>
                 </TouchableOpacity>
 
             </View>
@@ -105,7 +109,7 @@ export default class ExampleFullFunctions extends React.PureComponent<any, EStat
             }),
 
         }}>
-            <Text style={styles.headerTitle}>{title}</Text>
+            <Text style={styles.headerTitle}>{TITLE}</Text>
         </Animated.View>
     }
 
@@ -132,6 +136,7 @@ export default class ExampleFullFunctions extends React.PureComponent<any, EStat
                     frozeTop={FROZE_TOP}
                     makeScrollTrans={this._makeScrollTrans}
                     headerRespond={true}
+                    scrollEnabled={this.state.scrollEnabled}
                 />
                 {this._renderCustomView()}
             </View>
@@ -390,7 +395,17 @@ const styles = StyleSheet.create({
             android: {
                 fontFamily: '',
             }
-        }),
+        })
+    },
+    subTitle: {
+        color: '#848484',
+        fontSize: 15,
+        marginTop: 10,
+        ...Platform.select({
+            android: {
+                fontFamily: '',
+            }
+        })
     }
 });
 

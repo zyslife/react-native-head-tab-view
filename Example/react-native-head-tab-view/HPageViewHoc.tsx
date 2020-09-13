@@ -123,11 +123,12 @@ _renderScene = (sceneProps) => {
                 headerTrans,
                 refreshTrans,
                 containerTrans,
+                sceneScrollEnabled,
                 ...rest
             } = this.props;
             const { placeHeight, scrollEnabled } = this.state
             const headerHeight = this.getHeaderHeight()
-
+            const mScrollEnabled = sceneScrollEnabled !== undefined ? sceneScrollEnabled : scrollEnabled
             if (!this.needHandleScroll()) {
                 return <WrappedComponent ref={forwardedRef} {...this.props} />
             }
@@ -150,7 +151,6 @@ _renderScene = (sceneProps) => {
                             style={[{
                                 opacity: this.state.hideContent ? 0 : 1,
                             }, this.getTransformAction()]}
-                            scrollEnabled={scrollEnabled}
                             scrollEventThrottle={16}
                             directionalLockEnabled
                             automaticallyAdjustContentInsets={false}
@@ -159,6 +159,7 @@ _renderScene = (sceneProps) => {
                             overScrollMode={'never'}
                             contentContainerStyle={{ paddingTop: isRefreshing ? headerHeight + 100 : headerHeight, paddingBottom: placeHeight }}
                             onContentSizeChange={this._onContentSizeChange}
+                            scrollEnabled={mScrollEnabled}
                             {...rest}
                             showsVerticalScrollIndicator={false}
                             bounces={false}

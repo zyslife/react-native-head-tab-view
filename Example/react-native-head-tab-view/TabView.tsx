@@ -127,9 +127,9 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     }
 
     render() {
-        const { headerRespond } = this.props
+        const { headerRespond, scrollEnabled } = this.props
         const { childRefs } = this.state
-
+        const enabled = scrollEnabled !== false
         return (
             <PanGestureHandler
                 ref={this.drawer}
@@ -140,6 +140,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
                 activeOffsetY={20}
                 activeOffsetX={[-500, 500]}
                 onHandlerStateChange={this._onHandlerStateChange}
+                enabled={enabled}
             >
                 <Animated.View style={{ flex: 1 }} onLayout={this.containerOnLayout}>
                     {this._renderFrozeView()}
@@ -210,7 +211,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     //渲染可滑动头部
     _renderScrollHead() {
 
-        const { renderScrollHeader, frozeTop } = this.props
+        const { renderScrollHeader, frozeTop, scrollEnabled } = this.props
         if (!renderScrollHeader) return null
         const { containerTrans, sceneWidth } = this.state;
         const headerHeight = this.getHeaderHeight() - frozeTop
@@ -219,6 +220,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             headerRef={this.headerRef}
             onPanResponderGrant={this.onPanResponderGrant}
             headerReleaseResponder={this.headerReleaseResponder}
+            scrollEnabled={scrollEnabled}
             style={{
                 position: 'absolute',
                 top: 0,
@@ -570,7 +572,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
      * 组装子页面的参数
      */
     makeSceneParams(item: T, index: number) {
-        const { makeHeaderHeight, faultHeight, renderScrollHeader, frozeTop } = this.props;
+        const { makeHeaderHeight, faultHeight, renderScrollHeader, frozeTop, scrollEnabled } = this.props;
         if (!renderScrollHeader) {
             return { item, index }
         }
@@ -592,7 +594,8 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             dragY: this.dragY,
             refreshTrans: this.getRefreshTrans(index),
             expectHeight: this.getHeaderHeight() + tabviewHeight - tabbarHeight - frozeTop * 2,
-            scrollYTrans: this.getSceneTrans(index)
+            scrollYTrans: this.getSceneTrans(index),
+            sceneScrollEnabled: scrollEnabled
         };
 
         return params;

@@ -112,6 +112,7 @@ interface HPageViewHocNU<T> {
      * 容错高度
      */
     faultHeight: number;
+    sceneScrollEnabled?: boolean;
 }
 
 
@@ -240,6 +241,10 @@ export interface TabViewProps<T> extends TabProps<T> {
      * 是否允许滚动
      */
     locked?: boolean;
+    /**
+     * 是否允许Tabview的标签页滚动
+     */
+    scrollEnabled?: boolean;
     /**
      * tabbar的样式
      */
