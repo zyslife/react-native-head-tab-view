@@ -148,9 +148,6 @@ _renderScene = (sceneProps) => {
                                     }
                                 }
                             }}
-                            style={[{
-                                opacity: this.state.hideContent ? 0 : 1,
-                            }, this.getTransformAction()]}
                             scrollEventThrottle={16}
                             directionalLockEnabled
                             automaticallyAdjustContentInsets={false}
@@ -161,6 +158,9 @@ _renderScene = (sceneProps) => {
                             onContentSizeChange={this._onContentSizeChange}
                             scrollEnabled={mScrollEnabled}
                             {...rest}
+                            style={[{
+                                opacity: this.state.hideContent ? 0 : 1,
+                            }, this.getTransformAction()]}
                             showsVerticalScrollIndicator={false}
                             bounces={false}
                         >
@@ -256,7 +256,9 @@ _renderScene = (sceneProps) => {
                     deceleration: 0.998,
                     useNativeDriver: true,
                 },
-            ).start();
+            ).start(()=>{
+                this.stopScroll = true
+            });
         }
         //header responder start
         headerGrant = () => {
@@ -271,15 +273,17 @@ _renderScene = (sceneProps) => {
 
             if (this.startRefresh && !this.props.isRefreshing && nativeEvent.translationY >= 0) return;
 
+            
             this.handleHeaderRelease(e);
 
         }
 
         updateHeaderView = (e: { value: number }) => {
+            
             if (!this.props.isActive) return;
             if (this.startRefresh && !this.props.isRefreshing && e.value >= 0) return;
             if (this.stopScroll) return;
-
+    
             this.handleUpdateHeader(e)
         }
 
@@ -303,6 +307,7 @@ _renderScene = (sceneProps) => {
         }
 
         tabDidClick = () => {
+
             this.stopScroll = true
             this.props.headerTrans.stopAnimation(() => { })
         }

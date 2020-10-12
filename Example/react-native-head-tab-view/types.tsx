@@ -72,10 +72,12 @@ export interface TabViewState<T> {
 
 
 export interface TabViewProps<T> extends TabProps<T> {
+    style?: StyleProp<ViewStyle>
+    contentStyle?: StyleProp<ViewStyle>
     /**
      * 渲染每个标签页的方法
      */
-    renderScene: (info: HPageViewHocProps<T> | SceneItem<T>) => React.ReactElement | null | undefined;
+    renderScene: (info: HPageViewHocProps | SceneItem<T>) => React.ReactElement | null | undefined;
     /**
      * 获取头部的高度
      */

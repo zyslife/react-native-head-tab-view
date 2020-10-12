@@ -21,11 +21,13 @@ interface Props {
     onPanResponderGrant: () => void;
     headerReleaseResponder: (e: PanGestureHandlerStateChangeEvent) => void;
     headerRef: React.RefObject<any>
+    headerParentRef: React.RefObject<any>
     scrollEnabled?: boolean
+
 }
 const isIOS = Platform.OS === "ios";
 export default class ScrollHeader extends React.PureComponent<Props> {
-    private tapRef: React.RefObject<any> = React.createRef();
+
     static propTypes = {
         headerTrans: PropTypes.any.isRequired, //
         onPanResponderGrant: PropTypes.func
@@ -56,42 +58,42 @@ export default class ScrollHeader extends React.PureComponent<Props> {
         }
     };
 
-    _onTapHandlerStateChange = (e: TapGestureHandlerStateChangeEvent) => {
+    _onParentPanHandlerStateChange = (e: TapGestureHandlerStateChangeEvent) => {
         const { headerTrans } = this.props
         const { nativeEvent } = e
 
-        if (nativeEvent.state === State.BEGAN) {
+        if (nativeEvent.state === State.BEGAN || nativeEvent.state === State.ACTIVE) {
             headerTrans.stopAnimation()
         }
     };
 
     render() {
-        const { scrollEnabled } = this.props
+        const { scrollEnabled, headerParentRef } = this.props
         const enabled = scrollEnabled !== false
         return (
-            <TapGestureHandler
-                ref={this.tapRef}
-                onHandlerStateChange={this._onTapHandlerStateChange}
-                maxDeltaY={10}
+            <PanGestureHandler
+                ref={headerParentRef}
+                onHandlerStateChange={this._onParentPanHandlerStateChange}
             >
-                <Animated.View style={this.props.style}>
+                <Animated.View style={this.props.style} >
                     <PanGestureHandler
-                        waitFor={this.tapRef}
+                        simultaneousHandlers={[headerParentRef]}
                         ref={this.props.headerRef}
                         shouldCancelWhenOutside={false}
                         onGestureEvent={this._onGestureEvent}
                         onHandlerStateChange={this._onHandlerStateChange}
                         activeOffsetX={[-500, 500]}
-                        activeOffsetY={[-1, 1]}
+                        activeOffsetY={[-30, 30]}
                         enabled={enabled}
                     >
                         <Animated.View>
                             {this.props.children}
                         </Animated.View>
                     </PanGestureHandler>
-                </Animated.View>
-            </TapGestureHandler>
+                </Animated.View >
+            </PanGestureHandler>
 
         )
     }
 }
+

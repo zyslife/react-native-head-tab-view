@@ -183,6 +183,16 @@ export interface TabbarProps<T> extends TabbarInfo {
 
 export interface TabViewProps<T> extends TabProps<T> {
     /**
+     * tabview style
+     */
+    style?: StyleProp<ViewStyle>
+    /**
+     * content style 
+     * with tabs,header,footer
+     * without renderScrollHeader
+     */
+    contentStyle?: StyleProp<ViewStyle>
+    /**
      * 渲染每个标签页的方法
      */
     renderScene: (info: PageViewHocProps<T> | SceneItem<T>) => React.ReactElement | null | undefined;
@@ -269,15 +279,15 @@ export class Tabbar<T> extends React.Component<TabbarProps<T>>{
 
 }
 
-export class RefreshControlAnimated extends React.PureComponent{
+export class RefreshControlAnimated extends React.PureComponent {
 
 }
 
 type HighHocFunc = typeof ScrollView | typeof FlatList | typeof SectionList
 
-declare class PageViewHocComponent<T> extends React.Component<PageViewHocProps<T>>{}
+declare class PageViewHocComponent<T> extends React.Component<PageViewHocProps<T>>{ }
 
-export function HPageViewHoc(component: HighHocFunc ): any;
+export function HPageViewHoc(component: HighHocFunc): any;
 
 
 export interface ChangeTabProperties {

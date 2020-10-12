@@ -52,6 +52,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     private drawer: React.RefObject<any> = React.createRef();
     private contentScroll: React.RefObject<any> = React.createRef();
     private headerRef: React.RefObject<any> = React.createRef();
+    private headerParentRef: React.RefObject<any> = React.createRef();
     private _onGestureEvent: (...args: any[]) => void
     private scrollView: any
     private androidPager: any
@@ -127,13 +128,13 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     }
 
     render() {
-        const { headerRespond, scrollEnabled } = this.props
+        const { headerRespond, scrollEnabled, contentStyle, style } = this.props
         const { childRefs } = this.state
         const enabled = scrollEnabled !== false
         return (
             <PanGestureHandler
                 ref={this.drawer}
-                simultaneousHandlers={[...childRefs, this.contentScroll, this.headerRef]}
+                simultaneousHandlers={[...childRefs, this.contentScroll, this.headerRef, this.headerParentRef]}
                 shouldCancelWhenOutside={false}
                 onGestureEvent={this._onGestureEvent}
                 failOffsetX={[-20, 20]}
@@ -142,15 +143,21 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
                 onHandlerStateChange={this._onHandlerStateChange}
                 enabled={enabled}
             >
-                <Animated.View style={{ flex: 1 }} onLayout={this.containerOnLayout}>
+                <Animated.View style={[{ flex: 1, alignItems: 'center' }, style]} onLayout={this.containerOnLayout}>
                     {this._renderFrozeView()}
                     {headerRespond ? null : this._renderScrollHead()}
-                    {this._renderTabBar()}
-                    {this._renderHeader()}
-                    {
-                        this.state.tabviewHeight > 0 ? <NativeViewGestureHandler ref={this.contentScroll} >
-                            {this._renderContent()}
-                        </NativeViewGestureHandler> : null}
+                    <View style={[{ flex: 1, overflow: 'hidden', width: '100%' }, contentStyle]} onLayout={this.contentOnLayout}>
+                        {this._renderTabBar()}
+                        {this._renderHeader()}
+                        {
+                            this.state.tabviewHeight > 0 ?
+
+                                <NativeViewGestureHandler ref={this.contentScroll} >
+                                    {this._renderContent()}
+                                </NativeViewGestureHandler>
+                                : null
+                        }
+                    </View>
 
                     {this._renderFooter()}
                     {headerRespond ? this._renderScrollHead() : null}
@@ -213,18 +220,20 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
 
         const { renderScrollHeader, frozeTop, scrollEnabled } = this.props
         if (!renderScrollHeader) return null
-        const { containerTrans, sceneWidth } = this.state;
+        const { containerTrans } = this.state;
         const headerHeight = this.getHeaderHeight() - frozeTop
         return <ScrollHeader
             headerTrans={this.headerTrans}
             headerRef={this.headerRef}
+            headerParentRef={this.headerParentRef}
             onPanResponderGrant={this.onPanResponderGrant}
             headerReleaseResponder={this.headerReleaseResponder}
             scrollEnabled={scrollEnabled}
             style={{
                 position: 'absolute',
                 top: 0,
-                width: sceneWidth,
+                left: 0,
+                right: 0,
                 transform: [{
                     translateY: containerTrans.interpolate({
                         inputRange: [0, headerHeight, headerHeight + 1],
@@ -461,7 +470,13 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     * 整体的layout方法
     */
     containerOnLayout = (event: LayoutChangeEvent) => {
-        this.setState({ sceneWidth: event.nativeEvent.layout.width, tabviewHeight: event.nativeEvent.layout.height })
+        this.setState({ tabviewHeight: event.nativeEvent.layout.height })
+    }
+    /**
+    * tabview部分的layout方法
+    */
+    contentOnLayout = (event: LayoutChangeEvent) => {
+        this.setState({ sceneWidth: event.nativeEvent.layout.width })
     }
 
     /**
@@ -520,13 +535,13 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     }
 
     getScrollNode() {
-        if (this.scrollView.scrollTo) {
+        if (this.scrollView && this.scrollView.scrollTo) {
             return this.scrollView
         }
         return this.scrollView && this.scrollView.getNode ? this.scrollView.getNode() : null
     }
     getPagerNode() {
-        if (this.androidPager.setPage) {
+        if (this.androidPager && this.androidPager.setPage) {
             return this.androidPager
         }
         return this.androidPager && this.androidPager.getNode ? this.androidPager.getNode() : null
