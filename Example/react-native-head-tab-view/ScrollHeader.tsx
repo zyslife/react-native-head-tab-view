@@ -74,6 +74,7 @@ export default class ScrollHeader extends React.PureComponent<Props> {
             <PanGestureHandler
                 ref={headerParentRef}
                 activeOffsetX={[-500, 500]}
+                activeOffsetY={[-1, 1]}
                 onHandlerStateChange={this._onParentPanHandlerStateChange}
             >
                 <Animated.View style={this.props.style} >

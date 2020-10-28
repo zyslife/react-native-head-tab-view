@@ -34,7 +34,7 @@ export default function HPageViewHoc<T>(WrappedComponent: any) {
         static defaultProps = defaultProps
         private scrollTop: number = 0
         private needTryScroll: boolean = false
-        private stopScroll: boolean = false
+        private stopScroll: boolean = true
         private shouldStartRefresh: boolean = true
         private _scrollView: any
         private transEvent: string = ''
