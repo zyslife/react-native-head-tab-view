@@ -9,7 +9,11 @@ import {
 import { TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER, TABVIEW_HEADER_GRANT, TABVIEW_HEADER_RELEASE, TABVIEW_PULL_RELESE, TABVIEW_ONSCROLL } from './Const'
 import Tabbar from './Tabbar'
 import ScrollHeader from './ScrollHeader'
+import PullRefreshView from './PullRefreshView'
+import RefreshControlAnimated from './RefreshControlAnimated'
+import { getContentAnimatedStyles, getScrollHeaderAnimatedStyles, pullRefreshAnimatedStyles } from './utils/animations'
 
+const overflowPull = 50
 import ViewPagerAndroid from "@react-native-community/viewpager";
 import {
     PanGestureHandler,
@@ -29,7 +33,9 @@ const defaultProps = {
     preInitSceneNum: 0,
     faultHeight: 2,
     headerRespond: false,
-    frozeTop: 0
+    frozeTop: 0,
+    scrollEnabled: true,
+    refreshHeight: 100
 }
 interface ObserversItem {
     instance: any,
@@ -47,6 +53,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     private dragY: Animated.Value = new Animated.Value(0)
     private offsetAndroid: Animated.Value = new Animated.Value(0)
     private headerTrans: Animated.Value = new Animated.Value(0)
+    private tabviewRefreshTrans: Animated.Value = new Animated.Value(0)
     private scrollOnMountCalled: boolean = false
     private observers: Observers = {}
     private drawer: React.RefObject<any> = React.createRef();
@@ -56,6 +63,12 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     private _onGestureEvent: (...args: any[]) => void
     private scrollView: any
     private androidPager: any
+    private shouldStartRefresh: boolean = true
+    private dragYEvent = ''
+    private tabviewRefreshEvent = ''
+    private containerTransEvent = ''
+    private startDragY = 0
+    private startRefresh = false
 
     constructor(props: TabViewProps<T> & typeof defaultProps) {
         super(props)
@@ -85,6 +98,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             refreshTrans,
             //子页面实际滑动距离的动画数组
             sceneTrans,
+            sceneScrollEnabled: props.scrollEnabled
         }
 
         this.handleScrollValue()
@@ -101,6 +115,11 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             console.warn('必须实现 makeHeaderHeight方法')
         }
 
+        this.addViewListener()
+    }
+
+    componentWillUnmount() {
+        this.removeViewListener()
     }
 
     componentDidUpdate(prevProps: TabViewProps<T> & typeof defaultProps, prevState: TabViewState<T>) {
@@ -108,6 +127,11 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             const newKeys = this.getDisplayScene(this.props.tabs, this.state.currentIndex)
             const obj = this.initializes(this.props)
             this.setState({ displayKeys: newKeys, tabs: this.props.tabs, ...obj })
+        }
+        if (prevProps.isRefreshing !== this.props.isRefreshing) {
+            if (this.props.isRefreshing === false) {
+                this.pullRefreshEnd()
+            }
         }
     }
 
@@ -128,9 +152,12 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     }
 
     render() {
-        const { headerRespond, scrollEnabled, contentStyle, style } = this.props
+        const { headerRespond, contentStyle, style, scrollEnabled, isRefreshing, refreshHeight } = this.props
         const { childRefs } = this.state
+
         const enabled = scrollEnabled !== false
+        const animatedStyle = pullRefreshAnimatedStyles(this.tabviewRefreshTrans, refreshHeight + overflowPull)
+        const transform = isRefreshing ? undefined : animatedStyle.transform
         return (
             <PanGestureHandler
                 ref={this.drawer}
@@ -138,30 +165,34 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
                 shouldCancelWhenOutside={false}
                 onGestureEvent={this._onGestureEvent}
                 failOffsetX={[-20, 20]}
-                activeOffsetY={20}
+                activeOffsetY={[-5, 5]}
                 activeOffsetX={[-500, 500]}
                 onHandlerStateChange={this._onHandlerStateChange}
                 enabled={enabled}
             >
                 <Animated.View style={[{ flex: 1, alignItems: 'center' }, style]} onLayout={this.containerOnLayout}>
-                    {this._renderFrozeView()}
-                    {headerRespond ? null : this._renderScrollHead()}
-                    <View style={[{ flex: 1, overflow: 'hidden', width: '100%' }, contentStyle]} onLayout={this.contentOnLayout}>
-                        {this._renderTabBar()}
-                        {this._renderHeader()}
-                        {
-                            this.state.tabviewHeight > 0 ?
+                    <Animated.View style={{
+                        flex: 1, width: '100%', transform
+                    }}>
+                        {this._renderFrozeView()}
+                        {headerRespond ? null : this._renderScrollHead()}
+                        <View style={[{ flex: 1, overflow: 'hidden', width: '100%' }, contentStyle]} onLayout={this.contentOnLayout}>
+                            {this._renderTabBar()}
+                            {this._renderHeader()}
+                            {
+                                this.state.tabviewHeight > 0 ?
 
-                                <NativeViewGestureHandler ref={this.contentScroll} >
-                                    {this._renderContent()}
-                                </NativeViewGestureHandler>
-                                : null
-                        }
-                    </View>
+                                    <NativeViewGestureHandler ref={this.contentScroll} >
+                                        {this._renderContent()}
+                                    </NativeViewGestureHandler>
+                                    : null
+                            }
+                        </View>
 
-                    {this._renderFooter()}
-                    {headerRespond ? this._renderScrollHead() : null}
-
+                        {this._renderFooter()}
+                        {headerRespond ? this._renderScrollHead() : null}
+                    </Animated.View>
+                    {this.renderRefreshControl()}
                 </Animated.View>
             </PanGestureHandler >
         )
@@ -169,8 +200,11 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
 
     _onHandlerStateChange = ({ nativeEvent }: PanGestureHandlerStateChangeEvent) => {
         if (nativeEvent.oldState === State.ACTIVE) {
+            this.makePullRefreshRelease();
+
             this.emitListener(TABVIEW_PULL_RELESE)
         }
+
     };
 
     _renderFrozeView() {
@@ -180,18 +214,12 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     }
     //渲染头部
     _renderHeader() {
-        const { renderHeader, frozeTop } = this.props
+        const { renderHeader, frozeTop, isRefreshing, refreshHeight } = this.props
         const headerHeight = this.getHeaderHeight() - frozeTop
         if (!renderHeader) return null
+        const mStyle = getContentAnimatedStyles(this.state.containerTrans, headerHeight, isRefreshing, refreshHeight)
         return (
-            <Animated.View style={{
-                transform: [{
-                    translateY: this.state.containerTrans.interpolate({
-                        inputRange: [0, headerHeight, headerHeight + 1],
-                        outputRange: [headerHeight, 0, 0]
-                    })
-                }], zIndex: 10
-            }}>
+            <Animated.View style={mStyle}>
                 {renderHeader(this.makeParams())}
             </Animated.View>
         )
@@ -215,31 +243,31 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
         this.headerTrans.stopAnimation(() => { })
     }
 
+    getScrollEnabled() {
+        return this.state.sceneScrollEnabled && this.props.scrollEnabled
+    }
+
     //渲染可滑动头部
     _renderScrollHead() {
 
-        const { renderScrollHeader, frozeTop, scrollEnabled } = this.props
+        const { renderScrollHeader, frozeTop, isRefreshing, refreshHeight } = this.props
         if (!renderScrollHeader) return null
-        const { containerTrans } = this.state;
+        const { containerTrans, sceneScrollEnabled } = this.state;
         const headerHeight = this.getHeaderHeight() - frozeTop
+        const mStyle = getScrollHeaderAnimatedStyles(containerTrans, headerHeight, isRefreshing, refreshHeight)
         return <ScrollHeader
             headerTrans={this.headerTrans}
             headerRef={this.headerRef}
             headerParentRef={this.headerParentRef}
             onPanResponderGrant={this.onPanResponderGrant}
             headerReleaseResponder={this.headerReleaseResponder}
-            scrollEnabled={scrollEnabled}
+            scrollEnabled={this.getScrollEnabled()}
             style={{
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 right: 0,
-                transform: [{
-                    translateY: containerTrans.interpolate({
-                        inputRange: [0, headerHeight, headerHeight + 1],
-                        outputRange: [0, -headerHeight, -headerHeight]
-                    })
-                }]
+                ...mStyle
             }} >
             {renderScrollHeader()}
         </ScrollHeader>
@@ -572,6 +600,117 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
         return this.state.sceneTrans[currentIndex]
     }
 
+    /******************************************** Pull-refresh ********************************************/
+
+    addViewListener() {
+        if (this.props.onStartRefresh === undefined) return;
+
+        this.dragYEvent = this.dragY.addListener(this.tabviewDidDrag);
+        this.tabviewRefreshEvent = this.tabviewRefreshTrans.addListener(({ value }) => { });
+        this.containerTransEvent = this.state.containerTrans.addListener(this.containerTransUpdate)
+
+    }
+
+    removeViewListener() {
+        if (this.props.onStartRefresh === undefined) return;
+
+        this.dragY.removeListener(this.dragYEvent);
+        this.tabviewRefreshTrans.removeListener(this.tabviewRefreshEvent);
+        this.state.containerTrans.removeListener(this.containerTransEvent);
+    }
+    //RefreshControl container
+    renderContent = (refreshProps: any) => {
+        const { renderRefreshControl } = this.props;
+
+        if (renderRefreshControl) {
+            return renderRefreshControl()
+        }
+        return <RefreshControlAnimated {...refreshProps} />
+
+    }
+
+    //render Refresh component
+    renderRefreshControl() {
+        const { isRefreshing, onStartRefresh, refreshHeight } = this.props;
+        const { containerTrans } = this.state
+        if (!onStartRefresh) return;
+
+        const refreshProps = {
+            headerHeight: 0,
+            containerTrans,
+            transY: this.tabviewRefreshTrans,
+            isRefreshing,
+            isActive: true,
+            scrollYTrans: containerTrans,
+            removeListener: this.removeListener,
+            addListener: this.addListener,
+            refreshHeight,
+            overflowPull,
+            hideContent: false,
+            renderContent: this.renderContent
+        }
+
+        return (
+            <PullRefreshView {...refreshProps} />
+        )
+    }
+
+    containerTransUpdate = ({ value }: { value: number }) => {
+        if (!this.props.onStartRefresh) return;
+        if (value > 0) {
+            this.shouldStartRefresh = false;
+        } else {
+            if (this.shouldStartRefresh === true) return
+            this.shouldStartRefresh = true;
+        }
+    }
+
+    tabviewDidDrag = (e: { value: number }) => {
+        const { value } = e
+        if (!this.props.onStartRefresh) return false;
+        if (this.props.isRefreshing) return false
+        if (value <= 0) return false;
+
+        if (this.startRefresh) {
+            this.tabviewRefreshTrans.setValue(value - this.startDragY)
+        } else if (this.shouldStartRefresh) {
+            this.setState({ sceneScrollEnabled: false }, () => {
+                this.startDragY = value
+                this.startRefresh = true
+            })
+        }
+
+    }
+
+    makePullRefreshRelease = () => {
+        if (!this.props.onStartRefresh) return;
+        if (this.props.isRefreshing) return;
+
+        this.startDragY = 0;
+
+        if (this.tabviewRefreshTrans._value > this.props.refreshHeight) {
+            this.setState({ sceneScrollEnabled: true }, () => {
+                this.pageOnScroll()
+            })
+        } else {
+            this.pullRefreshEnd()
+        }
+    }
+
+    pageOnScroll = () => {
+        this.props.onStartRefresh && this.props.onStartRefresh();
+    }
+
+    pullRefreshEnd() {
+        if (!this.props.onStartRefresh) return;
+        this.setState({ sceneScrollEnabled: true }, () => {
+            this.tabviewRefreshTrans.setValue(0)
+            this.startRefresh = false;
+        })
+
+    }
+    /******************************************** Pull-refresh ********************************************/
+
     /**
     * renderHeader和renderFooter的参数装配
     */
@@ -587,10 +726,11 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
      * 组装子页面的参数
      */
     makeSceneParams(item: T, index: number) {
-        const { makeHeaderHeight, faultHeight, renderScrollHeader, frozeTop, scrollEnabled } = this.props;
+        const { makeHeaderHeight, faultHeight, renderScrollHeader, frozeTop, isRefreshing, onStartRefresh } = this.props;
         if (!renderScrollHeader) {
             return { item, index }
         }
+
         const { currentIndex, containerTrans, tabviewHeight, tabbarHeight, childRefs } = this.state;
 
         const params: PageViewHocProps<T> = {
@@ -610,7 +750,9 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             refreshTrans: this.getRefreshTrans(index),
             expectHeight: this.getHeaderHeight() + tabviewHeight - tabbarHeight - frozeTop * 2,
             scrollYTrans: this.getSceneTrans(index),
-            sceneScrollEnabled: scrollEnabled
+            sceneScrollEnabled: this.getScrollEnabled(),
+            isRefreshingTabView: isRefreshing,
+            pulldownEnabled: onStartRefresh === undefined
         };
 
         return params;
@@ -621,7 +763,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
      */
     makeTabParams() {
 
-        const { tabbarStyle, renderScrollHeader, frozeTop, tabs, tabNameConvert, averageTab, tabsContainerStyle, activeTextStyle, inactiveTextStyle } = this.props
+        const { tabbarStyle, renderScrollHeader, frozeTop, tabs, tabNameConvert, averageTab, tabsContainerStyle, activeTextStyle, inactiveTextStyle, isRefreshing, refreshHeight } = this.props
         const params: TabbarInfo<T> = {
             tabs,
             tabNameConvert,
@@ -640,15 +782,8 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
         }
         if (renderScrollHeader) {
             const headerHeight = this.getHeaderHeight() - frozeTop
-            params.style = Object.assign(params.style, {
-                transform: [{
-                    translateY: this.state.containerTrans.interpolate({
-                        inputRange: [0, headerHeight, headerHeight + 1],
-                        outputRange: [headerHeight, 0, 0]
-                    })
-                }]
-            })
-
+            const mStyle = getContentAnimatedStyles(this.state.containerTrans, headerHeight, isRefreshing, refreshHeight)
+            params.style = Object.assign(params.style, mStyle)
         }
 
 

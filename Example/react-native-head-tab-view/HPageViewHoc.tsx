@@ -11,6 +11,7 @@ import { TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER, TABVIEW_HEADER_RELEASE, 
 import { NativeViewGestureHandler, PanGestureHandlerStateChangeEvent } from 'react-native-gesture-handler';
 import RefreshControlNormal from './RefreshControlNormal'
 import PullRefreshView from './PullRefreshView'
+import { pullRefreshAnimatedStyles } from './utils/animations'
 import { PageViewHocProps, HPageViewHocState, HPageViewProps } from './types'
 
 const defaultProps = {
@@ -101,8 +102,8 @@ _renderScene = (sceneProps) => {
 
         //render Refresh component
         renderRefreshControl() {
-            const { containerTrans, index, refreshTrans, isRefreshing, isActive, scrollYTrans, removeListener, addListener, refreshHeight, overflowPull, onStartRefresh } = this.props;
-            if (!onStartRefresh) return;
+            const { containerTrans, index, refreshTrans, isRefreshing, isActive, scrollYTrans, removeListener, addListener, refreshHeight, overflowPull } = this.props;
+            if (!this.pullDownIsEnabled()) return;
             const headerHeight = this.getHeaderHeight()
             const refreshProps = { headerHeight, containerTrans, index, transY: refreshTrans, isRefreshing, isActive, scrollYTrans, removeListener, addListener, refreshHeight, overflowPull, hideContent: this.state.hideContent, renderContent: this.renderContent }
 
@@ -124,14 +125,17 @@ _renderScene = (sceneProps) => {
                 refreshTrans,
                 containerTrans,
                 sceneScrollEnabled,
+                isRefreshingTabView,
                 ...rest
             } = this.props;
             const { placeHeight, scrollEnabled } = this.state
             const headerHeight = this.getHeaderHeight()
-            const mScrollEnabled = sceneScrollEnabled !== undefined ? sceneScrollEnabled : scrollEnabled
+            const mScrollEnabled = sceneScrollEnabled && scrollEnabled
+
             if (!this.needHandleScroll()) {
                 return <WrappedComponent ref={forwardedRef} {...this.props} />
             }
+            const showPaddingTop = isRefreshing || isRefreshingTabView
             return (
                 <View>
                     <NativeViewGestureHandler
@@ -154,7 +158,7 @@ _renderScene = (sceneProps) => {
                             onScrollBeginDrag={this.onScrollBeginDrag}
                             onScroll={this.getOnScroll()}
                             overScrollMode={'never'}
-                            contentContainerStyle={{ paddingTop: isRefreshing ? headerHeight + 100 : headerHeight, paddingBottom: placeHeight }}
+                            contentContainerStyle={{ paddingTop: showPaddingTop ? headerHeight + 100 : headerHeight, paddingBottom: placeHeight }}
                             onContentSizeChange={this._onContentSizeChange}
                             scrollEnabled={mScrollEnabled}
                             {...rest}
@@ -256,7 +260,7 @@ _renderScene = (sceneProps) => {
                     deceleration: 0.998,
                     useNativeDriver: true,
                 },
-            ).start(()=>{
+            ).start(() => {
                 this.stopScroll = true
             });
         }
@@ -273,17 +277,17 @@ _renderScene = (sceneProps) => {
 
             if (this.startRefresh && !this.props.isRefreshing && nativeEvent.translationY >= 0) return;
 
-            
+
             this.handleHeaderRelease(e);
 
         }
 
         updateHeaderView = (e: { value: number }) => {
-            
+
             if (!this.props.isActive) return;
             if (this.startRefresh && !this.props.isRefreshing && e.value >= 0) return;
             if (this.stopScroll) return;
-    
+
             this.handleUpdateHeader(e)
         }
 
@@ -338,7 +342,7 @@ _renderScene = (sceneProps) => {
         /************************************************ Pull-refresh *************************************************/
         //Pull-refresh draging
         makePullRefreshDrag = (value: number) => {
-            if (!this.props.onStartRefresh) return false;
+            if (!this.pullDownIsEnabled()) return false;
             if (!this.props.isActive) return false;
             if (this.props.isRefreshing) return false
             if (value <= 0) return false;
@@ -346,20 +350,17 @@ _renderScene = (sceneProps) => {
             if (this.startRefresh) {
 
                 this.props.refreshTrans.setValue(value - this.startDragY)
-                return true
             } else if (this.shouldStartRefresh) {
 
                 this.setState({ scrollEnabled: false }, () => {
                     this.startDragY = value
                     this.startRefresh = true
                 })
-                return true
             }
-            return false;
         }
         //Pull-refresh release fingers
         makePullRefreshRelease = () => {
-            if (!this.props.onStartRefresh) return;
+            if (!this.pullDownIsEnabled()) return;
             if (this.props.isRefreshing) return;
 
             this.startDragY = 0;
@@ -383,7 +384,7 @@ _renderScene = (sceneProps) => {
         }
 
         pullRefreshEnd() {
-            if (!this.props.onStartRefresh) return;
+            if (!this.pullDownIsEnabled()) return;
             this.setState({ scrollEnabled: true }, () => {
                 this.props.refreshTrans.setValue(0)
                 this.startRefresh = false;
@@ -392,7 +393,7 @@ _renderScene = (sceneProps) => {
 
         //judge refresh status
         updateRefreshStatus(transValue: number) {
-            if (!this.props.onStartRefresh) return;
+            if (!this.pullDownIsEnabled()) return;
             if (transValue > 0) {
                 this.shouldStartRefresh = false;
             } else {
@@ -409,9 +410,9 @@ _renderScene = (sceneProps) => {
 
         //get transform
         getTransformAction() {
-            const { isActive, refreshTrans, isRefreshing, refreshHeight, overflowPull } = this.props;
+            const { isActive, refreshTrans, isRefreshing, refreshHeight, overflowPull, isRefreshingTabView } = this.props;
 
-            if (isRefreshing) return {
+            if (isRefreshing || isRefreshingTabView) return {
                 transform: [{
                     translateY: 0
                 }]
@@ -419,14 +420,11 @@ _renderScene = (sceneProps) => {
 
             if (!isActive) return {}
 
-            return {
-                transform: [{
-                    translateY: refreshTrans.interpolate({
-                        inputRange: [-1, 0, refreshHeight + overflowPull, refreshHeight + overflowPull + 100],
-                        outputRange: [0, 0, refreshHeight + overflowPull, refreshHeight + overflowPull + 10]
-                    })
-                }]
-            }
+            return pullRefreshAnimatedStyles(refreshTrans, refreshHeight + overflowPull)
+        }
+
+        pullDownIsEnabled() {
+            return this.props.pulldownEnabled && this.props.onStartRefresh !== undefined
         }
 
         refreshTransDidUpdate = (e: { value: number }) => { this.refreshTransValue = e.value }

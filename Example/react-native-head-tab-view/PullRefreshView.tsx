@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { TABVIEW_BECOME_RESPONDER } from './Const'
 import { RefreshObserverType, RefreshType } from './types'
+import { pullRefreshViewAnimatedStyles } from './utils/animations'
 
 interface Props {
     transY: Animated.Value;
@@ -20,7 +21,7 @@ interface Props {
     hideContent: boolean;
     addListener: any;
     removeListener: any;
-    renderContent: () => React.ReactElement;
+    renderContent?: React.ComponentType<any> | React.ReactElement | null;
 }
 interface State {
     hidden: boolean;
@@ -83,13 +84,8 @@ export default class PullRefreshView extends React.Component<Props, State> {
     getTransform() {
         const { refreshHeight, overflowPull } = this.props;
         if (!this.props.isRefreshing) {
-
-            return [{
-                translateY: this.mTransValue.interpolate({
-                    inputRange: [-1, 0, refreshHeight + overflowPull, refreshHeight + overflowPull + 100],
-                    outputRange: [-1, 0, refreshHeight + overflowPull, refreshHeight + overflowPull + 10]
-                })
-            }]
+            const animatedStyle = pullRefreshViewAnimatedStyles(this.mTransValue, refreshHeight + overflowPull)
+            return animatedStyle.transform
         }
 
         if (this.props.isActive) {

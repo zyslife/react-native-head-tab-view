@@ -68,6 +68,7 @@ export interface TabViewState<T> {
     refreshTrans: Array<Animated.Value>
     sceneTrans: Array<Animated.Value>
     childRefs: Array<React.RefObject<any>>
+    sceneScrollEnabled: boolean
 }
 
 
@@ -150,6 +151,22 @@ export interface TabViewProps<T> extends TabProps<T> {
      * 这个值是在标签页内容不够，计算补位视图时的容错高度，后面考虑删掉该字段
      */
     faultHeight?: number;
+    /**
+     * 是否是下拉刷新状态
+     */
+    isRefreshing?: boolean;
+    /**
+     * 开始下拉刷新 回调方法
+     */
+    onStartRefresh?: () => void;
+    /**
+     * 自定义下拉刷新 组件
+     */
+    renderRefreshControl?: () => React.ReactElement
+    /**
+     * 下拉刷新的高度 （默认100）
+     */
+    refreshHeight?: number;
 }
 
 export interface HPageViewProps {

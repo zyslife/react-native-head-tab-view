@@ -112,6 +112,9 @@ interface HPageViewHocNU<T> {
      * 容错高度
      */
     faultHeight: number;
+    /**
+     * Whether the scene can slide
+     */
     sceneScrollEnabled?: boolean;
 }
 
@@ -268,6 +271,23 @@ export interface TabViewProps<T> extends TabProps<T> {
      * 这个值是在标签页内容不够，计算补位视图时的容错高度，后面考虑删掉该字段
      */
     faultHeight?: number;
+    /**
+     * Whether the TabView is refreshing
+     */
+    isRefreshing?: boolean;
+    /**
+     * If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality.
+     * Make sure to also set the isRefreshing prop correctly.
+     */
+    onStartRefresh?: () => void;
+    /**
+     * A custom RefreshControl
+     */
+    renderRefreshControl?: () => React.ReactElement
+    /**
+     * If this height is reached, a refresh event will be triggered （onStartRefresh）
+     */
+    refreshHeight?: number;
 }
 
 
