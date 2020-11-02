@@ -13,8 +13,10 @@ import {
     Alert,
 } from 'react-native';
 
-import { HPageViewHoc, TabView, Tabbar, TabbarInfo, TabItemInfo, TabItemButtonInfo } from 'react-native-head-tab-view'
+import { HPageViewHoc, TabView } from 'react-native-head-tab-view'
 import { default as staticData } from '../configData/staticData.js'
+
+const TIMECOUNT = 3000
 
 const HScrollView = HPageViewHoc(ScrollView)
 const HFlatList = HPageViewHoc(FlatList)
@@ -22,68 +24,78 @@ const HSectionList = HPageViewHoc(SectionList)
 
 interface EState {
     tabs: Array<string>
+    isRefreshing: boolean
+    page1Data: Array<any>
+    page2Data: Array<any>
+    page3Data: Array<any>
 }
 
 const HEAD_HEIGHT = 180
 
-export default class ExampleNoPullRefresh extends React.PureComponent<any, EState> {
+export default class ExampleWithTabViewPullRefresh extends React.PureComponent<any, EState> {
+    private mTimer?: number
+    private curIndex = 0
 
     constructor(props: any) {
-        super(props);
+        super(props)
         this.state = {
             tabs: ['ScrollView', 'FlatList', 'SectionList'],
+            isRefreshing: false,
+            page1Data: staticData.Page1Data,
+            page2Data: staticData.Page2Data,
+            page3Data: staticData.Page3Data,
         }
     }
 
+    componentWillUnmount() {
+        if (this.mTimer) {
+            clearInterval(this.mTimer)
+        }
+    }
+
+
     private _renderScrollHeader = () => {
         return (
-            <ImageBackground source={require('../resource/header_img.png')} resizeMode={'stretch'} style={{ backgroundColor: '#c44078', width: '100%', height: HEAD_HEIGHT }}>
 
+            <ImageBackground source={require('../resource/header_img.png')} resizeMode={'stretch'} style={{ backgroundColor: '#c44078', width: '100%', height: HEAD_HEIGHT }}>
+                <TouchableWithoutFeedback onPress={() => {
+                    Alert.alert('123');
+                }}>
+                    <Image source={require('../resource/header_icon.png')} style={{ position: 'absolute', left: 35, top: 90, width: 100, height: 74 }} />
+                </TouchableWithoutFeedback>
             </ImageBackground>
+
         )
     }
 
     private _renderScene = (sceneProps: { item: string, index: number }) => {
         const { item } = sceneProps;
         if (item == 'ScrollView') {
-            return <Page1 {...sceneProps} />
+            return <Page1 {...sceneProps} data={this.state.page1Data} />
         } else if (item == 'FlatList') {
-            return <Page2 {...sceneProps} />
+            return <Page2 {...sceneProps} data={this.state.page2Data} />
         } else if (item == 'SectionList') {
-            return <Page3 {...sceneProps} />
+            return <Page3 {...sceneProps} data={this.state.page3Data} />
         }
         return null;
     }
-    makeHeaderHeight = () => HEAD_HEIGHT
 
-    _renderTabItemButton = (tabBtnInfo: TabItemButtonInfo<string>) => {
-        const { item, index, isActive } = tabBtnInfo
-        const tabImage = staticData.TabData[index]
-        const activeTextStyle = {
-            fontSize: 14,
-            color: '#4D4D4D',
-            fontWeight: 'bold'
-        }
-        const inActiveTextStyle = {
-            fontSize: 14,
-            color: '#848484',
-            fontWeight: 'bold'
-        }
-        const textStyle = isActive ? activeTextStyle : inActiveTextStyle
-
-        return (
-            <View style={styles.tabbarBtn}>
-                <Image style={styles.tabbarImage} source={tabImage} />
-                <Text style={textStyle}>{item}</Text>
-            </View>
-        )
+    onStartRefresh = (mIndex = this.curIndex) => {
+        this.setState({ isRefreshing: true })
+        this.mTimer = setTimeout(() => {
+            if (mIndex === 0) {
+                this.setState({ isRefreshing: false, page1Data: [...this.state.page1Data].reverse() })
+            } else if (mIndex === 1) {
+                this.setState({ isRefreshing: false, page2Data: [...this.state.page2Data].reverse() })
+            } else if (mIndex === 2) {
+                this.setState({ isRefreshing: false, page3Data: [...this.state.page3Data].reverse() })
+            }
+        }, TIMECOUNT);
     }
 
-    _renderTabBar = (tabbarProps: TabbarInfo) => {
-        return <Tabbar
-            {...tabbarProps}
-            renderTabItemButton={this._renderTabItemButton}
-        />
+    onChangeTab = ({ from, curIndex }: { from: number, curIndex: number }) => {
+        if (from === curIndex) return;
+        this.curIndex = curIndex
     }
 
     render() {
@@ -92,24 +104,29 @@ export default class ExampleNoPullRefresh extends React.PureComponent<any, EStat
                 <TabView
                     tabs={this.state.tabs}
                     renderScene={this._renderScene}
-                    makeHeaderHeight={this.makeHeaderHeight}
+                    makeHeaderHeight={() => { return HEAD_HEIGHT }}
                     renderScrollHeader={this._renderScrollHeader}
-                    renderTabBar={this._renderTabBar}
+                    headerRespond={true}
+                    onStartRefresh={this.onStartRefresh}
+                    isRefreshing={this.state.isRefreshing}
+                    onChangeTab={this.onChangeTab}
                 />
             </View>
         )
     }
 }
 
-class Page1 extends React.PureComponent {
-
+interface PageProps {
+    data: Array<any>
+}
+class Page1 extends React.PureComponent<PageProps, any> {
     render() {
-
+        const { data } = this.props
         return (
             <HScrollView
                 {...this.props}>
 
-                {staticData.Page1Data.map((item, index) => {
+                {data.map((item, index) => {
                     return (
                         <View style={{ width: '100%', alignItems: 'center' }} key={'Page1_' + index}>
                             <View style={{ height: 40, width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFF' }}>
@@ -125,10 +142,6 @@ class Page1 extends React.PureComponent {
 }
 
 
-interface IState {
-    data: Array<any>,
-    loading: boolean
-}
 
 interface FlatListItemInfo {
     image: any;
@@ -138,41 +151,36 @@ interface FlatListItemInfo {
     imgSize: number;
 }
 
-class Page2 extends React.PureComponent<any, IState> {
-
-
+class Page2 extends React.PureComponent<PageProps, any> {
 
     private renderItem = (itemInfo: { item: FlatListItemInfo }) => {
         const { item } = itemInfo
         return (
             <View style={[styles.flatItem, { height: item.height }]}>
-                {item.image ? <Image style={{ width: item.imgSize, height: item.imgSize, marginRight: 10, borderRadius: 5 }} source={item.image} /> : null}
+                {item.directory === 'left' ? <Image style={{ width: item.imgSize, height: item.imgSize, marginRight: 10, borderRadius: 5 }} source={item.image} /> : null}
                 <Text>{item.text}</Text>
+                {item.directory === 'right' ? <Image style={{ width: item.imgSize, height: item.imgSize, marginRight: 10, borderRadius: 5 }} source={item.image} /> : null}
             </View>
         )
     }
 
 
+    keyExtractor = (item: any, index: number) => index.toString()
 
     render() {
         return (
             <HFlatList
                 {...this.props}
-                data={staticData.Page2Data}
+                data={this.props.data}
                 renderItem={this.renderItem.bind(this)}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={this.keyExtractor}
             />
         )
     }
 }
 
-class Page3 extends React.PureComponent {
-    constructor(props) {
-        super(props)
-        this.state = {
-            isRefreshing: false
-        }
-    }
+class Page3 extends React.PureComponent<PageProps, any> {
+
     private renderItem = (itemInfo: { item: string }) => {
         const { item } = itemInfo;
         return (
@@ -195,6 +203,8 @@ class Page3 extends React.PureComponent {
     }
 
 
+    keyExtractor = (item: any, index: number) => index.toString()
+
     render() {
         return (
             <HSectionList
@@ -202,8 +212,8 @@ class Page3 extends React.PureComponent {
                 renderItem={this.renderItem}
                 renderSectionHeader={this.renderSectionHeader}
                 stickySectionHeadersEnabled={false}
-                sections={staticData.Page3Data}
-                keyExtractor={(item, index) => item + index}
+                sections={this.props.data}
+                keyExtractor={this.keyExtractor}
                 getItemLayout={this.getItemLayout}
             />
         )
@@ -221,11 +231,12 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     flatItem: {
-        paddingLeft: 15,
+        paddingHorizontal: 30,
         borderBottomWidth: 1,
         borderBottomColor: '#EAEAEA',
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'space-between'
     },
     sectionItem: {
         height: 50,
@@ -233,14 +244,6 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         borderBottomWidth: 1,
         borderBottomColor: '#EAEAEA',
-    },
-    tabbarBtn: {
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    tabbarImage: {
-        width: 15,
-        height: 15
     }
 });
 

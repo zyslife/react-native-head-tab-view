@@ -15,7 +15,6 @@ import {
 
 import { HPageViewHoc, TabView } from 'react-native-head-tab-view'
 import { default as staticData } from '../configData/staticData.js'
-import TestScrollView from './component/TestScrollView'
 
 const TIMECOUNT = 3000
 
@@ -77,8 +76,7 @@ export default class ExampleWithPullRefresh extends React.PureComponent<any, ESt
 
 interface State {
     isRefreshing: boolean
-    signOfRefresh?: boolean
-    data?: Array<any>
+    data: Array<any>
 }
 class Page1 extends React.PureComponent<any, State> {
     private mTimer?: number
@@ -86,7 +84,7 @@ class Page1 extends React.PureComponent<any, State> {
         super(props)
         this.state = {
             isRefreshing: false,
-            signOfRefresh: true
+            data: staticData.Page1Data
         }
     }
 
@@ -100,19 +98,19 @@ class Page1 extends React.PureComponent<any, State> {
         this.setState({ isRefreshing: true })
 
         this.mTimer = setTimeout(() => {
-            this.setState({ isRefreshing: false, signOfRefresh: !this.state.signOfRefresh })
+            this.setState({ isRefreshing: false, data: [...this.state.data].reverse() })
         }, TIMECOUNT);
     }
 
     render() {
-        const { signOfRefresh } = this.state;
+
         return (
             <HScrollView
                 {...this.props}
                 onStartRefresh={this.onStartRefresh}
                 isRefreshing={this.state.isRefreshing}>
 
-                {signOfRefresh ? staticData.Page1Data.map((item, index) => {
+                {this.state.data.map((item, index) => {
                     return (
                         <View style={{ width: '100%', alignItems: 'center' }} key={'Page1_' + index}>
                             <View style={{ height: 40, width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFF' }}>
@@ -121,7 +119,7 @@ class Page1 extends React.PureComponent<any, State> {
                             <Image style={{ width: '100%', height: 200 }} resizeMode={'cover'} source={item.image} />
                         </View>
                     )
-                }) : <TestScrollView />}
+                })}
             </HScrollView>
         )
     }
@@ -143,8 +141,7 @@ class Page2 extends React.PureComponent<any, State> {
         super(props)
         this.state = {
             isRefreshing: false,
-            signOfRefresh: true,
-            data: staticData.Page2Data1
+            data: staticData.Page2Data
         }
     }
     componentWillUnmount() {
@@ -157,9 +154,9 @@ class Page2 extends React.PureComponent<any, State> {
         const { item } = itemInfo
         return (
             <View style={[styles.flatItem, { height: item.height }]}>
-                {this.state.signOfRefresh ? <Image style={{ width: item.imgSize, height: item.imgSize, marginRight: 10, borderRadius: 5 }} source={item.image} /> : null}
+                {item.directory === 'left' ? <Image style={{ width: item.imgSize, height: item.imgSize, marginRight: 10, borderRadius: 5 }} source={item.image} /> : null}
                 <Text>{item.text}</Text>
-                {this.state.signOfRefresh ? null : <Image style={{ width: item.imgSize, height: item.imgSize, marginRight: 10, borderRadius: 5 }} source={item.image} />}
+                {item.directory === 'right' ? <Image style={{ width: item.imgSize, height: item.imgSize, marginRight: 10, borderRadius: 5 }} source={item.image} /> : null}
             </View>
         )
     }
@@ -168,7 +165,7 @@ class Page2 extends React.PureComponent<any, State> {
         this.setState({ isRefreshing: true })
 
         this.mTimer = setTimeout(() => {
-            this.setState({ isRefreshing: false, signOfRefresh: !this.state.signOfRefresh })
+            this.setState({ isRefreshing: false, data: [...this.state.data].reverse() })
         }, TIMECOUNT);
     }
 
@@ -193,7 +190,8 @@ class Page3 extends React.PureComponent<any, State> {
     constructor(props: any) {
         super(props)
         this.state = {
-            isRefreshing: false
+            isRefreshing: false,
+            data: staticData.Page3Data
         }
     }
 
@@ -227,7 +225,7 @@ class Page3 extends React.PureComponent<any, State> {
     onStartRefresh = () => {
         this.setState({ isRefreshing: true })
         this.mTimer = setTimeout(() => {
-            this.setState({ isRefreshing: false })
+            this.setState({ isRefreshing: false, data: [...this.state.data].reverse() })
         }, TIMECOUNT);
     }
 
@@ -242,7 +240,7 @@ class Page3 extends React.PureComponent<any, State> {
                 onStartRefresh={this.onStartRefresh}
                 renderSectionHeader={this.renderSectionHeader}
                 stickySectionHeadersEnabled={false}
-                sections={staticData.Page3Data}
+                sections={this.state.data}
                 keyExtractor={this.keyExtractor}
                 getItemLayout={this.getItemLayout}
             />

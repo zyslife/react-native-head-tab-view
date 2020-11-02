@@ -8,6 +8,7 @@ import MainScreen from './MainScreen'
 import ExampleNoPullRefresh from './ExampleNoPullRefresh'
 import ExampleWithPullRefresh from './ExampleWithPullRefresh'
 import ExampleFullFunctions from './ExampleFullFunctions'
+import ExampleWithTabViewPullRefresh from './ExampleWithTabViewPullRefresh'
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ export default class Example extends React.PureComponent {
                 ref={navigationRef}>
                 <Stack.Navigator
                     initialRouteName="MainScreen"
+                    // headerMode={'none'}
                     // 页面共享的配置
                     screenOptions={getScreenOptions()}>
                     <Stack.Screen
@@ -35,6 +37,11 @@ export default class Example extends React.PureComponent {
                         name="ExampleWithPullRefresh"
                         component={ExampleWithPullRefresh}
                         options={{ title: 'ExampleWithPullRefresh' }}
+                    />
+                    <Stack.Screen
+                        name="ExampleWithTabViewPullRefresh"
+                        component={ExampleWithTabViewPullRefresh}
+                        options={{ title: 'ExampleWithTabViewPullRefresh' }}
                     />
                     <Stack.Screen
                         name="ExampleFullFunctions"

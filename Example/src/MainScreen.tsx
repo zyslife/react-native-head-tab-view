@@ -16,6 +16,9 @@ export default class MainScreen extends React.PureComponent<Props> {
     jumpToExampleWithPullRefresh = () => {
         this.props.navigation.navigate('ExampleWithPullRefresh')
     }
+    jumpToExampleTabViewWithPullRefresh = () => {
+        this.props.navigation.navigate('ExampleWithTabViewPullRefresh')
+    }
 
     jumpToExampleFullFunctions = () => {
         this.props.navigation.navigate('ExampleFullFunctions')
@@ -32,6 +35,10 @@ export default class MainScreen extends React.PureComponent<Props> {
                 <TouchableOpacity style={{ marginTop: 80,height: 40, justifyContent: 'center', alignItems: 'center' }} onPress={this.jumpToExampleWithPullRefresh}>
                     <Text>Jump to ExampleWithPullRefresh.</Text>
                     <Text style={{ fontSize: 13, color: '#999' }}>An example with pull-down refresh.</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ marginTop: 80,height: 40, justifyContent: 'center', alignItems: 'center' }} onPress={this.jumpToExampleTabViewWithPullRefresh}>
+                    <Text>Jump to ExampleWithTabViewPullRefresh.</Text>
+                    <Text style={{ fontSize: 13, color: '#999' }}>An example with pull-down refresh on TabView.</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={{ marginTop: 80, justifyContent: 'center', alignItems: 'center' }} onPress={this.jumpToExampleFullFunctions}>
                     <Text>Jump to ExampleFullFunctions.</Text>
