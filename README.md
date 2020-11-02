@@ -1,17 +1,12 @@
 # React Native Head Tab View
-带有头部组件，可以整体上下滑动的标签页组件  
-点击跳转[博客文章](https://www.jianshu.com/p/222716d8a0a2)
-
-**最新版本v2.0如果不稳定，可以退回上一个版本v1.1.6**
 
 ## 功能
-
 - 左右滑动标签页
-- 可定制的Tabbar
-- 标签页可以添加头部，并且整体上下滑动
-- 兼容iOS和Android
+- 共享滑动状态的头部
 - 头部可控制整个组件上下滚动
-- **新增各个标签页下拉刷新功能（v2.0~）**
+- 头部可以响应点击事件
+- **新增标签页下拉刷新功能（v2.0~）**
+- **新增整个组件下拉刷新功能（v2.0.6~）**
 
 ## Demo
 
@@ -22,6 +17,38 @@
 #### Android效果图：  
 
 ![demo_android.gif](https://github.com/zyslife/react-native-head-tab-view/blob/master/demoGIF/demo_android.gif)  
+
+## 简例  
+
+```
+import { ScrollView } from 'react-native';
+import { HPageViewHoc, TabView } from 'react-native-head-tab-view'
+const HScrollView = HPageViewHoc(ScrollView)
+
+_renderScene = (sceneProps: { item: string, index: number }) => {
+        return <HScrollView {...sceneProps}>
+            <View style={{ height: 800, backgroundColor: 'red' }} />
+            <View style={{ height: 800, backgroundColor: 'green' }} />
+            <View style={{ height: 800, backgroundColor: 'blue' }} />
+        </HScrollView>
+}
+    
+render() {
+        return (
+            <View style={{ flex: 1, backgroundColor: '#FFF' }}>
+                <TabView
+                        tabs={['tab1','tab2','tab3']}
+                        renderScene={this._renderScene}
+                        makeHeaderHeight={() => { return 180 }}
+                        renderScrollHeader={()=><View style={{height:180,backgroundColor:'red'}}/>}
+                        onChangeTab={this.onChangeTab}
+                    />
+            </View>
+        )
+    }
+```
+
+更加完善的例子请点击[Example](https://github.com/zyslife/react-native-head-tab-view/blob/master/Example/src/Example.tsx)  
 
 ## 运行Example  
 ```sh
@@ -62,48 +89,14 @@ https://github.com/react-native-community/react-native-viewpager#Linking
 |                  | iOS support      | iOS support      |
 | Android support  | Android support  | AndroidX support  |
 
-## 简例  
 
-```
-import { HPageViewHoc, TabView } from 'react-native-head-tab-view'
-
-_renderScene = (sceneProps: { item: string, index: number }) => {
-        const { item } = sceneProps;
-        if (item == 'ScrollView') {
-            return <Page1 {...sceneProps} />
-        } else if (item == 'FlatList') {
-            return <Page2 {...sceneProps} />
-        } else if (item == 'SectionList') {
-            return <Page3 {...sceneProps} />
-        }
-        return null;
-}
-    
-render() {
-        return (
-            <View style={{ flex: 1, backgroundColor: '#FFF' }}>
-                <StatusBar
-                    barStyle={'dark-content'}
-                    translucent={true}
-                />
-                {this._renderNavBar()}
-                <TabView
-                        tabs={this.state.tabs}
-                        renderScene={this._renderScene}
-                        makeHeaderHeight={() => { return 180 }}
-                        renderScrollHeader={()=><View style={{height:180,backgroundColor:'red'}}/>}
-                        onChangeTab={this.onChangeTab}
-                    />
-            </View>
-        )
-    }
-```
-
-更加完善的例子请点击[Example](https://github.com/zyslife/react-native-head-tab-view/blob/master/Example/src/Example.tsx)  
 
 
 ---
-## Common Props
+### Documentation
+
+<details>
+<summary>Common Props</summary>
 
 ##### `tabs` (`required`) _(tabs :string[])_
 
@@ -147,9 +140,10 @@ tabbar item选中的样式
 
 ##### inactiveTextStyle _(StyleProp<ViewStyle>)_  
 tabbar item未选中的样式
+</details>
 
-
-## HPageViewHoc Props  （标签页的props）
+<details>
+<summary>HPageViewHoc Props （HOC props）</summary>
 
 ##### `isRefreshing`  _(boolean)_   
 标签页是否处于下拉刷新状态  
@@ -162,9 +156,10 @@ tabbar item未选中的样式
 ##### `overflowPull`  _(number)_   
 下拉的距离超过 下拉刷新组件的高度 （默认50）
 
+</details>
 
-
-## TabView Props  - (extends  Common Props)
+<details>
+<summary>TabView Props  - (extends  Common Props)</summary>
 
 ##### `renderScene` (`required`) _(renderScene :(info: TabViewItemInfo<TabItemT>) => React.ReactElement | null | undefined)_  
 渲染各个标签子页面的方法，传入参数遵从TabViewItemInfo协议包含以下参数
@@ -256,9 +251,19 @@ renderScrollHeader={()=><View style={{height:180,backgroundColor:'red'}}/>}
 tabbar的样式
 ##### `extraData` _(any)_ 
 用于重新渲染组件  
+##### `isRefreshing`  _(boolean)_   
+整个TabView是否处于下拉刷新状态  
+##### `onStartRefresh`  _(() => void)_   
+整个TabView开始下拉刷新 回调方法  
+##### `renderRefreshControl`  _(() => React.ReactElement)_   
+自定义下拉刷新 组件
+##### `refreshHeight`  _(number)_   
+下拉刷新的高度 （默认100） 
+</details>
 
+<details>
+<summary>Tabbar Props  - (extends  Common Props)</summary>
 
-## Tabbar Props  - (extends  Common Props)
 ##### style _(StyleProp<ViewStyle>)_ 
 tabbar样式
 ##### underLineHidden _(boolean)_  
@@ -280,3 +285,4 @@ tabItem样式
 ##### renderRightView _(React.ComponentType<any> | React.ReactElement | null)_
 渲染Tabbar右边组件
 
+</details>
