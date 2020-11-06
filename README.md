@@ -129,19 +129,20 @@ Example:
 />
 ```
 
-##### tabNameConvert _((tabname: string) => string) 
+##### `tabNameConvert` _((tabname: string) => string) 
+
 Convert the elements in tabs into the titles you want
 example:
 ```tabNameConvert={(tabname)=>return tabname+'_aguai'}```
 
-##### tabsContainerStyle _(StyleProp<ViewStyle>)_  
+##### `tabsContainerStyle` _(StyleProp<ViewStyle>)_  
 These styles will be applied to the Tabbar view content container which wraps all of the child views. 
 
-##### activeTextStyle _(StyleProp<ViewStyle>)_  
+##### `activeTextStyle` _(StyleProp<ViewStyle>)_  
 The style of the tab item when active
 defaults to { fontSize: 14, color: '#4D4D4D', fontWeight: 'bold' }
 
-##### inactiveTextStyle _(StyleProp<ViewStyle>)_  
+##### `inactiveTextStyle` _(StyleProp<ViewStyle>)_  
 The style of the tab item when inactive
 defaults to { fontSize: 14, color: '#848484', fontWeight: 'bold' }
 
@@ -281,26 +282,26 @@ If this height is reached, a refresh event will be triggered ï¼ˆonStartRefreshï¼
 <details>
 <summary>Tabbar Props  - (extends  Common Props)</summary>
 
-##### style _(StyleProp<ViewStyle>)_ 
+##### `style` _(StyleProp<ViewStyle>)_ 
 The style of the tabbar
-##### underLineHidden _(boolean)_  
+##### `underLineHidden` _(boolean)_  
 Whether the underline is displayed  
 it defaults to false
-##### underlineStyle _(StyleProp<ViewStyle>)_  
+##### `underlineStyle` _(StyleProp<ViewStyle>)_  
 The style of the underlined container
-##### lineStyle _(StyleProp<ViewStyle>)_  
+##### `lineStyle` _(StyleProp<ViewStyle>)_  
 The style of the underline
-##### tabItemStyle _(StyleProp<ViewStyle>)_  
+##### `tabItemStyle` _(StyleProp<ViewStyle>)_  
 The style of the tab item
-##### renderTabItem  _(React.ComponentType<any> | React.ReactElement | null)_
+##### `renderTabItem`  _(React.ComponentType<any> | React.ReactElement | null)_
 Takes an item from data and renders it
-##### renderTabItemButton _(React.ComponentType<any> | React.ReactElement | null)_
+##### `renderTabItemButton` _(React.ComponentType<any> | React.ReactElement | null)_
 Takes an item from data and renders it to the TAB Item button  
-##### scrollValue  _(Animated.Value)_  
+##### `scrollValue`  _(Animated.Value)_  
 Progress relative to total length  
-##### renderLeftView _(React.ComponentType<any> | React.ReactElement | null)_
+##### `renderLeftView` _(React.ComponentType<any> | React.ReactElement | null)_
 Render the view to the left of the Tabbar  
-##### renderRightView _(React.ComponentType<any> | React.ReactElement | null)_
+##### `renderRightView` _(React.ComponentType<any> | React.ReactElement | null)_
 Render the view to the right of the Tabbar   
 
 </details>
