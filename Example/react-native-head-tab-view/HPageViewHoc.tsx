@@ -126,6 +126,7 @@ _renderScene = (sceneProps) => {
                 containerTrans,
                 sceneScrollEnabled,
                 isRefreshingTabView,
+                refreshHeight,
                 ...rest
             } = this.props;
             const { placeHeight, scrollEnabled } = this.state
@@ -158,7 +159,7 @@ _renderScene = (sceneProps) => {
                             onScrollBeginDrag={this.onScrollBeginDrag}
                             onScroll={this.getOnScroll()}
                             overScrollMode={'never'}
-                            contentContainerStyle={{ paddingTop: showPaddingTop ? headerHeight + 100 : headerHeight, paddingBottom: placeHeight }}
+                            contentContainerStyle={{ paddingTop: showPaddingTop ? headerHeight + refreshHeight : headerHeight, paddingBottom: placeHeight }}
                             onContentSizeChange={this._onContentSizeChange}
                             scrollEnabled={mScrollEnabled}
                             {...rest}

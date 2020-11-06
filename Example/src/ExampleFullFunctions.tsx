@@ -216,7 +216,7 @@ class Page2 extends React.PureComponent<any, State> {
         this.state = {
             isRefreshing: false,
             signOfRefresh: true,
-            data: staticData.Page2Data1
+            data: staticData.Page2Data
         }
     }
 

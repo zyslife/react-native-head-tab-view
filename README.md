@@ -1,24 +1,24 @@
 # React Native Head Tab View
 
-## 功能
-- 左右滑动标签页
-- 共享滑动状态的头部
-- 头部可控制整个组件上下滚动
-- 头部可以响应点击事件
-- **新增标签页下拉刷新功能（v2.0~）**
-- **新增整个组件下拉刷新功能（v2.0.6~）**
+## Features
+- Scrollable tabs
+- All Tab pages share Collapsible headers
+- Collapsible Headers controls the slide of the Tabview in the vertical direction
+- Collapsible Headers can respond to an event
+- **Add a drop-down refresh for the Tab page（v2.0~）**
+- **Add a drop-down refresh for the Tabview（v2.0.6~）**
 
 ## Demo
 
-#### iOS效果图  
+#### iOS demo 
 
 ![demo_ios.gif](https://github.com/zyslife/react-native-head-tab-view/blob/master/demoGIF/demo_ios.gif)    
 
-#### Android效果图：  
+#### Android demo：  
 
 ![demo_android.gif](https://github.com/zyslife/react-native-head-tab-view/blob/master/demoGIF/demo_android.gif)  
 
-## 简例  
+## Example  
 
 ```
 import { ScrollView } from 'react-native';
@@ -48,24 +48,24 @@ render() {
     }
 ```
 
-更加完善的例子请点击[Example](https://github.com/zyslife/react-native-head-tab-view/blob/master/Example/src/Example.tsx)  
+More examples：[Example](https://github.com/zyslife/react-native-head-tab-view/blob/master/Example/src/Example.tsx)  
 
-## 运行Example  
+## Run the example  
 ```sh
 cd Example
 yarn or npm install
 
-//运行 Android 
+//run Android 
 react-native run-android
 
-//运行 iOS 
+//run iOS 
 cd ios
 pod install
 cd ../
 react-native run-ios
 ```
 
-## 添加到自己项目  
+## Add to your project
 
 ```sh
 yarn add react-native-head-tab-view react-native-gesture-handler @react-native-community/viewpager
@@ -75,15 +75,15 @@ npm install react-native-head-tab-view react-native-gesture-handler @react-nativ
 
 
 ## Linking  
-1. 依赖了 @react-native-community/viewpager  [自动或者手动进行链接](https://github.com/react-native-community/react-native-viewpager#Linking)  
+1. dependencies： @react-native-community/viewpager  [Autolinking and Manually link](https://github.com/react-native-community/react-native-viewpager#Linking)  
  
 
 https://github.com/react-native-community/react-native-viewpager#Linking  
 
-2. 依赖了react-native-gesture-handler [自动或者手动进行链接](https://github.com/software-mansion/react-native-gesture-handler)
+2. dependencies： react-native-gesture-handler [Autolinking and Manually link](https://github.com/software-mansion/react-native-gesture-handler)
 
-## Versions (@react-native-community/viewpager) **【建议将版本固定为3.3，[参考issues28](https://github.com/zyslife/react-native-head-tab-view/issues/28)】**
-以下为@react-native-community/viewpager的版本，请自行选择
+## Versions (@react-native-community/viewpager) **【It is recommended that you fix the version for V3.3，[reference issues28](https://github.com/zyslife/react-native-head-tab-view/issues/28)】**
+Some versions of @react-native-community/viewpager 
 | 1.x              | 2.x              | 3.x
 | ---------------- | -------------    | -------------    |
 |                  | iOS support      | iOS support      |
@@ -100,8 +100,7 @@ https://github.com/react-native-community/react-native-viewpager#Linking
 
 ##### `tabs` (`required`) _(tabs :string[])_
 
-此组件的数据源，为各个标签页的名字组成的数组
-可配合`tabNameConvert`使用  
+The data source for Tabbar and TabView
 Example:
 
 ```js
@@ -116,9 +115,10 @@ Example:
 
 ##### `averageTab`  _(boolean)_
 
-Tabbar组件内元素是否平分  
-`true` : 以Tabbar宽度平分所有元素  
-`false` : 根据Tabbar元素的长度自动伸展，可左右滑动
+Whether items in a Tabbar divide the width of the container of the Tabbar equally  
+it defaults to true.
+`true` : All TAB items divide the width of the tabbar equally
+`false` : The width depends on the text of the label item. Wrapped in a ScrollView
 
 Example:
 
@@ -130,31 +130,39 @@ Example:
 ```
 
 ##### tabNameConvert _((tabname: string) => string) 
-可以再tabs中设置["a","b","c"],然后通过此方法转换成想要显示在tabbar上的文字
+Convert the elements in tabs into the titles you want
+example:
+```tabNameConvert={(tabname)=>return tabname+'_aguai'}```
 
 ##### tabsContainerStyle _(StyleProp<ViewStyle>)_  
-tabbar容器的样式
+These styles will be applied to the Tabbar view content container which wraps all of the child views. 
 
 ##### activeTextStyle _(StyleProp<ViewStyle>)_  
-tabbar item选中的样式
+The style of the tab item when active
+defaults to { fontSize: 14, color: '#4D4D4D', fontWeight: 'bold' }
 
 ##### inactiveTextStyle _(StyleProp<ViewStyle>)_  
-tabbar item未选中的样式
+The style of the tab item when inactive
+defaults to { fontSize: 14, color: '#848484', fontWeight: 'bold' }
+
 </details>
 
 <details>
 <summary>HPageViewHoc Props （HOC props）</summary>
 
 ##### `isRefreshing`  _(boolean)_   
-标签页是否处于下拉刷新状态  
+Whether the scene is refreshing  
 ##### `onStartRefresh`  _(() => void)_   
-开始下拉刷新 回调方法  
+If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality.  
+Make sure to also set the isRefreshing prop correctly.  
 ##### `renderRefreshControl`  _(() => React.ReactElement)_   
-自定义下拉刷新 组件
+A custom RefreshControl for scene
 ##### `refreshHeight`  _(number)_   
-下拉刷新的高度 （默认100） 
+If this height is reached, a refresh event will be triggered （onStartRefresh）  
+ it defaults to 100
 ##### `overflowPull`  _(number)_   
-下拉的距离超过 下拉刷新组件的高度 （默认50）
+It's the distance beyond the refreshHeight, the distance to continue the displacement, when the pull is long enough,  
+it defaults to 50.
 
 </details>
 
@@ -162,10 +170,11 @@ tabbar item未选中的样式
 <summary>TabView Props  - (extends  Common Props)</summary>
 
 ##### `renderScene` (`required`) _(renderScene :(info: TabViewItemInfo<TabItemT>) => React.ReactElement | null | undefined)_  
-渲染各个标签子页面的方法，传入参数遵从TabViewItemInfo协议包含以下参数
+Takes an item from tabs and render the scene of the TAB item
+When renderScrollHeader is assigned, pass info to the component wrapped by HPageViewHoc
 
-- item _(string)_ : 标签的名字（`tabs`数组的其中一个元素）  
-- index _(number)_ : 标签页的序号 ，从0开始排序  
+- item _(string)_ : An element in the Tabs array
+- index _(number)_ : index
 
 
 Example:
@@ -190,7 +199,7 @@ Example:
 
 ##### `renderScrollHeader` _(React.ComponentType<any> | React.ReactElement | null)_
 
-渲染标签页组件共有的头部，可整体滑动
+render the collapsible header
 
 ```js
 <TabView
@@ -199,7 +208,7 @@ Example:
 ```
 ##### `frozeTop` _(number)_
 
-滑动头部冻结高度，可以让tabbar和子页面滚动到距离顶部frozeTop距离
+The height at which the top area of the Tabview is frozen
 
 ```js
 <TabView
@@ -208,33 +217,37 @@ Example:
 ```
 
 ##### `headerRespond` _(boolean)_
-头部是否能响应事件 。默认值 false (如果设置为true，头部会相应滑动事件，Android在debug模式下可能会有卡顿的感觉)
+Collapsible headers can respond to an event
+it defaults to false
 ```js
 <TabView
     headerRespond={true}
 />
 ```
 
-##### `makeHeaderHeight` (`如果有renderScrollHeader时，必须实现此方法`)
+##### `makeHeaderHeight` 
 
-返回renderScrollHeader组件的高度
+The height of collapsible header
 
 ```js
 renderScrollHeader={()=><View style={{height:180,backgroundColor:'red'}}/>}
 ```  
 
 ##### `renderHeader` _(React.ComponentType<any> | React.ReactElement | null)_   
-渲染头部组件(在Tabbar的下方)
+render the header of the Tabview
 
 ##### `renderFooter` _(React.ComponentType<any> | React.ReactElement | null)_   
-渲染底部组件
+render the footer of the Tabview
 ##### `initialPage` _(number)_  
-初始显示的标签页序号 （默认是0）
+The sequence number of the initial scene. 
+it defaults to 0  
 ##### `preInitSceneNum` _(number)_  
-预加载的屏幕数量 （默认是0）
+Number of pre-loaded pages  
+it defaults to 0  
 ##### `renderTabBar` _(React.ComponentType<any> | React.ReactElement | null)_  
-自定义Tabbar的渲染方法
+Render the custom tabbar
 ##### `onChangeTab` _((value: ChangeTabProperties): void)_  
+This method is called when the scene is switched
 ```js
 <TabView
     onChangeTab={({from,curIndex}) => { console.log('from:'+from+'-to:'+curIndex) }}
@@ -242,47 +255,52 @@ renderScrollHeader={()=><View style={{height:180,backgroundColor:'red'}}/>}
 
 ```
 ##### `onScroll` _((value: number): void)_  
-当前标签页左右滑动的进度回调，value:当前滚动的距离/总共可滚动距离
+Horizontal scrolling invokes this method  
+`value`: Progress relative to total length
 ##### `locked` _(boolean)_  
-是否允许水平滑动  
+Whether horizontal sliding is allowed.  
+it defaults to false
 ##### `scrollEnabled` _(boolean)_
-是否允许标签页滑动
+Whether to allow the scene to slide vertically
 ##### `tabbarStyle` _(StyleProp<ViewStyle>)_  
-tabbar的样式
+The style of the Tabbar
 ##### `extraData` _(any)_ 
-用于重新渲染组件  
+A marker property for telling the tabview to re-render (since it implements PureComponent).  
+ stick it here and treat it immutably.
 ##### `isRefreshing`  _(boolean)_   
-整个TabView是否处于下拉刷新状态  
+Whether the TabView is refreshing  
 ##### `onStartRefresh`  _(() => void)_   
-整个TabView开始下拉刷新 回调方法  
+If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality.  
+Make sure to also set the isRefreshing prop correctly.
 ##### `renderRefreshControl`  _(() => React.ReactElement)_   
-自定义下拉刷新 组件
+A custom RefreshControl
 ##### `refreshHeight`  _(number)_   
-下拉刷新的高度 （默认100） 
+If this height is reached, a refresh event will be triggered （onStartRefresh）   
 </details>
 
 <details>
 <summary>Tabbar Props  - (extends  Common Props)</summary>
 
 ##### style _(StyleProp<ViewStyle>)_ 
-tabbar样式
+The style of the tabbar
 ##### underLineHidden _(boolean)_  
-是否隐藏下划线  
+Whether the underline is displayed  
+it defaults to false
 ##### underlineStyle _(StyleProp<ViewStyle>)_  
-下划线容器样式
+The style of the underlined container
 ##### lineStyle _(StyleProp<ViewStyle>)_  
-下划线样式
+The style of the underline
 ##### tabItemStyle _(StyleProp<ViewStyle>)_  
-tabItem样式
+The style of the tab item
 ##### renderTabItem  _(React.ComponentType<any> | React.ReactElement | null)_
-渲染tabItem的按钮
+Takes an item from data and renders it
 ##### renderTabItemButton _(React.ComponentType<any> | React.ReactElement | null)_
-渲染tabbarItem方法  
+Takes an item from data and renders it to the TAB Item button  
 ##### scrollValue  _(Animated.Value)_  
-当前滚动的距离/总共可滚动距离（水平方向）
+Progress relative to total length  
 ##### renderLeftView _(React.ComponentType<any> | React.ReactElement | null)_
-渲染Tabbar左边组件  
+Render the view to the left of the Tabbar  
 ##### renderRightView _(React.ComponentType<any> | React.ReactElement | null)_
-渲染Tabbar右边组件
+Render the view to the right of the Tabbar   
 
 </details>

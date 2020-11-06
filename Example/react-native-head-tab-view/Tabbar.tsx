@@ -353,7 +353,6 @@ const styles = StyleSheet.create({
     },
     leftRightView: {
         width: 44,
-        height: 44,
         justifyContent: 'center',
         alignItems: 'center'
     },

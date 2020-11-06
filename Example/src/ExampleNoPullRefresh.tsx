@@ -79,7 +79,7 @@ export default class ExampleNoPullRefresh extends React.PureComponent<any, EStat
         )
     }
 
-    _renderTabBar = (tabbarProps: TabbarInfo) => {
+    _renderTabBar = (tabbarProps: TabbarInfo<string>) => {
         return <Tabbar
             {...tabbarProps}
             renderTabItemButton={this._renderTabItemButton}
