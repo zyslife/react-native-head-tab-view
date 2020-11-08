@@ -21,7 +21,7 @@ interface Props {
     hideContent: boolean;
     addListener: any;
     removeListener: any;
-    renderContent?: React.ComponentType<any> | React.ReactElement | null;
+    renderContent: (refreshProps?: any) => React.ReactElement;
 }
 interface State {
     hidden: boolean;

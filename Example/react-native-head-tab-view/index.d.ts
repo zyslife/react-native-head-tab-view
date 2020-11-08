@@ -1,10 +1,9 @@
 
 
 import * as React from 'react';
-import { Animated, ViewStyle, TextStyle, StyleProp, LayoutChangeEvent, ScrollView, FlatList, SectionList } from 'react-native';
+import { Animated, ViewStyle, TextStyle, StyleProp, LayoutChangeEvent, ScrollView, FlatList, SectionList, ScrollViewProps } from 'react-native';
 
 declare class TabViewPageComponent extends React.Component { }
-
 interface TabItemBase<T> {
     item: T;
     index: number;
@@ -110,7 +109,7 @@ export type HPageViewHocProps = {
     /**
      * A custom RefreshControl for scene
      */
-    renderRefreshControl?: () => React.ComponentType<any> | React.ReactElement | null;
+    renderRefreshControl?: () => React.ReactElement;
     /**
      * If this height is reached, a refresh event will be triggered （onStartRefresh）
      * it defaults to 100
@@ -123,7 +122,7 @@ export type HPageViewHocProps = {
     overflowPull?: number;
 }
 
-export type PageViewHocProps<T> = HPageViewHocProps & HPageViewHocNU<T> & SceneItem<T>;
+export type PageViewHocProps<T> = HPageViewHocProps & HPageViewHocNU<T> & SceneItem<T> & ScrollViewProps;
 
 
 export interface TabbarProps<T> extends TabbarInfo<T> {
@@ -209,6 +208,7 @@ export interface TabViewProps<T> extends TabProps<T> {
      */
     renderHeader?: (params: { item: T, index: number } | null) => React.ReactElement | null;
     /**
+     * 【 This property has been deprecated,By default, the header responds to events. 】
      * Collapsible headers can respond to an event
      * it defaults to false
      */
@@ -275,7 +275,7 @@ export interface TabViewProps<T> extends TabProps<T> {
     /**
      * A custom RefreshControl
      */
-    renderRefreshControl?: () => React.ComponentType<any> | React.ReactElement | null;
+    renderRefreshControl?: () => React.ReactElement;
     /**
      * If this height is reached, a refresh event will be triggered （onStartRefresh）
      */

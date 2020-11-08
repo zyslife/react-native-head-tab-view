@@ -115,6 +115,7 @@ _renderScene = (sceneProps) => {
 
         render() {
             const {
+                style,
                 children,
                 forwardedRef,
                 index,
@@ -137,8 +138,9 @@ _renderScene = (sceneProps) => {
                 return <WrappedComponent ref={forwardedRef} {...this.props} />
             }
             const showPaddingTop = isRefreshing || isRefreshingTabView
+            const paddingTop = showPaddingTop ? headerHeight + refreshHeight : headerHeight
             return (
-                <View>
+                <View style={{ flex: 1 }}>
                     <NativeViewGestureHandler
                         ref={childRefs[index]}
                     >
@@ -159,15 +161,15 @@ _renderScene = (sceneProps) => {
                             onScrollBeginDrag={this.onScrollBeginDrag}
                             onScroll={this.getOnScroll()}
                             overScrollMode={'never'}
-                            contentContainerStyle={{ paddingTop: showPaddingTop ? headerHeight + refreshHeight : headerHeight, paddingBottom: placeHeight }}
+                            contentContainerStyle={{ paddingTop, paddingBottom: placeHeight }}
                             onContentSizeChange={this._onContentSizeChange}
                             scrollEnabled={mScrollEnabled}
-                            {...rest}
+                            scrollIndicatorInsets={{ top: paddingTop }}
+                            bounces={false}
                             style={[{
                                 opacity: this.state.hideContent ? 0 : 1,
-                            }, this.getTransformAction()]}
-                            showsVerticalScrollIndicator={false}
-                            bounces={false}
+                            }, this.getTransformAction(), style]}
+                            {...rest}
                         >
                             {children}
                         </AnimatePageView>
@@ -354,6 +356,9 @@ _renderScene = (sceneProps) => {
             } else if (this.shouldStartRefresh) {
 
                 this.setState({ scrollEnabled: false }, () => {
+                    if (Platform.OS === 'ios' && this.props.bounces === true) {
+                        this.props.containerTrans.setValue(0)
+                    }
                     this.startDragY = value
                     this.startRefresh = true
                 })
@@ -368,6 +373,9 @@ _renderScene = (sceneProps) => {
 
             if (this.refreshTransValue > this.props.refreshHeight) {
                 this.setState({ scrollEnabled: true }, () => {
+                    if (Platform.OS === 'ios' && this.props.bounces === true) {
+                        this.props.containerTrans.setValue(0)
+                    }
                     this.pageOnScroll()
                 })
             } else {

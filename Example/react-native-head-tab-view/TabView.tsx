@@ -32,7 +32,6 @@ const defaultProps = {
     initialPage: 0,
     preInitSceneNum: 0,
     faultHeight: 2,
-    headerRespond: false,
     frozeTop: 0,
     scrollEnabled: true,
     refreshHeight: 100
@@ -152,7 +151,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     }
 
     render() {
-        const { headerRespond, contentStyle, style, scrollEnabled, isRefreshing, refreshHeight } = this.props
+        const { contentStyle, style, scrollEnabled, isRefreshing, refreshHeight } = this.props
         const { childRefs } = this.state
 
         const enabled = scrollEnabled !== false
@@ -175,7 +174,6 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
                         flex: 1, width: '100%', transform
                     }}>
                         {this._renderFrozeView()}
-                        {headerRespond ? null : this._renderScrollHead()}
                         <View style={[{ flex: 1, overflow: 'hidden', width: '100%' }, contentStyle]} onLayout={this.contentOnLayout}>
                             {this._renderTabBar()}
                             {this._renderHeader()}
@@ -190,7 +188,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
                         </View>
 
                         {this._renderFooter()}
-                        {headerRespond ? this._renderScrollHead() : null}
+                        {this._renderScrollHead()}
                     </Animated.View>
                     {this.renderRefreshControl()}
                 </Animated.View>
@@ -287,6 +285,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
         const { transform, ...restStyle } = this.getStyle(style);
         const newProps = { ...rest, ...{ style: restStyle } }
         const tabbarContent = renderTabBar ? (renderTabBar(newProps) || null) : <Tabbar {...newProps} />
+        //zIndex:10 ，In order for the Tabbar to be on top of the Tabview, to be able to respond to events
         return (
             <Animated.View onLayout={this.tabbarOnLayout} style={[tabbarProps.style, { zIndex: 10 }]}>
                 {tabbarContent}

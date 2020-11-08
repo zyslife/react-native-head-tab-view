@@ -84,10 +84,10 @@ https://github.com/react-native-community/react-native-viewpager#Linking
 
 ## Versions (@react-native-community/viewpager) **【It is recommended that you fix the version for V3.3，[reference issues28](https://github.com/zyslife/react-native-head-tab-view/issues/28)】**
 Some versions of @react-native-community/viewpager 
-| 1.x              | 2.x              | 3.x
-| ---------------- | -------------    | -------------    |
-|                  | iOS support      | iOS support      |
-| Android support  | Android support  | AndroidX support  |
+| 1.x             | 2.x             | 3.x              |
+| --------------- | --------------- | ---------------- |
+|                 | iOS support     | iOS support      |
+| Android support | Android support | AndroidX support |
 
 
 
@@ -217,7 +217,7 @@ The height at which the top area of the Tabview is frozen
 />
 ```
 
-##### `headerRespond` _(boolean)_
+##### `headerRespond` _(boolean)_【This property has been deprecated,By default, the header responds to events.】  
 Collapsible headers can respond to an event
 it defaults to false
 ```js
