@@ -93,6 +93,8 @@ interface HPageViewHocNU<T> {
     makeHeaderHeight?: () => number;
     faultHeight: number;
     sceneScrollEnabled?: boolean;
+    isRefreshingTabView?: boolean
+    pulldownEnabled?: boolean
 }
 
 
@@ -280,6 +282,10 @@ export interface TabViewProps<T> extends TabProps<T> {
      * If this height is reached, a refresh event will be triggered （onStartRefresh）
      */
     refreshHeight?: number;
+    /**
+     * When true, the scroll view bounces when it reaches the end of the content if it slides the tabs horizontally
+     */
+    bounces?: boolean;
 }
 
 

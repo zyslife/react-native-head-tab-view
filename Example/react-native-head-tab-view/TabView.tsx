@@ -316,6 +316,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
                 directionalLockEnabled
                 alwaysBounceVertical={false}
                 keyboardDismissMode="on-drag"
+                bounces={this.props.bounces}
             >
                 {this.getScene()}
             </Animated.ScrollView>

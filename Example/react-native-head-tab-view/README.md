@@ -93,7 +93,7 @@ Some versions of @react-native-community/viewpager
 
 
 ---
-### Documentation
+## Documentation
 
 <details>
 <summary>Common Props</summary>
@@ -217,7 +217,7 @@ The height at which the top area of the Tabview is frozen
 />
 ```
 
-##### `headerRespond` _(boolean)_【This property has been deprecated,By default, the header responds to events.】  
+##### `headerRespond` _(boolean)_ <font color=red >【This property has been deprecated,By default, the header responds to events.】</font>  
 Collapsible headers can respond to an event
 it defaults to false
 ```js
@@ -277,6 +277,8 @@ Make sure to also set the isRefreshing prop correctly.
 A custom RefreshControl
 ##### `refreshHeight`  _(number)_   
 If this height is reached, a refresh event will be triggered （onStartRefresh）   
+##### `bounces`  _(boolean)_   
+When true, the scroll view bounces when it reaches the end of the content if it slides the tabs horizontally   
 </details>
 
 <details>

@@ -36,6 +36,7 @@ export default class ExampleNoPullRefresh extends React.PureComponent<any, EStat
     }
 
     private _renderScrollHeader = () => {
+        return <View style={{  width: '100%', height: HEAD_HEIGHT }}/>
         return (
             <ImageBackground source={require('../resource/header_img.png')} resizeMode={'stretch'} style={{ backgroundColor: '#c44078', width: '100%', height: HEAD_HEIGHT }}>
 
@@ -89,6 +90,13 @@ export default class ExampleNoPullRefresh extends React.PureComponent<any, EStat
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: '#FFF' }}>
+                {/* <ScrollView>
+                    <View>
+                        <View style={{ height: 1000, backgroundColor: 'red' }}></View>
+
+                    </View>
+                </ScrollView> */}
+                                
                 <TabView
                     tabs={this.state.tabs}
                     renderScene={this._renderScene}
@@ -107,6 +115,7 @@ class Page1 extends React.PureComponent {
 
         return (
             <HScrollView
+                style={{backgroundColor:'red'}}
                 {...this.props}>
 
                 {staticData.Page1Data.map((item, index) => {

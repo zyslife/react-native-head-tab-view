@@ -137,6 +137,7 @@ export default class ExampleFullFunctions extends React.PureComponent<any, EStat
                     makeScrollTrans={this._makeScrollTrans}
                     headerRespond={true}
                     scrollEnabled={this.state.scrollEnabled}
+                    bounces={false}
                 />
                 {this._renderCustomView()}
             </View>
@@ -176,6 +177,10 @@ class Page1 extends React.PureComponent<any, State> {
         }
     }
 
+    onScroll=(e)=>{
+        console.log(e.nativeEvent.contentOffset.y);
+    }
+
     render() {
         return (
             <HScrollView
@@ -183,6 +188,7 @@ class Page1 extends React.PureComponent<any, State> {
                 isRefreshing={this.state.isRefreshing}
                 onStartRefresh={this.onStartRefresh}
                 renderRefreshControl={this.renderRefreshControl}
+                onScroll={this.onScroll}
             >
 
                 {staticData.Page1Data.map((item, index) => {

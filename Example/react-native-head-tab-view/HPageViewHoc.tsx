@@ -24,7 +24,7 @@ const defaultProps = {
 const isIOS = Platform.OS === 'ios'
 
 export default function HPageViewHoc<T>(WrappedComponent: any) {
-    const AnimatePageView = Animated.createAnimatedComponent(WrappedComponent)
+    const AnimatePageView: any = Animated.createAnimatedComponent(WrappedComponent)
     class HPageView extends React.Component<PageViewHocProps<T> & typeof defaultProps & HPageViewProps, HPageViewHocState> {
         static propTypes = {
             containerTrans: PropTypes.any.isRequired, //
@@ -114,8 +114,12 @@ _renderScene = (sceneProps) => {
 
 
         render() {
+            if (!this.needHandleScroll()) {
+                return <WrappedComponent ref={this.props.forwardedRef} {...this.props} />
+            }
             const {
                 style,
+                contentContainerStyle,
                 children,
                 forwardedRef,
                 index,
@@ -134,9 +138,6 @@ _renderScene = (sceneProps) => {
             const headerHeight = this.getHeaderHeight()
             const mScrollEnabled = sceneScrollEnabled && scrollEnabled
 
-            if (!this.needHandleScroll()) {
-                return <WrappedComponent ref={forwardedRef} {...this.props} />
-            }
             const showPaddingTop = isRefreshing || isRefreshingTabView
             const paddingTop = showPaddingTop ? headerHeight + refreshHeight : headerHeight
             return (
@@ -158,11 +159,8 @@ _renderScene = (sceneProps) => {
                             scrollEventThrottle={16}
                             directionalLockEnabled
                             automaticallyAdjustContentInsets={false}
-                            onScrollBeginDrag={this.onScrollBeginDrag}
-                            onScroll={this.getOnScroll()}
                             overScrollMode={'never'}
-                            contentContainerStyle={{ paddingTop, paddingBottom: placeHeight }}
-                            onContentSizeChange={this._onContentSizeChange}
+                            contentContainerStyle={[{ paddingTop, paddingBottom: placeHeight }, contentContainerStyle]}
                             scrollEnabled={mScrollEnabled}
                             scrollIndicatorInsets={{ top: paddingTop }}
                             bounces={false}
@@ -170,6 +168,9 @@ _renderScene = (sceneProps) => {
                                 opacity: this.state.hideContent ? 0 : 1,
                             }, this.getTransformAction(), style]}
                             {...rest}
+                            onScroll={this.getOnScroll()}
+                            onScrollBeginDrag={this.onScrollBeginDrag}
+                            onContentSizeChange={this._onContentSizeChange}
                         >
                             {children}
                         </AnimatePageView>
@@ -308,7 +309,7 @@ _renderScene = (sceneProps) => {
         }
 
         _onScroll = (e: any) => {
-
+            this.props.onScroll && this.props.onScroll(e)
             this.props.scrollYTrans.setValue(e.nativeEvent.contentOffset.y)
             this.scrollTop = e.nativeEvent.contentOffset.y
         }
@@ -459,6 +460,8 @@ _renderScene = (sceneProps) => {
 
         //adjust the scene size
         _onContentSizeChange = (contentWidth: number, contentHeight: number) => {
+            this.props.onContentSizeChange && this.props.onContentSizeChange(contentWidth, contentHeight)
+
             const { placeHeight } = this.state;
             const { expectHeight, faultHeight } = this.props;
             const intContainerHeight = Math.floor(expectHeight + faultHeight);
@@ -492,9 +495,10 @@ _renderScene = (sceneProps) => {
             this.stopScroll = true;
             this.props.headerTrans.stopAnimation()
         }
-        onScrollBeginDrag = () => {
-            const { scenePageDidDrag, index } = this.props;
+        onScrollBeginDrag = (event: any) => {
+            const { scenePageDidDrag, index, onScrollBeginDrag } = this.props;
             scenePageDidDrag && scenePageDidDrag(index)
+            onScrollBeginDrag && onScrollBeginDrag(event)
 
         }
 
