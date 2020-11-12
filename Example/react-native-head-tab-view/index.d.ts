@@ -286,6 +286,11 @@ export interface TabViewProps<T> extends TabProps<T> {
      * When true, the scroll view bounces when it reaches the end of the content if it slides the tabs horizontally
      */
     bounces?: boolean;
+    /**
+     * This method is called when all the tabs are about to be mounted.
+     */
+    tabsWillMount: () => void;
+    slideAnimated?:boolean;
 }
 
 

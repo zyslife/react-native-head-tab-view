@@ -178,8 +178,8 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
                             {this._renderTabBar()}
                             {this._renderHeader()}
                             {
+                                //Avoiding the scene's expectHeight is inaccurate
                                 this.state.tabviewHeight > 0 ?
-
                                     <NativeViewGestureHandler ref={this.contentScroll} >
                                         {this._renderContent()}
                                     </NativeViewGestureHandler>
@@ -494,11 +494,15 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     tabbarOnLayout = (event: LayoutChangeEvent) => {
         this.setState({ tabbarHeight: event.nativeEvent.layout.height })
     }
+
+    tabsWillMount = () => {
+        this.props.tabsWillMount && this.props.tabsWillMount()
+    }
     /**
     * 整体的layout方法
     */
     containerOnLayout = (event: LayoutChangeEvent) => {
-        this.setState({ tabviewHeight: event.nativeEvent.layout.height })
+        this.setState({ tabviewHeight: event.nativeEvent.layout.height }, this.tabsWillMount)
     }
     /**
     * tabview部分的layout方法
