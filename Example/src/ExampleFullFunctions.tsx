@@ -137,7 +137,6 @@ export default class ExampleFullFunctions extends React.PureComponent<any, EStat
                     makeScrollTrans={this._makeScrollTrans}
                     headerRespond={true}
                     scrollEnabled={this.state.scrollEnabled}
-                    bounces={false}
                 />
                 {this._renderCustomView()}
             </View>
@@ -178,7 +177,7 @@ class Page1 extends React.PureComponent<any, State> {
     }
 
     onScroll=(e)=>{
-        console.log(e.nativeEvent.contentOffset.y);
+        // console.log(e.nativeEvent.contentOffset.y);
     }
 
     render() {

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
     Image,
@@ -35,13 +34,13 @@ export default class ExampleWithPullRefresh extends React.PureComponent<any, ESt
 
     private _renderScrollHeader = () => {
         return (
-            <View source={require('../resource/header_img.png')} resizeMode={'stretch'} style={{ width: '100%', height: HEAD_HEIGHT }}>
+            <ImageBackground source={require('../resource/header_img.png')} resizeMode={'stretch'} style={{ backgroundColor: '#c44078', width: '100%', height: HEAD_HEIGHT }}>
                 <TouchableWithoutFeedback onPress={() => {
                     Alert.alert('123');
                 }}>
                     <Image source={require('../resource/header_icon.png')} style={{ position: 'absolute', left: 35, top: 90, width: 100, height: 74 }} />
                 </TouchableWithoutFeedback>
-            </View>
+            </ImageBackground>
         )
     }
 
@@ -107,17 +106,16 @@ class Page1 extends React.PureComponent<any, State> {
         return (
             <HScrollView
                 {...this.props}
-                style={{ flex: 1,backgroundColor: 'yellow' }}
                 onStartRefresh={this.onStartRefresh}
                 isRefreshing={this.state.isRefreshing}>
 
                 {this.state.data.map((item, index) => {
                     return (
                         <View style={{ width: '100%', alignItems: 'center' }} key={'Page1_' + index}>
-                            {/* <View style={{ height: 40, width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFF' }}>
+                            <View style={{ height: 40, width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFF' }}>
                                 <Text style={styles.sectionTitle}>{item.title}</Text>
                             </View>
-                            <Image style={{ width: '100%', height: 200 }} resizeMode={'cover'} source={item.image} /> */}
+                            <Image style={{ width: '100%', height: 200 }} resizeMode={'cover'} source={item.image} />
                         </View>
                     )
                 })}
@@ -275,4 +273,3 @@ const styles = StyleSheet.create({
         borderBottomColor: '#EAEAEA',
     }
 });
-
