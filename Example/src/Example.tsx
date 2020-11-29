@@ -8,6 +8,7 @@ import MainScreen from './MainScreen'
 import ExampleNoPullRefresh from './ExampleNoPullRefresh'
 import ExampleWithPullRefresh from './ExampleWithPullRefresh'
 import ExampleFullFunctions from './ExampleFullFunctions'
+import ExampleSlideAnimated from './ExampleSlideAnimated'
 import ExampleWithTabViewPullRefresh from './ExampleWithTabViewPullRefresh'
 
 const Stack = createStackNavigator();
@@ -46,6 +47,10 @@ export default class Example extends React.PureComponent {
                     <Stack.Screen
                         name="ExampleFullFunctions"
                         component={ExampleFullFunctions}
+                    />
+                    <Stack.Screen
+                        name="ExampleSlideAnimated"
+                        component={ExampleSlideAnimated}
                     />
                 </Stack.Navigator>
             </NavigationContainer>

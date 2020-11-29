@@ -7,6 +7,7 @@
 - Collapsible Headers can respond to an event
 - **Add a drop-down refresh for the Tab page（v2.0~）**
 - **Add a drop-down refresh for the Tabview（v2.0.6~）**
+- **Add the new slide mode to Collapsible Headers and Tabview（v2.1.0~）**
 
 ## Demo
 
@@ -149,25 +150,6 @@ defaults to { fontSize: 14, color: '#848484', fontWeight: 'bold' }
 </details>
 
 <details>
-<summary>HPageViewHoc Props （HOC props）</summary>
-
-##### `isRefreshing`  _(boolean)_   
-Whether the scene is refreshing  
-##### `onStartRefresh`  _(() => void)_   
-If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality.  
-Make sure to also set the isRefreshing prop correctly.  
-##### `renderRefreshControl`  _(() => React.ReactElement)_   
-A custom RefreshControl for scene
-##### `refreshHeight`  _(number)_   
-If this height is reached, a refresh event will be triggered （onStartRefresh）  
- it defaults to 100
-##### `overflowPull`  _(number)_   
-It's the distance beyond the refreshHeight, the distance to continue the displacement, when the pull is long enough,  
-it defaults to 50.
-
-</details>
-
-<details>
 <summary>TabView Props  - (extends  Common Props)</summary>
 
 ##### `renderScene` (`required`) _(renderScene :(info: TabViewItemInfo<TabItemT>) => React.ReactElement | null | undefined)_  
@@ -207,6 +189,18 @@ render the collapsible header
     makeHeaderHeight={() => { return 180 }}
 />
 ```
+
+##### `slideAnimated` _(boolean)_
+Whether to animate the entire Tabview when the head appears on the screen  
+On Android, if the header is too long, it might be better to set SlideAnimated to true.   
+
+it defaults to false.  
+|            | slide the header            | slide the Tab page
+| --------------- | ---------------             |--------|
+|false| I'm going to listen for headerTrans, and then I'm going to call the scrollTo method on the Tab|I'm going to enable the Transform animation of the Tabview until the head disappears completely  
+|true | I'm going to listen for headerTrans, and then enable the transformation animation for the header. |I'm going to enable the Transform animation of the Tabview until the head disappears completely  
+
+
 ##### `frozeTop` _(number)_
 
 The height at which the top area of the Tabview is frozen
@@ -279,6 +273,25 @@ A custom RefreshControl
 If this height is reached, a refresh event will be triggered （onStartRefresh）   
 ##### `bounces`  _(boolean)_   
 When true, the scroll view bounces when it reaches the end of the content if it slides the tabs horizontally   
+</details>
+
+<details>
+<summary>HPageViewHoc Props （HOC props）</summary>
+
+##### `isRefreshing`  _(boolean)_   
+Whether the scene is refreshing  
+##### `onStartRefresh`  _(() => void)_   
+If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality.  
+Make sure to also set the isRefreshing prop correctly.  
+##### `renderRefreshControl`  _(() => React.ReactElement)_   
+A custom RefreshControl for scene
+##### `refreshHeight`  _(number)_   
+If this height is reached, a refresh event will be triggered （onStartRefresh）  
+ it defaults to 100
+##### `overflowPull`  _(number)_   
+It's the distance beyond the refreshHeight, the distance to continue the displacement, when the pull is long enough,  
+it defaults to 50.
+
 </details>
 
 <details>

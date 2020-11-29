@@ -4,14 +4,15 @@ import {
     View,
     Animated,
     Platform,
-    LayoutChangeEvent
+    LayoutChangeEvent,
+    PixelRatio
 } from 'react-native';
-import { TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER, TABVIEW_HEADER_GRANT, TABVIEW_HEADER_RELEASE, TABVIEW_PULL_RELESE, TABVIEW_ONSCROLL } from './Const'
+import { TABVIEW_TABDIDCLICK, TABVIEW_BECOME_RESPONDER, TABVIEW_HEADER_GRANT, TABVIEW_HEADER_RELEASE, TABVIEW_PULL_RELESE, TABVIEW_ONSCROLL, TABVIEW_SCENE_SCROLL_TOP } from './Const'
 import Tabbar from './Tabbar'
 import ScrollHeader from './ScrollHeader'
 import PullRefreshView from './PullRefreshView'
 import RefreshControlAnimated from './RefreshControlAnimated'
-import { getContentAnimatedStyles, getScrollHeaderAnimatedStyles, pullRefreshAnimatedStyles } from './utils/animations'
+import { getContentAnimatedStyles, getScrollHeaderAnimatedStyles, pullRefreshAnimatedStyles, tabviewTransAnimatedStyles } from './utils/animations'
 
 const overflowPull = 50
 import ViewPagerAndroid from "@react-native-community/viewpager";
@@ -21,7 +22,7 @@ import {
     State,
     PanGestureHandlerStateChangeEvent
 } from 'react-native-gesture-handler';
-import { TabViewProps, TabViewState, TabbarInfo, PageViewHocProps, SceneProps, DisplayKeys } from './types'
+import { TabViewProps, TabViewState, TabbarInfo, NormalSceneContainerProps, SceneProps, DisplayKeys, TransMode } from './types'
 
 const AnimatedViewPagerAndroid = Platform.OS === 'android' ?
     Animated.createAnimatedComponent(ViewPagerAndroid) :
@@ -34,7 +35,7 @@ const defaultProps = {
     faultHeight: 2,
     frozeTop: 0,
     scrollEnabled: true,
-    refreshHeight: 100
+    refreshHeight: 100,
 }
 interface ObserversItem {
     instance: any,
@@ -53,6 +54,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     private offsetAndroid: Animated.Value = new Animated.Value(0)
     private headerTrans: Animated.Value = new Animated.Value(0)
     private tabviewRefreshTrans: Animated.Value = new Animated.Value(0)
+    private tabviewTrans: Animated.Value = new Animated.Value(0)
     private scrollOnMountCalled: boolean = false
     private observers: Observers = {}
     private drawer: React.RefObject<any> = React.createRef();
@@ -65,9 +67,14 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     private shouldStartRefresh: boolean = true
     private dragYEvent = ''
     private tabviewRefreshEvent = ''
+    private tabviewTransEvent = ''
     private containerTransEvent = ''
     private startDragY = 0
     private startRefresh = false
+    private startSlideValue = 0
+    private startSlide = false
+    private signValue = 0
+    private lastSlideValue = 0
 
     constructor(props: TabViewProps<T> & typeof defaultProps) {
         super(props)
@@ -78,26 +85,24 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
 
         const { refreshTrans, childRefs, sceneTrans } = this.initializes()
         const containerTrans = new Animated.Value(0)
+        const sceneScrollEnabled = props.slideAnimated && props.renderScrollHeader ? false : props.scrollEnabled
 
         this.state = {
             sceneWidth: 0,
             tabviewHeight: 0,
             tabbarHeight: 0,
             currentIndex: props.initialPage,
-            //所有页面是否需要显示和更新
+            //Whether all Tabs pages need to be displayed and updated
             displayKeys: this.getDisplayScene(props.tabs, props.initialPage),
-            //横向滑动的动画对象
             scrollValue: new Animated.Value(this.props.initialPage),
-            tabs: props.tabs, //所有tab
-            //控制垂直方向的整体滑动
+            tabs: props.tabs,
+            // Animated object for currently active Tab page (in vertical direction)
             containerTrans,
-            //子页面ref数组
             childRefs,
-            //下拉刷新动画数组
             refreshTrans,
-            //子页面实际滑动距离的动画数组
             sceneTrans,
-            sceneScrollEnabled: props.scrollEnabled
+            sceneScrollEnabled,
+            transMode: TransMode.default
         }
 
         this.handleScrollValue()
@@ -151,12 +156,11 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     }
 
     render() {
-        const { contentStyle, style, scrollEnabled, isRefreshing, refreshHeight } = this.props
+        const { scrollEnabled } = this.props
         const { childRefs } = this.state
 
         const enabled = scrollEnabled !== false
-        const animatedStyle = pullRefreshAnimatedStyles(this.tabviewRefreshTrans, refreshHeight + overflowPull)
-        const transform = isRefreshing ? undefined : animatedStyle.transform
+
         return (
             <PanGestureHandler
                 ref={this.drawer}
@@ -169,37 +173,101 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
                 onHandlerStateChange={this._onHandlerStateChange}
                 enabled={enabled}
             >
-                <Animated.View style={[{ flex: 1, alignItems: 'center' }, style]} onLayout={this.containerOnLayout}>
-                    <Animated.View style={{
-                        flex: 1, width: '100%', transform
-                    }}>
-                        {this._renderFrozeView()}
-                        <View style={[{ flex: 1, overflow: 'hidden', width: '100%' }, contentStyle]} onLayout={this.contentOnLayout}>
-                            {this._renderTabBar()}
-                            {this._renderHeader()}
-                            {
-                                //Avoiding the scene's expectHeight is inaccurate
-                                this.state.tabviewHeight > 0 ?
-                                    <NativeViewGestureHandler ref={this.contentScroll} >
-                                        {this._renderContent()}
-                                    </NativeViewGestureHandler>
-                                    : null
-                            }
-                        </View>
-
-                        {this._renderFooter()}
-                        {this._renderScrollHead()}
-                    </Animated.View>
-                    {this.renderRefreshControl()}
-                </Animated.View>
+                {this.renderTabViewContent()}
             </PanGestureHandler >
         )
     }
 
-    _onHandlerStateChange = ({ nativeEvent }: PanGestureHandlerStateChangeEvent) => {
-        if (nativeEvent.oldState === State.ACTIVE) {
-            this.makePullRefreshRelease();
+    renderTabViewContent() {
+        const { contentStyle, style, isRefreshing, refreshHeight } = this.props
+        if (this.props.slideAnimated) {
+            const headerHeight = this.getHeaderHeight()
 
+            return <Animated.View style={[{
+                flex: 1, alignItems: 'center'
+            }, style]} onLayout={this.containerOnLayout}>
+
+                <Animated.View style={[{
+                    width: '100%', height: this.state.tabviewHeight + headerHeight, alignItems: 'center', transform: this.getTransform()
+                }, style]}>
+                    {this.props.renderScrollHeader ? this.props.renderScrollHeader() : null}
+                    <View style={[{ flex: 1, overflow: 'hidden', width: '100%' }, contentStyle]} onLayout={this.contentOnLayout}>
+                        {this._renderTabBar()}
+                        {this._renderHeader()}
+                        {
+                            this.state.tabviewHeight > 0 ?
+
+                                <NativeViewGestureHandler ref={this.contentScroll} >
+                                    {this._renderContent()}
+                                </NativeViewGestureHandler>
+                                : null
+                        }
+                        {this._renderFooter()}
+                    </View>
+
+                </Animated.View>
+                {this.state.transMode === TransMode.pull_refresh || isRefreshing ? this._renderRefreshControl() : null}
+            </Animated.View>
+
+        }
+        const animatedStyle = pullRefreshAnimatedStyles(this.tabviewRefreshTrans, refreshHeight + overflowPull)
+        const transform = isRefreshing ? undefined : animatedStyle.transform
+        return <Animated.View style={[{ flex: 1, alignItems: 'center' }, style]} onLayout={this.containerOnLayout}>
+            <Animated.View style={{
+                flex: 1, width: '100%', transform
+            }}>
+                {this._renderFrozeView()}
+                <View style={[{ flex: 1, overflow: 'hidden', width: '100%' }, contentStyle]} onLayout={this.contentOnLayout}>
+                    {this._renderTabBar()}
+                    {this._renderHeader()}
+                    {
+                        //Avoiding the scene's expectHeight is inaccurate
+                        this.state.tabviewHeight > 0 ?
+                            <NativeViewGestureHandler ref={this.contentScroll} >
+                                {this._renderContent()}
+                            </NativeViewGestureHandler>
+                            : null
+                    }
+                </View>
+
+                {this._renderFooter()}
+                {this._renderScrollHead()}
+            </Animated.View>
+            {this._renderRefreshControl()}
+        </Animated.View>
+    }
+
+    getTransform() {
+        const { transMode } = this.state
+        const { isRefreshing, refreshHeight } = this.props
+        const animatedStyle = pullRefreshAnimatedStyles(this.tabviewRefreshTrans, refreshHeight + overflowPull)
+
+        let transform
+        if (this.props.slideAnimated) {
+            if (isRefreshing) {
+                const slideAnimatedStyle = tabviewTransAnimatedStyles(this.tabviewTrans, this.getHeaderHeight(), true, this.props.refreshHeight);
+                transform = slideAnimatedStyle.transform
+            } else {
+                if (transMode === TransMode.pull_refresh) {
+                    transform = animatedStyle.transform
+                } else {
+                    const slideAnimatedStyle = tabviewTransAnimatedStyles(this.tabviewTrans, this.getHeaderHeight());
+                    transform = slideAnimatedStyle.transform
+                }
+            }
+        } else {
+            transform = isRefreshing ? undefined : animatedStyle.transform
+        }
+        return transform
+    }
+
+    _onHandlerStateChange = ({ nativeEvent }: PanGestureHandlerStateChangeEvent) => {
+
+        if (nativeEvent.state === State.ACTIVE) {
+            //Correct tabviewTrans animation value
+            this.correctTabviewTrans()
+        } else if (nativeEvent.oldState === State.ACTIVE) {
+            this.makePullRefreshRelease({ nativeEvent });
             this.emitListener(TABVIEW_PULL_RELESE)
         }
 
@@ -210,11 +278,14 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
         if (frozeTop === undefined) return null
         return <View style={{ height: frozeTop, backgroundColor: 'transparent' }} />
     }
-    //渲染头部
+
     _renderHeader() {
-        const { renderHeader, frozeTop, isRefreshing, refreshHeight } = this.props
-        const headerHeight = this.getHeaderHeight() - frozeTop
+        const { renderHeader, slideAnimated, isRefreshing, refreshHeight } = this.props
+        const headerHeight = this.getHeaderHeight()
         if (!renderHeader) return null
+        if (slideAnimated) {
+            return renderHeader(this.makeParams())
+        }
         const mStyle = getContentAnimatedStyles(this.state.containerTrans, headerHeight, isRefreshing, refreshHeight)
         return (
             <Animated.View style={mStyle}>
@@ -222,7 +293,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             </Animated.View>
         )
     }
-    //渲染尾部
+
     _renderFooter() {
         const { renderFooter } = this.props
         if (!renderFooter) return null
@@ -245,13 +316,12 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
         return this.state.sceneScrollEnabled && this.props.scrollEnabled
     }
 
-    //渲染可滑动头部
     _renderScrollHead() {
 
         const { renderScrollHeader, frozeTop, isRefreshing, refreshHeight } = this.props
         if (!renderScrollHeader) return null
         const { containerTrans, sceneScrollEnabled } = this.state;
-        const headerHeight = this.getHeaderHeight() - frozeTop
+        const headerHeight = this.getHeaderHeight()
         const mStyle = getScrollHeaderAnimatedStyles(containerTrans, headerHeight, isRefreshing, refreshHeight)
         return <ScrollHeader
             headerTrans={this.headerTrans}
@@ -272,14 +342,11 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
 
     }
 
-    /**
-    * 渲染tabbar
-    */
     _renderTabBar() {
         const { renderTabBar } = this.props;
         const { tabs } = this.state;
         if (!tabs || !tabs.length) return null
-        //组装参数
+
         const tabbarProps = this.makeTabParams()
         const { style, ...rest } = tabbarProps;
         const { transform, ...restStyle } = this.getStyle(style);
@@ -293,9 +360,6 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
         )
     }
 
-    /**
-    * 渲染内容
-    */
     _renderContent() {
         if (Platform.OS === 'ios') {
 
@@ -351,9 +415,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
         }
     }
 
-    /**
-    * 获取标签子页面
-    */
+    //get Tab page
     getScene() {
         const { renderScene, renderScrollHeader } = this.props;
         const { sceneWidth, displayKeys, currentIndex, tabs } = this.state;
@@ -361,7 +423,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             const key = this.makeSceneKey(index)
             const display = this.sceneKeyIsDisplay(displayKeys, key)
 
-            //如果有scrollHeader，标签页必须保持update状态
+            //If the renderScrollHeader is not undefined, the Tab page must be able to update
             const showUpdate = renderScrollHeader ? true : this.sceneShouldPreInit(currentIndex, index)
             return <Scene key={this.makeSceneKey(index)} style={{ width: sceneWidth }} shouldUpdate={showUpdate}>
                 {(display && renderScene) ? renderScene(this.makeSceneParams(item, index)) : <View />}
@@ -369,9 +431,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
 
         })
     }
-    /**
-    * 跳转页面
-    */
+
     goToPage = (index: number) => {
         this.emitListener(TABVIEW_TABDIDCLICK);
         if (Platform.OS === 'ios') {
@@ -383,9 +443,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
         this.sceneWillShow(index)
     }
 
-    /**
-    * 动画停止
-    */
+
     onMomentumScrollEnd = (e: any) => {
         const offsetX = e.nativeEvent.contentOffset.x;
         const page = Math.round(offsetX / this.state.sceneWidth);
@@ -393,15 +451,11 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             this.pageHasChange(page);
         }
     }
-    /**
-    * 显示页面发生变化
-    */
+
     pageHasChange(page: number) {
         this.sceneWillShow(page)
     }
-    /**
-    * 页面将要显示
-    */
+
     sceneWillShow = (page: any) => {
 
         let zPage = page;
@@ -413,11 +467,11 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
         this.updateDisplayScene(zPage, this.onChangeTab.bind(this, currentIndex, zPage))
     }
 
-    /**
-    * tabbar切换
-    */
     onChangeTab(currentIndex: number, page: number) {
         if (currentIndex === page) return;
+        if (this.props.slideAnimated) {
+            this.state.containerTrans.setValue(this.getSceneTrans(page)._value)
+        }
         if (this.props.onChangeTab) {
             this.props.onChangeTab({ from: currentIndex, curIndex: page })
         }
@@ -437,22 +491,15 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             this.props.onScroll && this.props.onScroll(position + offset);
         }
     }
-    /**
-     * @description: 更新当前页面和当前应该显示的页面
-     * @param {page} 目标页面
-     * @param {callback} 回调
-     */
+
+    //Updates the current page and the page that should currently be displayed
     updateDisplayScene(page: number, callback = () => { }, tabs = this.state.tabs) {
         const { displayKeys } = this.state;
         const keys = this.getDisplayScene(tabs, page, displayKeys);
         this.setState({ currentIndex: page, displayKeys: keys }, callback)
     }
-    /**
-     * @description: 获取跳转到目标页面后，需要显示的页面
-     * @param {Array} tabs
-     * @param {number} page 当前页面
-     * @return: 所有需要显示的页面
-     */
+
+    //When you jump to the target page, get the page you want to display
     getDisplayScene(tabs = this.state.tabs, page = 0, displayKeys = {}) {
         const zPage = page
         const zKeys: DisplayKeys = Object.assign({}, displayKeys)
@@ -468,20 +515,12 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
 
         return Object.assign({}, zKeys)
     }
-    /**
-     * @description: 
-     * @param {number}} page 当前显示的page序号
-     * @param {number} sceneIndex 需要比较的页面
-     * @return: sceneIndex是否在page的预加载行列
-     */
+
     sceneShouldPreInit(page: number, sceneIndex: number) {
         const { preInitSceneNum } = this.props
         return ((sceneIndex >= page - preInitSceneNum) || (page - preInitSceneNum <= 0)) && sceneIndex <= page + preInitSceneNum
     }
-    /**
-     * @description: 
-     * @return: key是否显示
-     */
+
     sceneKeyIsDisplay(allScenekeys: DisplayKeys, key: string) {
         if (allScenekeys.constructor === Object && allScenekeys.hasOwnProperty(key) && allScenekeys[key]) return true
         return false
@@ -498,72 +537,26 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     tabsWillMount = () => {
         this.props.tabsWillMount && this.props.tabsWillMount()
     }
-    /**
-    * 整体的layout方法
-    */
+
     containerOnLayout = (event: LayoutChangeEvent) => {
         this.setState({ tabviewHeight: event.nativeEvent.layout.height }, this.tabsWillMount)
     }
-    /**
-    * tabview部分的layout方法
-    */
+
     contentOnLayout = (event: LayoutChangeEvent) => {
         this.setState({ sceneWidth: event.nativeEvent.layout.width })
     }
 
-    /**
-     * 抛出内部子页面上下滑动的y动画对象
-     */
     makeScrollTrans() {
+        if (this.props.slideAnimated) {
+            this.props.makeScrollTrans && this.props.makeScrollTrans(this.tabviewTrans)
+            return
+        }
         this.props.makeScrollTrans && this.props.makeScrollTrans(this.state.containerTrans)
     }
-    /**
-     * 标签页被拉拽
-     * @param {number} index 标签页的序号
-     */
+
     scenePageDidDrag = (index: number) => {
         this.stopHeaderAnimation()
         this.emitListener(TABVIEW_BECOME_RESPONDER, index)
-    }
-
-    emitListener(eventName: string, params?: any) {
-        if (this.observers.hasOwnProperty(eventName)) {
-            const allObservers = this.observers[eventName];
-
-            allObservers.forEach(observer => {
-                const { instance, callback } = observer;
-                if (instance && callback && typeof callback === 'function') {
-                    if (params !== undefined) {
-                        callback(params)
-                    } else {
-                        callback()
-                    }
-                }
-            });
-        }
-    }
-
-    removeListener = (instance: any, eventName: string, callback: any) => {
-        if (this.observers.hasOwnProperty(eventName)) {
-            const allObservers = this.observers[eventName];
-            const spliceIndex = allObservers.findIndex((el) => el.callback === callback)
-
-            if (spliceIndex >= 0) {
-                allObservers.splice(spliceIndex, 1)
-            }
-
-        }
-    }
-
-    addListener = (instance: any, eventName: string, callback: any) => {
-
-        if (this.observers.hasOwnProperty(eventName)) {
-            const allObservers = this.observers[eventName];
-            if (allObservers.find((el) => el.callback === callback)) return;
-            allObservers.push({ instance, callback })
-        } else {
-            this.observers[eventName] = [{ instance, callback }]
-        }
     }
 
     getScrollNode() {
@@ -604,22 +597,149 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
         return this.state.sceneTrans[currentIndex]
     }
 
+    /******************************************** Slide tabs ********************************************/
+    getSlideableHeight() {
+        const headerHeight = this.getHeaderHeight()
+        return this.props.isRefreshing ? headerHeight + this.props.refreshHeight : headerHeight
+    }
+
+    tabviewTransUpdate = ({ value }: { value: number }) => {
+
+        if (value >= this.getSlideableHeight() || value < 0) {
+            this.tabviewTrans.stopAnimation(() => { })
+        }
+        if (this.startSlide) return;
+
+        if (value >= this.getSlideableHeight() && this.state.sceneScrollEnabled === false) {
+            this.setState({ sceneScrollEnabled: true })
+        } else if (value < this.getSlideableHeight() && this.state.sceneScrollEnabled === true) {
+            this.setState({ sceneScrollEnabled: false })
+        }
+    }
+
+    prepareSlide(value: number) {
+        this.startSlide = true
+        this.startSlideValue = this.tabviewTrans._value + value
+    }
+
+    slideTabviewInDrag(value: number) {
+        if (this.state.containerTrans._value > 0) {
+            if (this.state.sceneScrollEnabled === false) {
+                this.setState({ sceneScrollEnabled: true })
+            }
+            return;
+        }
+        const isSlidingDown = value > this.lastSlideValue
+        const headerDisappeared = this.tabviewTrans._value >= this.getSlideableHeight()
+        const headerDisplayed = this.tabviewTrans._value <= 0
+        this.lastSlideValue = value
+
+        if (headerDisappeared && !isSlidingDown) return;
+
+        if (this.tabviewTrans._value <= 0 && isSlidingDown) return;
+
+        if (!this.startSlide) {
+            if (this.state.sceneScrollEnabled === true) {
+                if (value <= 0) return
+                if (!isSlidingDown) return;
+                this.setState({ sceneScrollEnabled: false }, () => {
+
+                    this.emitListener(TABVIEW_SCENE_SCROLL_TOP)
+                    this.prepareSlide(value)
+                })
+            } else {
+                this.prepareSlide(value)
+            }
+            return
+        }
+
+        if (headerDisappeared && value < 0 && isSlidingDown && this.signValue == 0) {
+            this.signValue = this.lastSlideValue
+            this.startSlideValue = this.getSlideableHeight()
+        } else if (headerDisplayed && value > 0 && !isSlidingDown && this.signValue == 0) {
+
+            this.signValue = this.lastSlideValue
+            this.startSlideValue = 0
+        }
+        this.tabviewTrans.setValue(this.getValidVaule(-value + this.signValue + this.startSlideValue))
+
+    }
+
+    getValidVaule(value: number) {
+        if (value < 0) {
+            return 0
+        } else if (value > this.getSlideableHeight()) {
+            return this.getSlideableHeight()
+        }
+
+        return value
+    }
+
+    slideTabviewRelease({ nativeEvent }) {
+        this.resetSlideStatus();
+
+        if (this.state.containerTrans._value > 0) return;
+        const ratio = PixelRatio.get();
+        const vY = -nativeEvent.velocityY / ratio / 1000
+
+        Animated.decay(
+            this.tabviewTrans,
+            {
+                velocity: vY,
+                deceleration: 0.998,
+                useNativeDriver: true,
+            },
+        ).start(() => {
+
+        });
+    }
+
+    resetSlideStatus() {
+        this.startSlide = false
+        this.signValue = 0
+        this.lastSlideValue = 0
+    }
+
+    getCanSlideTabview() {
+        return this.tabviewTrans._value < this.getSlideableHeight()
+    }
+
+    correctTabviewTrans() {
+        if (this.tabviewTrans._value <= 0 || this.tabviewTrans._value >= this.getSlideableHeight()) {
+            this.tabviewTrans.setValue(this.getValidVaule(this.tabviewTrans._value))
+        }
+    }
+    /******************************************** Slide tabs ********************************************/
+
     /******************************************** Pull-refresh ********************************************/
 
     addViewListener() {
-        if (this.props.onStartRefresh === undefined) return;
+        if (this.props.onStartRefresh === undefined && this.props.slideAnimated === undefined) return;
+
+        if (this.props.slideAnimated) {
+            this.tabviewTransEvent = this.tabviewTrans.addListener(this.tabviewTransUpdate);
+        }
+        if (this.props.onStartRefresh) {
+            this.tabviewRefreshEvent = this.tabviewRefreshTrans.addListener(({ value }) => { });
+        }
 
         this.dragYEvent = this.dragY.addListener(this.tabviewDidDrag);
-        this.tabviewRefreshEvent = this.tabviewRefreshTrans.addListener(({ value }) => { });
+
         this.containerTransEvent = this.state.containerTrans.addListener(this.containerTransUpdate)
 
     }
 
     removeViewListener() {
-        if (this.props.onStartRefresh === undefined) return;
+        if (this.props.onStartRefresh === undefined && this.props.slideAnimated === undefined) return;
+
+        if (this.props.slideAnimated) {
+            this.tabviewTrans.removeListener(this.tabviewTransEvent);
+        }
+        if (this.props.onStartRefresh) {
+            this.tabviewRefreshTrans.removeListener(this.tabviewRefreshEvent);
+        }
 
         this.dragY.removeListener(this.dragYEvent);
-        this.tabviewRefreshTrans.removeListener(this.tabviewRefreshEvent);
         this.state.containerTrans.removeListener(this.containerTransEvent);
     }
     //RefreshControl container
@@ -634,18 +754,18 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     }
 
     //render Refresh component
-    renderRefreshControl() {
-        const { isRefreshing, onStartRefresh, refreshHeight } = this.props;
+    _renderRefreshControl() {
+        const { isRefreshing, onStartRefresh, refreshHeight, slideAnimated } = this.props;
         const { containerTrans } = this.state
         if (!onStartRefresh) return;
 
         const refreshProps = {
             headerHeight: 0,
-            containerTrans,
+            containerTrans: slideAnimated ? this.tabviewTrans : containerTrans,
             transY: this.tabviewRefreshTrans,
             isRefreshing,
             isActive: true,
-            scrollYTrans: containerTrans,
+            scrollYTrans: slideAnimated ? this.tabviewTrans : containerTrans,
             removeListener: this.removeListener,
             addListener: this.addListener,
             refreshHeight,
@@ -660,6 +780,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     }
 
     containerTransUpdate = ({ value }: { value: number }) => {
+
         if (!this.props.onStartRefresh) return;
         if (value > 0) {
             this.shouldStartRefresh = false;
@@ -671,29 +792,78 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
 
     tabviewDidDrag = (e: { value: number }) => {
         const { value } = e
-        if (!this.props.onStartRefresh) return false;
-        if (this.props.isRefreshing) return false
-        if (value <= 0) return false;
+        this.reformDragState(value)
+    }
+
+    judgeDragType(value: number) {
+        if (this.props.slideAnimated) {
+            if (this.props.onStartRefresh && this.tabviewTrans._value <= 0) {
+                return value > 0 ? TransMode.pull_refresh : TransMode.slide_tabview
+            } else {
+                return TransMode.slide_tabview
+            }
+        } else if (this.props.onStartRefresh) {
+            return value > 0 ? TransMode.pull_refresh : TransMode.default
+        } else {
+            return TransMode.default;
+        }
+    }
+
+    reformDragState(value: number) {
+        const dragType = this.judgeDragType(value);
+        if (dragType === TransMode.pull_refresh) {
+            if (this.state.transMode === TransMode.pull_refresh) {
+                this.pullRefreshInDrag(value)
+            } else {
+                //TabviewTrans may have a negative value
+                this.tabviewTrans.setValue(0)
+                this.setState({ transMode: TransMode.pull_refresh })
+            }
+        } else if (dragType === TransMode.slide_tabview) {
+            if (this.state.transMode === TransMode.slide_tabview) {
+                this.slideTabviewInDrag(value)
+            } else {
+                this.setState({ transMode: TransMode.slide_tabview })
+            }
+        }
+
+        return;
+    }
+
+    pullRefreshInDrag(value: number) {
+        if (!this.props.onStartRefresh) return
+        if (this.props.isRefreshing) return
+        if (!this.shouldStartRefresh) return;
+
 
         if (this.startRefresh) {
             this.tabviewRefreshTrans.setValue(value - this.startDragY)
-        } else if (this.shouldStartRefresh) {
-            this.setState({ sceneScrollEnabled: false }, () => {
-                this.startDragY = value
-                this.startRefresh = true
-            })
+            return;
         }
-
+        this.setState({ sceneScrollEnabled: false, transMode: TransMode.pull_refresh }, () => {
+            this.startDragY = value
+            this.startRefresh = true
+        })
     }
 
-    makePullRefreshRelease = () => {
+    makePullRefreshRelease({ nativeEvent }) {
+
+        if (this.state.transMode === TransMode.pull_refresh) {
+            this.pullRefreshRelease()
+        } else {
+            this.slideTabviewRelease({ nativeEvent })
+        }
+    }
+
+    pullRefreshRelease() {
         if (!this.props.onStartRefresh) return;
+
         if (this.props.isRefreshing) return;
 
         this.startDragY = 0;
 
         if (this.tabviewRefreshTrans._value > this.props.refreshHeight) {
-            this.setState({ sceneScrollEnabled: true }, () => {
+            this.setState({ sceneScrollEnabled: this.getScrollEnabledRelease() }, () => {
                 this.pageOnScroll()
             })
         } else {
@@ -705,9 +875,14 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
         this.props.onStartRefresh && this.props.onStartRefresh();
     }
 
+    getScrollEnabledRelease() {
+        return !(this.props.slideAnimated && this.tabviewTrans._value < this.getSlideableHeight())
+    }
+
     pullRefreshEnd() {
         if (!this.props.onStartRefresh) return;
-        this.setState({ sceneScrollEnabled: true }, () => {
+
+        this.setState({ sceneScrollEnabled: this.getScrollEnabledRelease(), transMode: TransMode.default }, () => {
             this.tabviewRefreshTrans.setValue(0)
             this.startRefresh = false;
         })
@@ -716,7 +891,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     /******************************************** Pull-refresh ********************************************/
 
     /**
-    * renderHeader和renderFooter的参数装配
+    * Props for the renderHeader and renderFooter
     */
     makeParams() {
         const { tabs, currentIndex } = this.state;
@@ -727,47 +902,54 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     }
 
     /**
-     * 组装子页面的参数
+     * Props for Tab pages
      */
     makeSceneParams(item: T, index: number) {
-        const { makeHeaderHeight, faultHeight, renderScrollHeader, frozeTop, isRefreshing, onStartRefresh } = this.props;
+        const { makeHeaderHeight, faultHeight, renderScrollHeader, frozeTop, isRefreshing, onStartRefresh, slideAnimated } = this.props;
         if (!renderScrollHeader) {
             return { item, index }
         }
 
         const { currentIndex, containerTrans, tabviewHeight, tabbarHeight, childRefs } = this.state;
-
-        const params: PageViewHocProps<T> = {
+        const baseParams = {
             item,
             index,
             isActive: currentIndex == index,
-            containerTrans,
-            makeHeaderHeight,
-            faultHeight,
-            frozeTop,
-            headerTrans: this.headerTrans,
             childRefs,
-            addListener: this.addListener,
-            removeListener: this.removeListener,
-            scenePageDidDrag: this.scenePageDidDrag,
-            dragY: this.dragY,
-            refreshTrans: this.getRefreshTrans(index),
-            expectHeight: this.getHeaderHeight() + tabviewHeight - tabbarHeight - frozeTop * 2,
+            containerTrans,
             scrollYTrans: this.getSceneTrans(index),
             sceneScrollEnabled: this.getScrollEnabled(),
-            isRefreshingTabView: isRefreshing,
-            pulldownEnabled: onStartRefresh === undefined
-        };
+            slideAnimated,
+            addListener: this.addListener,
+            removeListener: this.removeListener
+        }
+        let params = baseParams
+        if (!slideAnimated) {
+            params = {
+                ...baseParams, ...{
+                    makeHeaderHeight,
+                    faultHeight,
+                    frozeTop,
+                    headerTrans: this.headerTrans,
+                    scenePageDidDrag: this.scenePageDidDrag,
+                    dragY: this.dragY,
+                    refreshTrans: this.getRefreshTrans(index),
+                    expectHeight: this.getHeaderHeight() + tabviewHeight - tabbarHeight - frozeTop,
+                    isRefreshingTabView: isRefreshing,
+                    pulldownEnabled: onStartRefresh === undefined,
+                }
+            }
+        }
 
         return params;
     }
 
     /**
-     * 组装给tabbar的参数
+     * Props for Tabbar
      */
     makeTabParams() {
 
-        const { tabbarStyle, renderScrollHeader, frozeTop, tabs, tabNameConvert, averageTab, tabsContainerStyle, activeTextStyle, inactiveTextStyle, isRefreshing, refreshHeight } = this.props
+        const { tabbarStyle, renderScrollHeader, frozeTop, tabs, tabNameConvert, averageTab, tabsContainerStyle, activeTextStyle, inactiveTextStyle, isRefreshing, refreshHeight, slideAnimated } = this.props
         const params: TabbarInfo<T> = {
             tabs,
             tabNameConvert,
@@ -784,8 +966,9 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
         if (tabbarStyle) {
             params.style = this.getStyle(tabbarStyle)
         }
-        if (renderScrollHeader) {
-            const headerHeight = this.getHeaderHeight() - frozeTop
+
+        if (renderScrollHeader && !slideAnimated) {
+            const headerHeight = this.getHeaderHeight()
             const mStyle = getContentAnimatedStyles(this.state.containerTrans, headerHeight, isRefreshing, refreshHeight)
             params.style = Object.assign(params.style, mStyle)
         }
@@ -796,9 +979,50 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
 
     getHeaderHeight() {
         if (this.props.makeHeaderHeight) {
-            return Math.floor(this.props.makeHeaderHeight())
+            const { makeHeaderHeight, frozeTop } = this.props
+            return Math.floor(makeHeaderHeight() - frozeTop)
         }
         return 0;
+    }
+
+    emitListener(eventName: string, params?: any) {
+        if (this.observers.hasOwnProperty(eventName)) {
+            const allObservers = this.observers[eventName];
+
+            allObservers.forEach(observer => {
+                const { instance, callback } = observer;
+                if (instance && callback && typeof callback === 'function') {
+                    if (params !== undefined) {
+                        callback(params)
+                    } else {
+                        callback()
+                    }
+                }
+            });
+        }
+    }
+
+    removeListener = (instance: any, eventName: string, callback: any) => {
+        if (this.observers.hasOwnProperty(eventName)) {
+            const allObservers = this.observers[eventName];
+            const spliceIndex = allObservers.findIndex((el) => el.callback === callback)
+
+            if (spliceIndex >= 0) {
+                allObservers.splice(spliceIndex, 1)
+            }
+
+        }
+    }
+
+    addListener = (instance: any, eventName: string, callback: any) => {
+
+        if (this.observers.hasOwnProperty(eventName)) {
+            const allObservers = this.observers[eventName];
+            if (allObservers.find((el) => el.callback === callback)) return;
+            allObservers.push({ instance, callback })
+        } else {
+            this.observers[eventName] = [{ instance, callback }]
+        }
     }
 
     getStyle(style: any) {

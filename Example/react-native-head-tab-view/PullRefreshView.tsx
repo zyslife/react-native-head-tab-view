@@ -94,14 +94,14 @@ export default class PullRefreshView extends React.Component<Props, State> {
                     inputRange: [0, 1],
                     outputRange: [refreshHeight, refreshHeight - 1]
                 })
-            }]
+            }, { translateX: 0 }]
         } else {
             return [{
                 translateY: this.props.scrollYTrans.interpolate({
                     inputRange: [0, 1],
                     outputRange: [refreshHeight, refreshHeight - 1]
                 })
-            }]
+            }, { translateX: 0 }]
         }
 
     }
