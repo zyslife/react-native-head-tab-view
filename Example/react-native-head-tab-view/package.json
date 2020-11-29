@@ -1,6 +1,6 @@
 {
   "name": "react-native-head-tab-view",
-  "version": "2.0.9",
+  "version": "2.1.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

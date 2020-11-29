@@ -49,7 +49,7 @@ export default class ScrollHeader extends React.PureComponent<Props> {
     _onHandlerStateChange = (e: PanGestureHandlerStateChangeEvent) => {
         const { onPanResponderGrant } = this.props
         const { nativeEvent } = e
-
+        
         if ((isIOS && nativeEvent.state === State.BEGAN) || (!isIOS && nativeEvent.state === State.ACTIVE)) {
             onPanResponderGrant && onPanResponderGrant()
         } else if (nativeEvent.oldState === State.ACTIVE) {
@@ -61,7 +61,7 @@ export default class ScrollHeader extends React.PureComponent<Props> {
     _onParentPanHandlerStateChange = (e: TapGestureHandlerStateChangeEvent) => {
         const { headerTrans } = this.props
         const { nativeEvent } = e
-
+        
         if (nativeEvent.state === State.BEGAN || nativeEvent.state === State.ACTIVE) {
             headerTrans.stopAnimation()
         }

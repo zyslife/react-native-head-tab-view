@@ -51,6 +51,27 @@ export function pullRefreshAnimatedStyles(refreshAnimated: Animated.Value | Anim
         }]
     }
 }
+
+export function tabviewTransAnimatedStyles(tabviewTrans: Animated.Value | Animated.AnimatedSubtraction, headerHeight: number, isRefreshing = false, refreshHeight = 0) {
+    // const inputRange = isRefreshing ? [-1, 0, refreshHeight + headerHeight, refreshHeight + headerHeight + 1] : [-1, 0, headerHeight, headerHeight + 1]
+    // const outputRange = isRefreshing ? [refreshHeight, refreshHeight, -refreshHeight - headerHeight, -refreshHeight - headerHeight] : [0, 0, - headerHeight, - headerHeight]
+    // const inputRange = isRefreshing ? [-1, 0, headerHeight, headerHeight + 1] : [-1, 0, headerHeight, headerHeight + 1]
+    // const outputRange = isRefreshing ? [refreshHeight, refreshHeight, -headerHeight, -headerHeight] : [0, 0, - headerHeight, - headerHeight]
+    const inputRange = isRefreshing ? [-1, 0, refreshHeight, refreshHeight + headerHeight, refreshHeight + headerHeight + 1] : [-1, 0, headerHeight, headerHeight + 1]
+    const outputRange = isRefreshing ? [refreshHeight, refreshHeight, 0, -headerHeight, -headerHeight] : [0, 0, - headerHeight, - headerHeight]
+
+    return {
+        transform: [{
+            translateY: tabviewTrans.interpolate({
+                inputRange,
+                outputRange
+            })
+        }
+            , { translateX: 0 }
+        ]
+    }
+}
+
 export function pullRefreshViewAnimatedStyles(refreshAnimated: Animated.Value | Animated.AnimatedSubtraction, refreshHeight: number) {
     const inputRange = [-1, 0, refreshHeight, refreshHeight + 100]
     const outputRange = [-1, 0, refreshHeight, refreshHeight + 10]

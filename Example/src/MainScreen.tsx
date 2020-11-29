@@ -23,6 +23,9 @@ export default class MainScreen extends React.PureComponent<Props> {
     jumpToExampleFullFunctions = () => {
         this.props.navigation.navigate('ExampleFullFunctions')
     }
+    jumpToExampleSlideAnimated = () => {
+        this.props.navigation.navigate('ExampleSlideAnimated')
+    }
 
     render() {
         return (
@@ -42,8 +45,11 @@ export default class MainScreen extends React.PureComponent<Props> {
                 </TouchableOpacity>
                 <TouchableOpacity style={{ marginTop: 80, justifyContent: 'center', alignItems: 'center' }} onPress={this.jumpToExampleFullFunctions}>
                     <Text>Jump to ExampleFullFunctions.</Text>
-                    <Text style={{ fontSize: 13, color: '#999' }}>Header clicks are available</Text>
-                    <Text style={{ fontSize: 13, color: '#999' }}>And the head can slide under control</Text>
+                    <Text style={{ fontSize: 13, color: '#999' }}>A slightly more complicated example</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ marginTop: 80, justifyContent: 'center', alignItems: 'center' }} onPress={this.jumpToExampleSlideAnimated}>
+                    <Text>Jump to ExampleSlideAnimated.</Text>
+                    <Text style={{ fontSize: 13, color: '#999' }}>As an example, Tabview's SlideAnimated is true</Text>
                 </TouchableOpacity>
             </SafeAreaView>
         )

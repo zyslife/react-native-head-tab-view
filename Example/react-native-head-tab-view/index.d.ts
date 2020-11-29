@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Animated, ViewStyle, TextStyle, StyleProp, LayoutChangeEvent, ScrollView, FlatList, SectionList, ScrollViewProps } from 'react-native';
 
 declare class TabViewPageComponent extends React.Component { }
+
 interface TabItemBase<T> {
     item: T;
     index: number;
@@ -66,39 +67,48 @@ type SceneItem<T> = {
     index: number;
 }
 
+export interface SceneContainerCommonProps {
+    isActive: boolean
+    childRefs: Array<React.LegacyRef<any>>
+    containerTrans: Animated.Value
+    scrollYTrans: Animated.Value
+    sceneScrollEnabled?: boolean
+    slideAnimated?: boolean
+    addListener: (instance: any, eventName: string, callback: any) => void;
+    removeListener: (instance: any, eventName: string, callback: any) => void;
+}
+
+export interface SceneContainerHOC {
+    ContainerView: any
+    WrappedComponent: any
+    forwardedRef: any
+}
+
 /**
  * This is the Tabview being passed to the HPageViewHoc props.
  * This Props is passed as a parameter to the renderScene method,When the renderScrollHeader for the Tabview is assigned.
  * Example:
  *      <TabView
  *          tabs={this.state.tabs}
- *          renderScene={(sceneProps: HPageViewHocNU<any> & SceneItem<any>)=>{
+ *          renderScene={(sceneProps: SceneContainerPropsNU<any> & SceneItem<any>)=>{
  *              return <HScrollView {...sceneProps}/>
  *          }}
  *      />
  */
-interface HPageViewHocNU<T> {
+interface SceneContainerPropsNU extends SceneContainerCommonProps {
     frozeTop: number;
     expectHeight: number;
-    isActive: boolean;
-    containerTrans: Animated.Value;
     headerTrans: Animated.Value;
     refreshTrans: Animated.Value;
-    scrollYTrans: Animated.Value;
     dragY: Animated.Value;
-    childRefs: Array<React.LegacyRef<any>>;
-    addListener: (instance: any, eventName: string, callback: any) => void;
-    removeListener: (instance: any, eventName: string, callback: any) => void;
     scenePageDidDrag: (index: number) => void;
     makeHeaderHeight?: () => number;
     faultHeight: number;
-    sceneScrollEnabled?: boolean;
     isRefreshingTabView?: boolean
     pulldownEnabled?: boolean
 }
 
-
-export type HPageViewHocProps = {
+export type NormalSceneContainerComponent = {
     /**
      * Whether the scene is refreshing
      */
@@ -123,8 +133,20 @@ export type HPageViewHocProps = {
      */
     overflowPull?: number;
 }
+export type NormalSceneContainerType<T> = NormalSceneContainerComponent & SceneContainerPropsNU & SceneItem<T> & ScrollViewProps;
+export type NormalSceneContainerProps<T> = NormalSceneContainerType<T> & SceneContainerHOC;
 
-export type PageViewHocProps<T> = HPageViewHocProps & HPageViewHocNU<T> & SceneItem<T> & ScrollViewProps;
+
+export interface SlideSceneContainerComponent {
+    style: StyleProp<ViewStyle>
+    /**
+     * Tab page slides to the top of the callback method
+    */
+    scrollToTop: () => void
+}
+
+export type SlideSceneContainerType<T> = SceneContainerCommonProps & SceneItem<T> & SlideSceneContainerComponent & ScrollViewProps;
+export type SlideSceneContainerProps<T> = SlideSceneContainerType<T> & SceneContainerHOC
 
 
 export interface TabbarProps<T> extends TabbarInfo<T> {
@@ -179,13 +201,13 @@ export interface TabViewProps<T> extends TabProps<T> {
      * Example:
      *      <TabView
      *          tabs={this.state.tabs}
-     *          renderScene={(sceneProps: HPageViewHocNU<any> & SceneItem<any>)=>{
+     *          renderScene={(sceneProps: SceneContainerPropsNU<any> & SceneItem<any>)=>{
      *              return <HScrollView {...sceneProps}/>
      *          }}
      *      />
      * 
      */
-    renderScene: (info: PageViewHocProps<T> | SceneItem<T>) => React.ReactElement | null | undefined;
+    renderScene: (info: NormalSceneContainerProps<T> | SceneItem<T>) => React.ReactElement | null | undefined;
     /**
      * The height of collapsible header
      */
@@ -286,6 +308,22 @@ export interface TabViewProps<T> extends TabProps<T> {
      * When true, the scroll view bounces when it reaches the end of the content if it slides the tabs horizontally
      */
     bounces?: boolean;
+    /**
+     * This method is called when all the tabs are about to be mounted.
+     */
+    tabsWillMount: () => void;
+    /**
+     * Whether to animate the entire Tabview when the head appears on the screen
+     * it defaults to false
+     * ----------------------------------------------------------------------------------------------------------------------------------
+     * false.
+     * If we slide the header, I'm going to listen for the animated object headerTrans and then I'm going to call the scrollTo method on the Tab page;
+     * If we slide the Tab page, I'll listen for the animation object containerTrans and then enable the transform animation of the header
+     * ----------------------------------------------------------------------------------------------------------------------------------
+     * true.
+     * If you slide over the Tabview, I'm going to enable the Transform animation of the Tabview until the head disappears completely
+     */
+    slideAnimated?: boolean;
 }
 
 
@@ -303,7 +341,7 @@ export class RefreshControlAnimated extends React.PureComponent {
 
 type HighHocFunc = typeof ScrollView | typeof FlatList | typeof SectionList
 
-declare class PageViewHocComponent<T> extends React.Component<PageViewHocProps<T>>{ }
+declare class PageViewHocComponent<T> extends React.Component<NormalSceneContainerProps<T>>{ }
 
 export function HPageViewHoc(component: HighHocFunc): any;
 
