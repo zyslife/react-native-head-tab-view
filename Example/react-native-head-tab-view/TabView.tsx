@@ -197,7 +197,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
                         {
                             this.state.tabviewHeight > 0 ?
 
-                                <NativeViewGestureHandler ref={this.contentScroll} >
+                                <NativeViewGestureHandler ref={this.contentScroll} waitFor={this.drawer}>
                                     {this._renderContent()}
                                 </NativeViewGestureHandler>
                                 : null
@@ -223,7 +223,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
                     {
                         //Avoiding the scene's expectHeight is inaccurate
                         this.state.tabviewHeight > 0 ?
-                            <NativeViewGestureHandler ref={this.contentScroll} >
+                            <NativeViewGestureHandler ref={this.contentScroll} waitFor={this.drawer}>
                                 {this._renderContent()}
                             </NativeViewGestureHandler>
                             : null
