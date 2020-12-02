@@ -180,7 +180,7 @@ class Page1 extends React.PureComponent<any, State> {
     }
 
     onScroll = (e) => {
-        // console.log(e.nativeEvent.contentOffset.y);
+
     }
     _scrollToTop = () => {
         this.listview && this.listview.getNode().scrollTo({ y: 0 })

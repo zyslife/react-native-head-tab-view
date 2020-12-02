@@ -20,7 +20,7 @@ class RefreshControlAnimated extends React.PureComponent<Props> {
 
 
     onProgress = (progress: number) => {
-        // console.log('onProgress====>>>>', progress);
+
     }
 
     componentDidMount() {

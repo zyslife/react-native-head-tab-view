@@ -177,7 +177,7 @@ class Page1 extends React.PureComponent<any, State> {
     }
 
     onScroll=(e)=>{
-        // console.log(e.nativeEvent.contentOffset.y);
+
     }
 
     render() {

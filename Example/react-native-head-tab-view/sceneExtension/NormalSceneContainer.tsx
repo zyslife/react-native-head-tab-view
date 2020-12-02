@@ -138,10 +138,7 @@ _renderScene = (sceneProps) => {
         const { placeHeight, scrollEnabled } = this.state
         const headerHeight = this.getSlideableHeight()
         const mScrollEnabled = sceneScrollEnabled && scrollEnabled
-        if (index == 1) {
-            console.log('isRefreshing==>', isRefreshing, 'isRefreshingTabView==>', isRefreshingTabView);
-
-        }
+       
         return (
             <View style={{ flex: 1 }}>
                 <NativeViewGestureHandler
