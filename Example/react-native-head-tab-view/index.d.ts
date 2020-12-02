@@ -311,7 +311,7 @@ export interface TabViewProps<T> extends TabProps<T> {
     /**
      * This method is called when all the tabs are about to be mounted.
      */
-    tabsWillMount: () => void;
+    tabsWillMount?: () => void;
     /**
      * Whether to animate the entire Tabview when the head appears on the screen
      * it defaults to false
