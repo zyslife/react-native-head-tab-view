@@ -19,7 +19,8 @@ const defaultProps = {
     makeHeaderHeight: () => { },
     frozeTop: 0,
     overflowPull: 50,
-    refreshHeight: 100
+    refreshHeight: 100,
+    inspectSceneInterval: 100
 }
 
 const isIOS = Platform.OS === "ios";
@@ -45,6 +46,8 @@ export default class NormalSceneContainer extends React.Component<NormalSceneCon
     private startRefresh: boolean = false
     private startDragY: number = 0
     private refreshTransValue: number = 0
+    private contentHeight: number = 0
+    private timer?: number | null
 
     constructor(props: NormalSceneContainerProps<any> & typeof defaultProps & HPageViewProps) {
         super(props);
@@ -62,6 +65,9 @@ export default class NormalSceneContainer extends React.Component<NormalSceneCon
                 this.pullRefreshEnd()
 
             }
+        }
+        if (prevProps.sceneShouldFitHeight !== this.props.sceneShouldFitHeight) {
+            this.fitSceneHeight(this.contentHeight)
         }
     }
 
@@ -87,6 +93,7 @@ _renderScene = (sceneProps) => {
     componentWillUnmount() {
         if (!this.needHandleScroll()) return;
         this.removeListener()
+        this.clearTimeout()
     }
 
     renderContent = () => {
@@ -138,7 +145,7 @@ _renderScene = (sceneProps) => {
         const { placeHeight, scrollEnabled } = this.state
         const headerHeight = this.getSlideableHeight()
         const mScrollEnabled = sceneScrollEnabled && scrollEnabled
-       
+
         return (
             <View style={{ flex: 1 }}>
                 <NativeViewGestureHandler
@@ -459,20 +466,35 @@ _renderScene = (sceneProps) => {
 
     //adjust the scene size
     _onContentSizeChange = (contentWidth: number, contentHeight: number) => {
+        this.contentHeight = contentHeight;
         this.props.onContentSizeChange && this.props.onContentSizeChange(contentWidth, contentHeight)
 
-        const { placeHeight } = this.state;
-        const { expectHeight, faultHeight } = this.props;
+        this.fitSceneHeight(contentHeight)
+    }
+
+    //Calculate the space height
+    fitSceneHeight(contentHeight: number) {
+        const { expectHeight, faultHeight, inspectSceneInterval } = this.props;
         const intContainerHeight = Math.floor(expectHeight + faultHeight);
         const intContentHeight = Math.floor(contentHeight)
 
+        if (intContentHeight >= intContainerHeight) {
+            this.tryScroll();
+        }
+        this.setTimeout(() => {
+            this.toAdjustPlaceHeight(intContainerHeight, intContentHeight)
+        }, inspectSceneInterval)
+    }
+
+    toAdjustPlaceHeight(intContainerHeight: number, intContentHeight: number) {
+
+        const { placeHeight } = this.state;
+        const { faultHeight } = this.props;
+
         if (intContentHeight < intContainerHeight) {//添加占位高度 placeHeight
             const newPlaceHeight = placeHeight + intContainerHeight - intContentHeight;
-            setTimeout(() => {
-                this.setState({ placeHeight: newPlaceHeight })
-            }, 0);
+            this.updatePlaceHeight(newPlaceHeight)
         } else {
-            this.tryScroll();
             if (placeHeight <= 0) return //占位高度小于等于0 ，不处理
 
             const moreHeight = intContentHeight - intContainerHeight
@@ -480,13 +502,25 @@ _renderScene = (sceneProps) => {
             const newPlaceHeight = moreHeight > placeHeight ? 0 : placeHeight - moreHeight
 
             if (newPlaceHeight != placeHeight) {
-
-                setTimeout(() => {
-                    this.setState({ placeHeight: newPlaceHeight })
-                }, 0);
+                this.updatePlaceHeight(newPlaceHeight)
             }
         }
+    }
 
+    updatePlaceHeight(newPlaceHeight: number) {
+        this.setState({ placeHeight: newPlaceHeight })
+    }
+
+    clearTimeout() {
+        if (this.timer) {
+            clearTimeout(this.timer)
+            this.timer = null
+        }
+    }
+
+    setTimeout(fn: any, time = 0) {
+        this.clearTimeout()
+        this.timer = setTimeout(fn, time)
     }
 
     /************************************************ other method *************************************************/
