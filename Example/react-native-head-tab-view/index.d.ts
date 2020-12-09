@@ -106,6 +106,7 @@ interface SceneContainerPropsNU extends SceneContainerCommonProps {
     faultHeight: number;
     isRefreshingTabView?: boolean
     pulldownEnabled?: boolean
+    sceneShouldFitHeight: boolean
 }
 
 export type NormalSceneContainerComponent = {
@@ -324,6 +325,17 @@ export interface TabViewProps<T> extends TabProps<T> {
      * If you slide over the Tabview, I'm going to enable the Transform animation of the Tabview until the head disappears completely
      */
     slideAnimated?: boolean;
+
+}
+
+export interface SceneConfig {
+    /**
+     * (When the Tab page height is not enough to fill the TabView, placeHeight is added manually)
+     * When onContentSizeChange is called for longer than inspectSceneInterval, 
+     * the scene's placeholder height is calculated.
+     * it defaults to 100 (ms)
+     */
+    inspectSceneInterval?: number;
 }
 
 
@@ -343,7 +355,7 @@ type HighHocFunc = typeof ScrollView | typeof FlatList | typeof SectionList
 
 declare class PageViewHocComponent<T> extends React.Component<NormalSceneContainerProps<T>>{ }
 
-export function HPageViewHoc(component: HighHocFunc): any;
+export function HPageViewHoc(component: HighHocFunc, config?: SceneConfig): any;
 
 
 export interface ChangeTabProperties {

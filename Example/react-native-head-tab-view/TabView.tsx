@@ -102,7 +102,8 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             refreshTrans,
             sceneTrans,
             sceneScrollEnabled,
-            transMode: TransMode.default
+            transMode: TransMode.default,
+            sceneShouldFitHeight: false
         }
 
         this.handleScrollValue()
@@ -194,14 +195,9 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
                     <View style={[{ flex: 1, overflow: 'hidden', width: '100%' }, contentStyle]} onLayout={this.contentOnLayout}>
                         {this._renderTabBar()}
                         {this._renderHeader()}
-                        {
-                            this.state.tabviewHeight > 0 ?
-
-                                <NativeViewGestureHandler ref={this.contentScroll} waitFor={this.drawer}>
-                                    {this._renderContent()}
-                                </NativeViewGestureHandler>
-                                : null
-                        }
+                        <NativeViewGestureHandler ref={this.contentScroll} waitFor={this.drawer}>
+                            {this._renderContent()}
+                        </NativeViewGestureHandler>
                         {this._renderFooter()}
                     </View>
 
@@ -220,14 +216,9 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
                 <View style={[{ flex: 1, overflow: 'hidden', width: '100%' }, contentStyle]} onLayout={this.contentOnLayout}>
                     {this._renderTabBar()}
                     {this._renderHeader()}
-                    {
-                        //Avoiding the scene's expectHeight is inaccurate
-                        this.state.tabviewHeight > 0 ?
-                            <NativeViewGestureHandler ref={this.contentScroll} waitFor={this.drawer}>
-                                {this._renderContent()}
-                            </NativeViewGestureHandler>
-                            : null
-                    }
+                    <NativeViewGestureHandler ref={this.contentScroll} waitFor={this.drawer}>
+                        {this._renderContent()}
+                    </NativeViewGestureHandler>
                 </View>
 
                 {this._renderFooter()}
@@ -539,7 +530,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     }
 
     containerOnLayout = (event: LayoutChangeEvent) => {
-        this.setState({ tabviewHeight: event.nativeEvent.layout.height }, this.tabsWillMount)
+        this.setState({ tabviewHeight: event.nativeEvent.layout.height, sceneShouldFitHeight: true }, this.tabsWillMount)
     }
 
     contentOnLayout = (event: LayoutChangeEvent) => {
@@ -910,7 +901,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             return { item, index }
         }
 
-        const { currentIndex, containerTrans, tabviewHeight, tabbarHeight, childRefs } = this.state;
+        const { currentIndex, containerTrans, tabviewHeight, tabbarHeight, childRefs, sceneShouldFitHeight } = this.state;
         const baseParams = {
             item,
             index,
@@ -921,7 +912,8 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             sceneScrollEnabled: this.getScrollEnabled(),
             slideAnimated,
             addListener: this.addListener,
-            removeListener: this.removeListener
+            removeListener: this.removeListener,
+            sceneShouldFitHeight
         }
         let params = baseParams
         if (!slideAnimated) {

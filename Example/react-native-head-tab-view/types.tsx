@@ -104,6 +104,7 @@ interface SceneContainerPropsNU extends SceneContainerCommonProps {
     faultHeight: number;
     isRefreshingTabView?: boolean
     pulldownEnabled?: boolean
+    sceneShouldFitHeight: boolean
 }
 
 export type NormalSceneContainerComponent = {
@@ -322,6 +323,17 @@ export interface TabViewProps<T> extends TabProps<T> {
      * If you slide over the Tabview, I'm going to enable the Transform animation of the Tabview until the head disappears completely
      */
     slideAnimated?: boolean;
+
+}
+
+export interface SceneConfig {
+    /**
+     * (When the Tab page height is not enough to fill the TabView, placeHeight is added manually)
+     * When onContentSizeChange is called for longer than inspectSceneInterval, 
+     * the scene's placeholder height is calculated.
+     * it defaults to 100 (ms)
+     */
+    inspectSceneInterval?: number;
 }
 
 
@@ -343,6 +355,7 @@ export interface TabViewState<T> {
     childRefs: Array<React.RefObject<any>>
     sceneScrollEnabled: boolean
     transMode: TransMode
+    sceneShouldFitHeight: boolean
 }
 
 export enum TransMode {
