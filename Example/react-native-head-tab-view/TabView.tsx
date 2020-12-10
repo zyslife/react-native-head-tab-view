@@ -128,10 +128,14 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     }
 
     componentDidUpdate(prevProps: TabViewProps<T> & typeof defaultProps, prevState: TabViewState<T>) {
-        if (prevState.tabs.toString() !== this.props.tabs.toString()) {
-            const newKeys = this.getDisplayScene(this.props.tabs, this.state.currentIndex)
+
+
+        if (prevProps.tabs !== this.props.tabs) {
+            const newKeys = this.getDisplayScene(this.props.tabs, this.props.initialPage)
             const obj = this.initializes(this.props)
-            this.setState({ displayKeys: newKeys, tabs: this.props.tabs, ...obj })
+            this.setState({ displayKeys: newKeys, tabs: this.props.tabs, currentIndex: this.props.initialPage, ...obj }, () => {
+                this.goToPage(this.props.initialPage)
+            })
         }
         if (prevProps.isRefreshing !== this.props.isRefreshing) {
             if (this.props.isRefreshing === false) {
@@ -157,6 +161,7 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
     }
 
     render() {
+        if (this.props.renderScrollHeader === undefined) return this.renderTabViewContent()
         const { scrollEnabled } = this.props
         const { childRefs } = this.state
 
@@ -213,8 +218,9 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
                 flex: 1, width: '100%', transform
             }}>
                 {this._renderFrozeView()}
+                {this._renderTabBar()}
                 <View style={[{ flex: 1, overflow: 'hidden', width: '100%' }, contentStyle]} onLayout={this.contentOnLayout}>
-                    {this._renderTabBar()}
+
                     {this._renderHeader()}
                     <NativeViewGestureHandler ref={this.contentScroll} waitFor={this.drawer}>
                         {this._renderContent()}
@@ -964,7 +970,6 @@ export default class TabView<T> extends React.PureComponent<TabViewProps<T> & ty
             const mStyle = getContentAnimatedStyles(this.state.containerTrans, headerHeight, isRefreshing, refreshHeight)
             params.style = Object.assign(params.style, mStyle)
         }
-
 
         return params;
     }
