@@ -201,7 +201,7 @@ class Page3 extends React.PureComponent {
                 {...this.props}
                 renderItem={this.renderItem}
                 renderSectionHeader={this.renderSectionHeader}
-                stickySectionHeadersEnabled={false}
+                stickySectionHeadersEnabled={true}
                 sections={staticData.Page3Data}
                 keyExtractor={(item, index) => item + index}
                 getItemLayout={this.getItemLayout}

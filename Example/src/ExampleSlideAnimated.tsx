@@ -368,7 +368,7 @@ class Page3 extends React.PureComponent<any, State> {
                 renderRefreshControl={this.renderRefreshControl}
                 renderItem={this.renderItem}
                 renderSectionHeader={this.renderSectionHeader}
-                stickySectionHeadersEnabled={false}
+                stickySectionHeadersEnabled={true}
                 sections={staticData.Page3Data}
                 keyExtractor={this.keyExtractor}
                 getItemLayout={this.getItemLayout}

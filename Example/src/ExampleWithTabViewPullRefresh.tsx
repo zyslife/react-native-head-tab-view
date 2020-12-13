@@ -211,7 +211,7 @@ class Page3 extends React.PureComponent<PageProps, any> {
                 {...this.props}
                 renderItem={this.renderItem}
                 renderSectionHeader={this.renderSectionHeader}
-                stickySectionHeadersEnabled={false}
+                stickySectionHeadersEnabled={true}
                 sections={this.props.data}
                 keyExtractor={this.keyExtractor}
                 getItemLayout={this.getItemLayout}

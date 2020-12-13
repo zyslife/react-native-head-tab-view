@@ -14,6 +14,7 @@ import RefreshControlNormal from '../RefreshControlNormal'
 import PullRefreshView from '../PullRefreshView'
 import { pullRefreshAnimatedStyles } from '../utils/animations'
 import { NormalSceneContainerProps, HPageViewHocState, HPageViewProps } from '../types'
+const invariant = require('invariant')
 
 const defaultProps = {
     makeHeaderHeight: () => { },
@@ -157,10 +158,11 @@ _renderScene = (sceneProps) => {
                             if (forwardedRef && forwardedRef.constructor) {
                                 if (typeof forwardedRef === 'function') {
                                     forwardedRef(_ref)
-                                } else if (typeof forwardedRef === 'object') {
+                                } else if (typeof forwardedRef === 'object' && forwardedRef != null) {
                                     forwardedRef.current = _ref
                                 }
                             }
+
                         }}
                         scrollEventThrottle={16}
                         directionalLockEnabled
@@ -537,23 +539,21 @@ _renderScene = (sceneProps) => {
 
     scrollTo(e: { y: number }, animated = false) {
         if (this.getScrollNode()) {
-            const elementNode = this.getScrollNode()
+            const elementNode = this._getScrollResponder()
 
-            if (this.isScrollView()) {
-                elementNode.scrollTo({ x: 0, y: e.y, animated });
-            } else if (this.isFlatList()) {
-                elementNode.scrollToOffset({ offset: e.y, animated });
-            } else if (this.isSectionList()) {
-                elementNode.scrollToLocation({ itemIndex: 0, sectionIndex: 0, viewOffset: -e.y, animated });
-            }
+            invariant(elementNode && elementNode.scrollTo, "The component passed to HPageViewHoc must contain the scrollTo method");
+            elementNode && elementNode.scrollTo({ x: 0, y: e.y, animated });
         }
     }
 
+    _getScrollResponder() {
+        if (!this.getScrollNode) return null;
+        return this.getScrollNode().getScrollResponder();
+    }
+
     getScrollNode() {
-        if (this._scrollView.scrollTo || this._scrollView.scrollToOffset || this._scrollView.scrollToLocation) {
-            return this._scrollView
-        }
-        return this._scrollView && this._scrollView.getNode ? this._scrollView.getNode() : null
+        if (this._scrollView && this._scrollView._component) return this._scrollView._component
+        return this._scrollView
     }
 
     needHandleScroll() {
@@ -570,23 +570,5 @@ _renderScene = (sceneProps) => {
     getSlideableHeight() {
         const headerHeight = this.getHeaderHeight()
         return this.props.isRefreshing || this.props.isRefreshingTabView ? headerHeight + this.props.refreshHeight : headerHeight
-    }
-
-    isScrollView() {
-        const { WrappedComponent } = this.props
-        if (WrappedComponent.prototype && WrappedComponent.prototype.hasOwnProperty('scrollTo')) return true
-        return WrappedComponent.name === 'ScrollView' || WrappedComponent.displayName === 'ScrollView'
-    }
-
-    isFlatList() {
-        const { WrappedComponent } = this.props
-        if (WrappedComponent.prototype && WrappedComponent.prototype.hasOwnProperty('scrollToOffset')) return true
-        return WrappedComponent.name === 'FlatList' || WrappedComponent.displayName === 'FlatList'
-    }
-
-    isSectionList() {
-        const { WrappedComponent } = this.props
-        if (WrappedComponent.prototype && WrappedComponent.prototype.hasOwnProperty('scrollToLocation')) return true
-        return WrappedComponent.name === 'SectionList' || WrappedComponent.displayName === 'SectionList'
     }
 }
