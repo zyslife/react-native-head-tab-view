@@ -26,6 +26,7 @@ interface Props {
 
 }
 const isIOS = Platform.OS === "ios";
+const OFFSET_Y = isIOS ? [-1, 1] : [-10, 10]
 export default class ScrollHeader extends React.PureComponent<Props> {
 
     static propTypes = {
@@ -49,7 +50,7 @@ export default class ScrollHeader extends React.PureComponent<Props> {
     _onHandlerStateChange = (e: PanGestureHandlerStateChangeEvent) => {
         const { onPanResponderGrant } = this.props
         const { nativeEvent } = e
-        
+
         if ((isIOS && nativeEvent.state === State.BEGAN) || (!isIOS && nativeEvent.state === State.ACTIVE)) {
             onPanResponderGrant && onPanResponderGrant()
         } else if (nativeEvent.oldState === State.ACTIVE) {
@@ -61,7 +62,7 @@ export default class ScrollHeader extends React.PureComponent<Props> {
     _onParentPanHandlerStateChange = (e: TapGestureHandlerStateChangeEvent) => {
         const { headerTrans } = this.props
         const { nativeEvent } = e
-        
+
         if (nativeEvent.state === State.BEGAN || nativeEvent.state === State.ACTIVE) {
             headerTrans.stopAnimation()
         }
@@ -74,7 +75,7 @@ export default class ScrollHeader extends React.PureComponent<Props> {
             <PanGestureHandler
                 ref={headerParentRef}
                 activeOffsetX={[-500, 500]}
-                activeOffsetY={[-1, 1]}
+                activeOffsetY={OFFSET_Y}
                 onHandlerStateChange={this._onParentPanHandlerStateChange}
             >
                 <Animated.View style={this.props.style} >
