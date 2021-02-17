@@ -68,7 +68,7 @@ import * as React from 'react';
 import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { SceneMap } from 'react-native-tab-view';
 import { HPageViewHoc } from 'react-native-head-tab-view'
-import { CollapsibleHeaderTabView } from 'react-native-tab-view-header'
+import { CollapsibleHeaderTabView } from 'react-native-tab-view-collapsible-header'
 const HScrollView = HPageViewHoc(ScrollView)
 
 const FirstRoute = () => (
