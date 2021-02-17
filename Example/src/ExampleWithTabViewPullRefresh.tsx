@@ -1,249 +1,175 @@
 
 import React from 'react';
 import {
-    Image,
-    StyleSheet,
-    ScrollView,
     View,
-    Text,
-    FlatList,
-    SectionList,
+    StyleSheet,
+    Dimensions,
     ImageBackground,
-    TouchableWithoutFeedback,
-    Alert,
 } from 'react-native';
 
-import { HPageViewHoc, TabView } from 'react-native-head-tab-view'
-import { default as staticData } from '../configData/staticData.js'
+import { CollapsibleHeaderTabView as ZHeaderTabView, SlideTabView as ZSlideTabView } from 'react-native-tab-view-collapsible-header'
+import { CollapsibleHeaderTabView, SlideTabView } from 'react-native-scrollable-tab-view-collapsible-header'
+import { ScrollViewPage, FlatListPage, SectionListPage } from './component'
 
-const TIMECOUNT = 3000
-
-const HScrollView = HPageViewHoc(ScrollView)
-const HFlatList = HPageViewHoc(FlatList)
-const HSectionList = HPageViewHoc(SectionList)
+import staticData from './config/staticData'
+import { TabViewType, SlideType } from './types'
 
 interface EState {
     tabs: Array<string>
-    isRefreshing: boolean
-    page1Data: Array<any>
-    page2Data: Array<any>
-    page3Data: Array<any>
+    index: number
+    routes: any[]
 }
 
+const G_WIN_WIDTH = Dimensions.get('window').width
 const HEAD_HEIGHT = 180
-
+const TIMECOUNT = 2000
 export default class ExampleWithTabViewPullRefresh extends React.PureComponent<any, EState> {
-    private mTimer?: number
-    private curIndex = 0
 
-    constructor(props: any) {
-        super(props)
-        this.state = {
-            tabs: ['ScrollView', 'FlatList', 'SectionList'],
-            isRefreshing: false,
-            page1Data: staticData.Page1Data,
-            page2Data: staticData.Page2Data,
-            page3Data: staticData.Page3Data,
-        }
+    getType(): TabViewType {
+        return this.props.route.params.type
     }
 
+    getModeType(): SlideType {
+        return this.props.route.params.mode
+    }
+
+    private _renderScrollHeader = () => {
+        return (
+            <ImageBackground source={staticData.HeaderImg} resizeMode={'stretch'} style={styles.headerStyle} />
+        )
+    }
+
+    makeHeaderHeight = () => HEAD_HEIGHT
+
+    render() {
+        const Props = {
+            makeHeaderHeight: this.makeHeaderHeight,
+            renderScrollHeader: this._renderScrollHeader,
+            modeType: this.getModeType()
+        }
+        return (
+            <View style={styles.container}>
+                {this.getType() === TabViewType.default ? <DefaultTabViewContainer {...Props} /> : <TabViewContainer {...Props} />}
+            </View>
+        )
+    }
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff'
+    },
+    tabviewLayout: {
+        width: G_WIN_WIDTH
+    },
+    headerStyle: {
+        backgroundColor: '#c44078',
+        width: '100%',
+        height: HEAD_HEIGHT
+    }
+});
+
+interface Props {
+    makeHeaderHeight: () => number
+    renderScrollHeader: () => React.ComponentType<any> | React.ReactElement | null;
+    modeType: SlideType
+}
+
+class DefaultTabViewContainer extends React.PureComponent<Props, { isRefreshing: boolean }>{
+    private mTimer?: NodeJS.Timeout
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            isRefreshing: false
+        }
+    }
     componentWillUnmount() {
         if (this.mTimer) {
             clearInterval(this.mTimer)
         }
     }
 
-
-    private _renderScrollHeader = () => {
-        return (
-
-            <ImageBackground source={require('../resource/header_img.png')} resizeMode={'stretch'} style={{ backgroundColor: '#c44078', width: '100%', height: HEAD_HEIGHT }}>
-                <TouchableWithoutFeedback onPress={() => {
-                    Alert.alert('123');
-                }}>
-                    <Image source={require('../resource/header_icon.png')} style={{ position: 'absolute', left: 35, top: 90, width: 100, height: 74 }} />
-                </TouchableWithoutFeedback>
-            </ImageBackground>
-
-        )
+    onStartRefresh = () => {
+        this.setState({ isRefreshing: true })
+        this.mTimer = setTimeout(() => {
+            this.setState({ isRefreshing: false })
+        }, TIMECOUNT);
     }
 
-    private _renderScene = (sceneProps: { item: string, index: number }) => {
-        const { item } = sceneProps;
-        if (item == 'ScrollView') {
-            return <Page1 {...sceneProps} data={this.state.page1Data} />
-        } else if (item == 'FlatList') {
-            return <Page2 {...sceneProps} data={this.state.page2Data} />
-        } else if (item == 'SectionList') {
-            return <Page3 {...sceneProps} data={this.state.page3Data} />
+    render() {
+        const { modeType, ...rest } = this.props
+        const Container = modeType === SlideType.normal ? CollapsibleHeaderTabView : SlideTabView
+        return <Container
+            {...rest}
+            onStartRefresh={this.onStartRefresh}
+            isRefreshing={this.state.isRefreshing}
+        >
+            <ScrollViewPage key={'ScrollViewPage'} tabLabel={'ScrollView'} index={0} slideAnimated={this.props.modeType === SlideType.slide} />
+            <FlatListPage key={'FlatListPage'} tabLabel={'FlatList'} index={1} slideAnimated={this.props.modeType === SlideType.slide} />
+            <SectionListPage key={'SectionListPage'} tabLabel={'SectionList'} index={2} slideAnimated={this.props.modeType === SlideType.slide} />
+        </Container>
+    }
+}
+
+class TabViewContainer extends React.PureComponent<Props, { isRefreshing: boolean, index: number, routes: { key: string, title: string }[] }>{
+    private mTimer?: NodeJS.Timeout
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            index: 0,
+            routes: [
+                { key: 'ScrollView', title: 'ScrollView' },
+                { key: 'FlatList', title: 'FlatList' },
+                { key: 'SectionList', title: 'SectionList' },
+            ],
+            isRefreshing: false
+        }
+    }
+    componentWillUnmount() {
+        if (this.mTimer) {
+            clearInterval(this.mTimer)
+        }
+    }
+    _renderScene = (e) => {
+        const { route } = e
+
+        if (route.key == 'ScrollView') {
+            return <ScrollViewPage index={0} slideAnimated={this.props.modeType === SlideType.slide} />
+        } else if (route.key == 'FlatList') {
+            return <FlatListPage index={1} slideAnimated={this.props.modeType === SlideType.slide} />
+        } else if (route.key == 'SectionList') {
+            return <SectionListPage index={2} slideAnimated={this.props.modeType === SlideType.slide} />
         }
         return null;
     }
 
-    onStartRefresh = (mIndex = this.curIndex) => {
+    setIndex = (index: number) => {
+        this.setState({ index })
+    }
+
+    onStartRefresh = () => {
         this.setState({ isRefreshing: true })
         this.mTimer = setTimeout(() => {
-            if (mIndex === 0) {
-                this.setState({ isRefreshing: false, page1Data: [...this.state.page1Data].reverse() })
-            } else if (mIndex === 1) {
-                this.setState({ isRefreshing: false, page2Data: [...this.state.page2Data].reverse() })
-            } else if (mIndex === 2) {
-                this.setState({ isRefreshing: false, page3Data: [...this.state.page3Data].reverse() })
-            }
+            this.setState({ isRefreshing: false })
         }, TIMECOUNT);
     }
 
-    onChangeTab = ({ from, curIndex }: { from: number, curIndex: number }) => {
-        if (from === curIndex) return;
-        this.curIndex = curIndex
-    }
-
     render() {
-        return (
-            <View style={{ flex: 1, backgroundColor: '#FFF' }}>
-                <TabView
-                    tabs={this.state.tabs}
-                    renderScene={this._renderScene}
-                    makeHeaderHeight={() => { return HEAD_HEIGHT }}
-                    renderScrollHeader={this._renderScrollHeader}
-                    headerRespond={true}
-                    onStartRefresh={this.onStartRefresh}
-                    isRefreshing={this.state.isRefreshing}
-                    onChangeTab={this.onChangeTab}
-                />
-            </View>
-        )
+        const { index, routes } = this.state
+
+        const { modeType, ...rest } = this.props
+        const Container = modeType === SlideType.normal ? ZHeaderTabView : ZSlideTabView
+        return <Container
+            {...rest}
+            navigationState={{ index, routes }}
+            renderScene={this._renderScene}
+            onIndexChange={this.setIndex}
+            initialLayout={styles.tabviewLayout}
+            lazy={true}
+            onStartRefresh={this.onStartRefresh}
+            isRefreshing={this.state.isRefreshing}
+        />
     }
 }
-
-interface PageProps {
-    data: Array<any>
-}
-class Page1 extends React.PureComponent<PageProps, any> {
-    render() {
-        const { data } = this.props
-        return (
-            <HScrollView
-                {...this.props}>
-
-                {data.map((item, index) => {
-                    return (
-                        <View style={{ width: '100%', alignItems: 'center' }} key={'Page1_' + index}>
-                            <View style={{ height: 40, width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFF' }}>
-                                <Text style={styles.sectionTitle}>{item.title}</Text>
-                            </View>
-                            <Image style={{ width: '100%', height: 200 }} resizeMode={'cover'} source={item.image} />
-                        </View>
-                    )
-                })}
-            </HScrollView>
-        )
-    }
-}
-
-
-
-interface FlatListItemInfo {
-    image: any;
-    height: number;
-    text: string;
-    directory: string;
-    imgSize: number;
-}
-
-class Page2 extends React.PureComponent<PageProps, any> {
-
-    private renderItem = (itemInfo: { item: FlatListItemInfo }) => {
-        const { item } = itemInfo
-        return (
-            <View style={[styles.flatItem, { height: item.height }]}>
-                {item.directory === 'left' ? <Image style={{ width: item.imgSize, height: item.imgSize, marginRight: 10, borderRadius: 5 }} source={item.image} /> : null}
-                <Text>{item.text}</Text>
-                {item.directory === 'right' ? <Image style={{ width: item.imgSize, height: item.imgSize, marginRight: 10, borderRadius: 5 }} source={item.image} /> : null}
-            </View>
-        )
-    }
-
-
-    keyExtractor = (item: any, index: number) => index.toString()
-
-    render() {
-        return (
-            <HFlatList
-                {...this.props}
-                data={this.props.data}
-                renderItem={this.renderItem.bind(this)}
-                keyExtractor={this.keyExtractor}
-            />
-        )
-    }
-}
-
-class Page3 extends React.PureComponent<PageProps, any> {
-
-    private renderItem = (itemInfo: { item: string }) => {
-        const { item } = itemInfo;
-        return (
-            <View style={[styles.sectionItem, { backgroundColor: '#FFF' }]}>
-                <Text style={styles.titleStyle}>{item}</Text>
-            </View>
-        )
-    }
-    private renderSectionHeader = (sectionInfo: { section: any }) => {
-        const { section } = sectionInfo;
-        const { title } = section;
-        return (
-            <View style={[styles.sectionItem, { backgroundColor: '#EEE' }]}>
-                <Text style={styles.sectionTitle}>{title}</Text>
-            </View>
-        )
-    }
-    private getItemLayout = (data: any, index: number) => {
-        return { length: 50, offset: index * 50, index };
-    }
-
-
-    keyExtractor = (item: any, index: number) => index.toString()
-
-    render() {
-        return (
-            <HSectionList
-                {...this.props}
-                renderItem={this.renderItem}
-                renderSectionHeader={this.renderSectionHeader}
-                stickySectionHeadersEnabled={true}
-                sections={this.props.data}
-                keyExtractor={this.keyExtractor}
-                getItemLayout={this.getItemLayout}
-            />
-        )
-    }
-}
-
-
-const styles = StyleSheet.create({
-    titleStyle: {
-        color: '#333',
-        fontSize: 14
-    },
-    sectionTitle: {
-        color: '#4D4D4D',
-        fontSize: 15,
-    },
-    flatItem: {
-        paddingHorizontal: 30,
-        borderBottomWidth: 1,
-        borderBottomColor: '#EAEAEA',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-    },
-    sectionItem: {
-        height: 50,
-        justifyContent: 'center',
-        paddingLeft: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#EAEAEA',
-    }
-});
 

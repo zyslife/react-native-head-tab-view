@@ -991,6 +991,11 @@
   resolved "https://registry.npm.taobao.org/@react-native-community/masked-view/download/@react-native-community/masked-view-0.1.10.tgz#5dda643e19e587793bc2034dd9bf7398ad43d401"
   integrity sha1-XdpkPhnlh3k7wgNN2b9zmK1D1AE=
 
+"@react-native-community/viewpager@^2.0.1":
+  version "2.0.2"
+  resolved "https://registry.npmjs.org/@react-native-community/viewpager/-/viewpager-2.0.2.tgz#622b190294b1310c4825c98daeaee1c8443f7124"
+  integrity sha512-CKVhIZdX/Cmb80muog8sKpi5vM8npwFp4tx4Dj1IvTBidZweuO22+VH2rDOj7E0LzdV9IYRJ4FGBwcPBD2qUrQ==
+
 "@react-native-community/viewpager@^3.3.0":
   version "3.3.1"
   resolved "https://registry.npm.taobao.org/@react-native-community/viewpager/download/@react-native-community/viewpager-3.3.1.tgz#c2c530fb99653252a4272c8cf1bb85dbd1edf57d"
@@ -1155,6 +1160,21 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-native-scrollable-tab-view@^0.10.1":
+  version "0.10.1"
+  resolved "https://registry.npmjs.org/@types/react-native-scrollable-tab-view/-/react-native-scrollable-tab-view-0.10.1.tgz#086c7021c24337ca60b4ce659486611c1669963d"
+  integrity sha512-33bFHxlZ3iGCfphkW8fauZeeDMniH2hfOxDxPyvq154OAt7FNAVTmPReTfwUhTKEn7aeM4XetHWpL42JMHl8HA==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-native" "*"
+
+"@types/react-native@*":
+  version "0.63.48"
+  resolved "https://registry.npmjs.org/@types/react-native/-/react-native-0.63.48.tgz#83ebffe2900b8dee7e420bad9d8d0efea86efe92"
+  integrity sha512-6+7WsHfVkcYEwO/u3wxarMwZq/mbJZ5iDYCXwX5bs8lm0vEIuBdMsk9jrwxuCBvaXhGdB0lriwTgfew/7VN2Kg==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-native@^0.61.7":
   version "0.61.23"
   resolved "https://registry.npm.taobao.org/@types/react-native/download/@types/react-native-0.61.23.tgz?cache=0&sync_timestamp=1598359006792&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Freact-native%2Fdownload%2F%40types%2Freact-native-0.61.23.tgz#bff4e0311c229a5203eb37aacd4febf59f3e2980"
@@ -1238,6 +1258,13 @@
   dependencies:
     lodash.unescape "4.0.1"
     semver "5.5.0"
+
+"@welldone-software/why-did-you-render@^6.0.5":
+  version "6.0.5"
+  resolved "https://registry.npmjs.org/@welldone-software/why-did-you-render/-/why-did-you-render-6.0.5.tgz#a8df3509ed612770bb21b5fa0ad61634acc61f38"
+  integrity sha512-8fWib+bKoAmnJHZPU8/qpEXKG8piB3oaoKj78fXNAdYd3x8ryde1pC7D5tKff5Mart2iOJUvYNxxcYlbtT9tow==
+  dependencies:
+    lodash "^4"
 
 abab@^2.0.0:
   version "2.0.4"
@@ -2111,6 +2138,14 @@ cosmiconfig@^5.0.5, cosmiconfig@^5.1.0:
     is-directory "^0.3.1"
     js-yaml "^3.13.1"
     parse-json "^4.0.0"
+
+create-react-class@^15.6.2:
+  version "15.7.0"
+  resolved "https://registry.npmjs.org/create-react-class/-/create-react-class-15.7.0.tgz#7499d7ca2e69bb51d13faf59bd04f0c65a1d6c1e"
+  integrity sha512-QZv4sFWG9S5RUvkTYWbflxeZX+JG7Cz0Tn33rQBJ+WFQTqTfUTjMjiv9tnfXazjsO5r0KhPs+AqCjyrQX6h2ng==
+  dependencies:
+    loose-envify "^1.3.1"
+    object-assign "^4.1.1"
 
 create-react-class@^15.6.3:
   version "15.6.3"
@@ -4244,7 +4279,7 @@ lodash.unescape@4.0.1:
   resolved "https://registry.npm.taobao.org/lodash.unescape/download/lodash.unescape-4.0.1.tgz#bf2249886ce514cda112fae9218cdc065211fc9c"
   integrity sha1-vyJJiGzlFM2hEvrpIYzcBlIR/Jw=
 
-lodash@^4.17.10, lodash@^4.17.14, lodash@^4.17.19, lodash@^4.17.5, lodash@^4.3.0:
+lodash@^4, lodash@^4.17.10, lodash@^4.17.14, lodash@^4.17.19, lodash@^4.17.5, lodash@^4.3.0:
   version "4.17.20"
   resolved "https://registry.npm.taobao.org/lodash/download/lodash-4.17.20.tgz?cache=0&sync_timestamp=1597335994883&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Flodash%2Fdownload%2Flodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha1-tEqbYpe8tpjxxRo1RaKzs2jVnFI=
@@ -5292,7 +5327,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.4"
 
-prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.npm.taobao.org/prop-types/download/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha1-UsQedbjIfnK52TYOAga5ncv/psU=
@@ -5385,7 +5420,7 @@ react-native-gesture-handler@^1.6.1:
     prop-types "^15.7.2"
 
 "react-native-head-tab-view@file:./react-native-head-tab-view":
-  version "2.0.6"
+  version "2.1.6"
 
 react-native-iphone-x-helper@^1.2.1:
   version "1.2.1"
@@ -5409,6 +5444,16 @@ react-native-screens@^2.8.0:
   resolved "https://registry.npm.taobao.org/react-native-screens/download/react-native-screens-2.10.1.tgz#06d22fae87ef0ce51c616c34a199726db1403b95"
   integrity sha1-BtIvrofvDOUcYWw0oZlybbFAO5U=
 
+react-native-scrollable-tab-view@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/react-native-scrollable-tab-view/-/react-native-scrollable-tab-view-1.0.0.tgz#87319896067f7bb643ecd7fba2cba4d6d8f9e18b"
+  integrity sha512-lpZ9xz+PBdgSzpk93VjCIfxV0zvJDX9iEUP8ImDg3p1QJGHOWbWyfDx+lcx5VCDVrrdZdtuVAAdc0tkYXZyQDw==
+  dependencies:
+    "@react-native-community/viewpager" "^2.0.1"
+    create-react-class "^15.6.2"
+    prop-types "^15.6.0"
+    react-timer-mixin "^0.13.3"
+
 react-native-snap-carousel@^4.0.0-beta.6:
   version "4.0.0-beta.6"
   resolved "https://registry.npm.taobao.org/react-native-snap-carousel/download/react-native-snap-carousel-4.0.0-beta.6.tgz#cc73108f83cbcf227cd1c6367f17926e8451fd01"
@@ -5416,6 +5461,11 @@ react-native-snap-carousel@^4.0.0-beta.6:
   dependencies:
     "@types/react-addons-shallow-compare" "^0.14.22"
     react-addons-shallow-compare "15.6.2"
+
+react-native-tab-view@^2.15.2:
+  version "2.15.2"
+  resolved "https://registry.npmjs.org/react-native-tab-view/-/react-native-tab-view-2.15.2.tgz#4bc7832d33a119306614efee667509672a7ee64e"
+  integrity sha512-2hxLkBnZtEKFDyfvNO5EUywhy3f/EiLOBO8SWqKj4BMBTO0QwnybaPE5MVF00Fhz+VA4+h/iI40Dkrrtq70dGg==
 
 react-native@0.61.4:
   version "0.61.4"
@@ -5466,6 +5516,11 @@ react-test-renderer@16.9.0:
     prop-types "^15.6.2"
     react-is "^16.9.0"
     scheduler "^0.15.0"
+
+react-timer-mixin@^0.13.3:
+  version "0.13.4"
+  resolved "https://registry.npmjs.org/react-timer-mixin/-/react-timer-mixin-0.13.4.tgz#75a00c3c94c13abe29b43d63b4c65a88fc8264d3"
+  integrity sha512-4+ow23tp/Tv7hBM5Az5/Be/eKKF7DIvJ09voz5LyHGQaqqz9WV8YMs31eFvcYQs7d451LSg7kDJV70XYN/Ug/Q==
 
 react@16.9.0:
   version "16.9.0"

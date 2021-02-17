@@ -5,10 +5,11 @@ import { createStackNavigator, HeaderBackButton } from '@react-navigation/stack'
 import getScreenOptions from './config/getScreenOptions';
 import { navigationRef } from './config/NavigationService';
 import MainScreen from './MainScreen'
-import ExampleNoPullRefresh from './ExampleNoPullRefresh'
+import ExampleBasic from './ExampleBasic'
+import ExampleCustomTabbar from './ExampleCustomTabbar'
 import ExampleWithPullRefresh from './ExampleWithPullRefresh'
-import ExampleFullFunctions from './ExampleFullFunctions'
-import ExampleSlideAnimated from './ExampleSlideAnimated'
+import ExampleScrollTrans from './ExampleScrollTrans'
+import ExampleCarouselHeader from './ExampleCarouselHeader'
 import ExampleWithTabViewPullRefresh from './ExampleWithTabViewPullRefresh'
 
 const Stack = createStackNavigator();
@@ -30,9 +31,14 @@ export default class Example extends React.PureComponent {
                         options={{ title: 'MainScreen' }}
                     />
                     <Stack.Screen
-                        name="ExampleNoPullRefresh"
-                        component={ExampleNoPullRefresh}
-                        options={{ title: 'ExampleNoPullRefresh' }}
+                        name="ExampleBasic"
+                        component={ExampleBasic}
+                        options={{ title: 'ExampleBasic' }}
+                    />
+                    <Stack.Screen
+                        name="ExampleCustomTabbar"
+                        component={ExampleCustomTabbar}
+                        options={{ title: 'ExampleCustomTabbar' }}
                     />
                     <Stack.Screen
                         name="ExampleWithPullRefresh"
@@ -45,12 +51,12 @@ export default class Example extends React.PureComponent {
                         options={{ title: 'ExampleWithTabViewPullRefresh' }}
                     />
                     <Stack.Screen
-                        name="ExampleFullFunctions"
-                        component={ExampleFullFunctions}
+                        name="ExampleScrollTrans"
+                        component={ExampleScrollTrans}
                     />
                     <Stack.Screen
-                        name="ExampleSlideAnimated"
-                        component={ExampleSlideAnimated}
+                        name="ExampleCarouselHeader"
+                        component={ExampleCarouselHeader}
                     />
                 </Stack.Navigator>
             </NavigationContainer>

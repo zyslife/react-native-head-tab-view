@@ -76,6 +76,7 @@
     "moduleResolution": "node",
     "noEmit": true,
     "strict": true,
+    "baseUrl": ".",
     "target": "esnext"
   },
   "exclude": [
