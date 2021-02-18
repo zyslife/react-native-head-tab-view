@@ -1,6 +1,6 @@
 # React Native Head Tab View
 
-After **v3.0**, the built-in tabs component is not supported.We will only extend the **other tabs component** so that each Tab page has a shared collapsible header.  
+After **v3.0**, the built-in Scrollable tabs component has been removed.We will only extend the **other tabs component** so that each Tab page has a shared collapsible header.  
 
 **The following components are currently supported:**  
 [react-native-scrollable-tab-view](https://github.com/ptomasroos/react-native-scrollable-tab-view)  
@@ -20,7 +20,7 @@ For detailed usage, please refer to [Example](https://github.com/zyslife/react-n
 - Add the new slide mode to Collapsible Headers and Tabview（v2.1.0~）
 ##### v3.0
 - **Support for extension of other Tabs components, support for shared collapsible headers**
-- **The built-in tabs component is discarded**
+- **The built-in Scrollable tabs component has been removed**
   
 
 ## Demo
@@ -135,20 +135,22 @@ react-native run-ios
 
 ## Installation
 
-- The first step is to add the base library and its dependencies
+#### The first step is to add the base library and its dependencies
 ```sh
 yarn add react-native-head-tab-view react-native-gesture-handler  
-or  
-npm install react-native-head-tab-view react-native-gesture-handler --save
 ```  
-- The second step is to select the extension library based on the tabs component you are using  
+#### The second step is to select the extension library based on the tabs component you are using  
 
-##### If your tabs component is react-native-scrollable-tab-view  
-```
+- If your tabs component is `react-native-scrollable-tab-view ` 
+> Install additional project [react-native-scrollable-tab-view-collapsible-header](https://github.com/zyslife/react-native-scrollable-tab-view-collapsible-header)
+```sh
 yarn add react-native-scrollable-tab-view-collapsible-header
-```
-##### If your tabs component is react-native-tab-view  
-```
+```  
+
+- If your tabs component is `react-native-tab-view ` 
+> Install additional project [react-native-tab-view-collapsible-header](https://github.com/zyslife/react-native-tab-view-collapsible-header)
+> 
+```sh
 yarn add react-native-tab-view-collapsible-header
 ```
 
@@ -176,7 +178,7 @@ import { CollapsibleHeaderTabView ,SlideTabView} from 'react-native-scrollable-t
 import { CollapsibleHeaderTabView ,SlideTabView} from 'react-native-tab-view-collapsible-header' 
 ```  
 
-`CollapsibleHeaderTabView` and `SlideTabView` extends the props for the tabs component by adding the **CollapsibleHeaderProps**
+`CollapsibleHeaderTabView` and `SlideTabView` extends the props for your tabs component by adding the **CollapsibleHeaderProps**
 
 #### CollapsibleHeaderProps  
 
@@ -253,7 +255,7 @@ const HScrollView = HPageViewHoc(ScrollView)
 const HFlatList = HPageViewHoc(FlatList)
 const HSectionList = HPageViewHoc(SectionList)
 
-//If you're using SlideTabView, then the second argument to hPageViewWhoc should be passed {slideAnimated: true}. In this mode, use the RefreshControl control built into ScrollView.
+//If you're using SlideTabView, then the second argument to HPageViewHoc should be passed {slideAnimated: true}. In this mode, use the RefreshControl control built into ScrollView.
 //ex.
 const HScrollView = HPageViewHoc(ScrollView, { slideAnimated: true })
 
@@ -262,9 +264,9 @@ const HScrollView = HPageViewHoc(ScrollView, { slideAnimated: true })
 
 ##### `index`  _(number)_   (require)  
 The number of the screen.  
-If you use **react-native-scrollable-tab-view**, it should correspond to the number of the `children` element in the TabView.  
+If you use `react-native-scrollable-tab-view`, it should correspond to the number of the `children` element in the TabView.  
 
-If you use **react-native-tab-view**, it should correspond to the index of the `navigationState` of the TabView  
+If you use `react-native-tab-view`, it should correspond to the index of the `navigationState` of the TabView  
 Please check the [Example](https://github.com/zyslife/react-native-head-tab-view#Example) .
 
 

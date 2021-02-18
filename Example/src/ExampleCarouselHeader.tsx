@@ -17,7 +17,7 @@ import { ScrollViewPage, FlatListPage, SectionListPage } from './component'
 import { styles } from './styles'
 import staticData from './config/staticData'
 import { TabViewType, SlideType } from './types'
-const TIMECOUNT = 50000
+const TIMECOUNT = 500
 const SUB_TITLE = "It's a little long here."
 const SUB_TITLE2 = "On Android, if the header is too long, it might be better to set slideAnimated to true."
 const G_WIN_WIDTH = Dimensions.get('window').width;
