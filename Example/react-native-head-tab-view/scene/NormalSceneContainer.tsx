@@ -86,7 +86,6 @@ export default class NormalSceneContainer extends React.PureComponent<NormalScen
         this.lastIsActive = this.getIsActive()
         this.lastSceneScrollEnabled = this.context.sceneScrollEnabled
     }
-
     //render Refresh component
     renderRefreshControl() {
         const { isRefreshing, refreshHeight, overflowPull } = this.props;
@@ -102,6 +101,7 @@ export default class NormalSceneContainer extends React.PureComponent<NormalScen
             isActive: this.getIsActive(),
             refreshHeight,
             overflowPull,
+            renderContent: this.props.renderRefreshControl,
             hideContent: this.state.hideContent,
         }
 

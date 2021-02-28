@@ -280,6 +280,7 @@ export default class GestureContainer<T> extends React.Component<IGestureContain
             refreshHeight,
             overflowPull,
             hideContent: false,
+            renderContent: this.props.renderRefreshControl,
         }
 
         return (
