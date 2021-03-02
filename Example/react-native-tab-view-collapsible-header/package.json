@@ -1,0 +1,32 @@
+{
+  "name": "react-native-tab-view-collapsible-header",
+  "version": "0.0.3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yu zou <zouyu123007@163.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zyslife/react-native-tab-view-collapsible-header.git"
+  },
+  "homepage": "https://github.com/zyslife/react-native-tab-view-collapsible-header#readme",
+  "license": "ISC",
+  "keywords": [
+    "react-native-component",
+    "react-component",
+    "react-native",
+    "ios",
+    "android",
+    "tab",
+    "swipe",
+    "scrollable",
+    "tabview",
+    "head",
+    "collapsible-header"
+  ],
+  "peerDependencies": {
+    "react-native-head-tab-view": "^3.0.0"
+  },
+  "description": "Extend react-native-tab-view to have shared collapsible headers"
+}
