@@ -7,8 +7,9 @@ import {
     View,
     Text,
 } from 'react-native';
-import { HPageViewHoc} from 'react-native-head-tab-view'
+import { HPageViewHoc } from 'react-native-head-tab-view'
 import staticData from '../config/staticData'
+import AnimatedRefreshControl from './AnimatedRefreshControl'
 const HScrollView = HPageViewHoc(ScrollView)
 const SScrollView = HPageViewHoc(ScrollView, { slideAnimated: true })
 
@@ -49,7 +50,9 @@ export default class ScrollViewPage extends React.PureComponent<Props & typeof d
         }, this.props.timecount);
     }
 
-
+    _renderRefreshControl = (refreshProps: any) => {
+        return <AnimatedRefreshControl {...refreshProps} />
+    }
 
     componentWillUnmount() {
         if (this.mTimer) {
@@ -61,6 +64,7 @@ export default class ScrollViewPage extends React.PureComponent<Props & typeof d
         const props = this.props.isPullRefresh ? {
             isRefreshing: this.state.isRefreshing,
             onStartRefresh: this.onStartRefresh,
+            renderRefreshControl: this._renderRefreshControl
         } : {}
         const Container = this.props.slideAnimated ? SScrollView : HScrollView
 

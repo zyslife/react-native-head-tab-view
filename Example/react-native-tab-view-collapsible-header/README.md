@@ -154,7 +154,11 @@ A custom RefreshControl
 ##### `refreshHeight`  _(number)_   
 If this height is reached, a refresh event will be triggered （onStartRefresh）   
 ##### `scrollEnabled` _(boolean)_
-Whether to allow the scene to slide vertically
+Whether to allow the scene to slide vertically  
+
+##### `makeRoomInRefreshing` _(boolean)_
+Does the ListView leave a space of "refreshHeight" while the ListView is pull-down.
+it defaults to true  
 
 ---  
 

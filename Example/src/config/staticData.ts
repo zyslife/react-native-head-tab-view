@@ -14,6 +14,8 @@ export default {
     DetailImg: require('../resource/img15.jpeg'),
     DetailImg2: require('../resource/img10.jpeg'),
 
+    Rainbow: require('../resource/rainbow.png'),
+
     BannerData: [
         require('../resource/img5.jpeg'),
         require('../resource/img4.jpeg'),

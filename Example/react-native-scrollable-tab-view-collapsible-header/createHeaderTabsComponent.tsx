@@ -39,6 +39,7 @@ class CollapsibleHeaderTabView extends React.Component<ForwardTabViewProps, { cu
             scrollEnabled: this.props.scrollEnabled,
             isRefreshing: this.props.isRefreshing,
             refreshHeight: this.props.refreshHeight,
+            makeRoomInRefreshing: this.props.makeRoomInRefreshing,
             onStartRefresh: this.props.onStartRefresh,
             makeScrollTrans: this.props.makeScrollTrans,
             makeHeaderHeight: this.props.makeHeaderHeight,
@@ -143,6 +144,6 @@ class SlideTabView extends React.Component<ForwardTabViewProps, { currentIndex: 
 
 const styles = StyleSheet.create({
     tabbarStyle: {
-        backgroundColor:'#fff'
+        backgroundColor: '#fff'
     }
 })

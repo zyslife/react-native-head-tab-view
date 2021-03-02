@@ -274,7 +274,6 @@ export default class GestureContainer<T> extends React.Component<IGestureContain
         const refreshProps = {
             pullTransY: this.tabviewRefreshTrans,
             activeTrans: slideAnimated ? this.tabviewTrans : containerTrans,
-            inactiveTrans: slideAnimated ? this.tabviewTrans : containerTrans,
             isRefreshing,
             isActive: true,
             refreshHeight,

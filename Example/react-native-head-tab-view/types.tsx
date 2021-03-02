@@ -25,6 +25,7 @@ export interface NormalSceneBaseProps extends CommonSceneProps {
     renderRefreshControl?: (refreshProps: RefreshControlProps) => React.ReactElement;
     refreshHeight?: number;
     overflowPull?: number;
+    makeRoomInRefreshing?: boolean;
 }
 
 export interface TabViewContainerBaseProps {
@@ -121,6 +122,7 @@ export interface IHeaderContext {
     pulldownEnabled: boolean
     refHasChanged: (ref: React.RefObject<any>) => void;
     currentIndex: number
+    makeRoomInRefreshing:boolean
 }
 
 export interface IHeaderSlideContext {

@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { HPageViewHoc } from 'react-native-head-tab-view'
 import staticData from '../config/staticData'
+import AnimatedRefreshControl from './AnimatedRefreshControl'
 const HFlatList = HPageViewHoc(FlatList)
 const SFlatList = HPageViewHoc(FlatList, { slideAnimated: true })
 
@@ -53,6 +54,10 @@ export default class FlatListPage extends React.PureComponent<Props & typeof def
             signOfRefresh: true,
             data: staticData.Page2Data
         }
+    }
+
+    _renderRefreshControl = (refreshProps: any) => {
+        return <AnimatedRefreshControl {...refreshProps} />
     }
 
     componentWillUnmount() {
@@ -99,6 +104,7 @@ export default class FlatListPage extends React.PureComponent<Props & typeof def
         const props = this.props.isPullRefresh ? {
             isRefreshing: this.state.isRefreshing,
             onStartRefresh: this.onStartRefresh,
+            renderRefreshControl: this._renderRefreshControl
         } : {}
         const { data } = this.state;
         const Container = this.props.slideAnimated ? SFlatList : HFlatList

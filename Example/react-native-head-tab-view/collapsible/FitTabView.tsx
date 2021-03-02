@@ -12,6 +12,7 @@ import { FitTabViewProps, IHeaderContext } from '../types'
 
 const defaultProps = {
     tabbarHeight: 49,
+    makeRoomInRefreshing: true
 }
 type Props = FitTabViewProps & typeof defaultProps
 
@@ -91,7 +92,7 @@ export default class FitTabView extends React.Component<Props, FitTabViewState> 
     }
 
     makeBaseSceneParams() {
-        const { makeHeaderHeight, overflowHeight, isRefreshing, onStartRefresh, refHasChanged, dragY, containerTrans, currentIndex, headerTrans,frozeTop } = this.props;
+        const { makeHeaderHeight, overflowHeight, isRefreshing, onStartRefresh, refHasChanged, dragY, containerTrans, currentIndex, headerTrans, frozeTop, makeRoomInRefreshing } = this.props;
         const { tabviewHeight, tabbarHeight } = this.state;
 
         const sceneParams: IHeaderContext = {
@@ -107,7 +108,8 @@ export default class FitTabView extends React.Component<Props, FitTabViewState> 
             makeHeaderHeight,
             refHasChanged,
             currentIndex,
-            frozeTop
+            frozeTop,
+            makeRoomInRefreshing
         }
         if (!this.cacheParams) return sceneParams
         let needUpdate = false;

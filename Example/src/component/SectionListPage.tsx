@@ -8,6 +8,7 @@ import {
     Text,
 } from 'react-native';
 import { HPageViewHoc } from 'react-native-head-tab-view'
+import AnimatedRefreshControl from './AnimatedRefreshControl'
 import staticData from '../config/staticData'
 const HSectionList = HPageViewHoc(SectionList)
 const SSectionList = HPageViewHoc(SectionList, { slideAnimated: true })
@@ -40,6 +41,10 @@ export default class SectionListPage extends React.PureComponent<Props & typeof 
         this.state = {
             isRefreshing: false
         }
+    }
+
+    _renderRefreshControl = (refreshProps: any) => {
+        return <AnimatedRefreshControl {...refreshProps} />
     }
 
     componentWillUnmount() {
@@ -86,6 +91,7 @@ export default class SectionListPage extends React.PureComponent<Props & typeof 
         const props = this.props.isPullRefresh ? {
             isRefreshing: this.state.isRefreshing,
             onStartRefresh: this.onStartRefresh,
+            renderRefreshControl: this._renderRefreshControl
         } : {}
         const Container = this.props.slideAnimated ? SSectionList : HSectionList
 

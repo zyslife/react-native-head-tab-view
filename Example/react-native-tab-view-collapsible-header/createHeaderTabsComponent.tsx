@@ -31,6 +31,7 @@ class CollapsibleHeaderTabView<T extends Route> extends React.Component<ForwardT
             scrollEnabled: this.props.scrollEnabled,
             isRefreshing: this.props.isRefreshing,
             refreshHeight: this.props.refreshHeight,
+            makeRoomInRefreshing: this.props.makeRoomInRefreshing,
             onStartRefresh: this.props.onStartRefresh,
             makeScrollTrans: this.props.makeScrollTrans,
             makeHeaderHeight: this.props.makeHeaderHeight,

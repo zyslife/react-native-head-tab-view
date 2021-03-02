@@ -58,6 +58,11 @@ export interface CollapsibleHeaderProps {
      * defaults to 100
      */
     refreshHeight?: number;
+    /**
+     * Does the ListView leave a space of "refreshHeight" while the ListView is pull-down.
+     * it defaults to true
+     */
+    makeRoomInRefreshing?: boolean
 }
 
 

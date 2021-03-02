@@ -15,7 +15,7 @@ const invariant = require('invariant')
 interface Props {
     pullTransY: Animated.Value;
     activeTrans: Animated.Value;
-    inactiveTrans: Animated.Value;
+    inactiveTrans?: Animated.Value;
     isRefreshing?: boolean;
     refreshHeight: number;
     top?: number;
@@ -87,19 +87,29 @@ export default class PullRefreshView extends React.Component<PullRefreshViewProp
     }
 
     getTransform() {
-        const { refreshHeight, overflowPull, moveMaxDistance } = this.props;
+        const { refreshHeight, overflowPull, moveMaxDistance, inactiveTrans, isActive } = this.props;
         if (!this.props.isRefreshing) {
             const animatedStyle = pullRefreshViewAnimatedStyles(this.mTransValue, refreshHeight + overflowPull)
             return animatedStyle.transform
         }
 
         if (moveMaxDistance) {
+            if (!isActive && inactiveTrans) {
+                return [{
+                    translateY: inactiveTrans.interpolate({
+                        inputRange: [0, moveMaxDistance, moveMaxDistance + 1],
+                        outputRange: [refreshHeight, refreshHeight - moveMaxDistance, refreshHeight - moveMaxDistance]
+                    })
+                }, { translateX: 0 }]
+            }
+
             return [{
                 translateY: this.props.activeTrans.interpolate({
                     inputRange: [0, moveMaxDistance, moveMaxDistance + 1],
                     outputRange: [refreshHeight, refreshHeight - moveMaxDistance, refreshHeight - moveMaxDistance]
                 })
             }, { translateX: 0 }]
+
         }
         return [{
             translateY: this.props.activeTrans.interpolate({
@@ -186,7 +196,6 @@ export default class PullRefreshView extends React.Component<PullRefreshViewProp
 
     addListener() {
         const { activeTrans, pullTransY } = this.props
-
 
         DeviceEventEmitter.addListener(EVENT_TABVIEW_BECOME_RESPONDER, this.sceneDidDrag);
         if (activeTrans) {

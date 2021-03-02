@@ -18,7 +18,7 @@ const invariant = require('invariant')
 
 const defaultProps = {
     overflowPull: 50,
-    refreshHeight: 100,
+    refreshHeight: 100
 }
 
 export default class NormalSceneContainer extends React.PureComponent<NormalSceneProps & typeof defaultProps & HPageViewProps, HPageViewHocState> {
@@ -89,20 +89,20 @@ export default class NormalSceneContainer extends React.PureComponent<NormalScen
     //render Refresh component
     renderRefreshControl() {
         const { isRefreshing, refreshHeight, overflowPull } = this.props;
-        const { containerTrans } = this.context;
+        const { containerTrans, makeRoomInRefreshing } = this.context;
         if (!this.pullDownIsEnabled()) return;
         const refreshProps = {
             top: this.getContentOffset(),
-            moveMaxDistance: this.getHeaderHeight(),
+            moveMaxDistance: this.getHeaderHeight() + refreshHeight,
             pullTransY: this.refreshTrans,
             activeTrans: containerTrans,
-            inactiveTrans: this.scrollYTrans,
             isRefreshing,
             isActive: this.getIsActive(),
             refreshHeight,
             overflowPull,
             renderContent: this.props.renderRefreshControl,
             hideContent: this.state.hideContent,
+            inactiveTrans: makeRoomInRefreshing ? this.scrollYTrans : undefined
         }
 
         return (
@@ -144,7 +144,7 @@ export default class NormalSceneContainer extends React.PureComponent<NormalScen
                             <SceneListComponent
                                 ContainerView={ContainerView}
                                 zForwardedRef={this.setAndForwardRef}
-                                headerHeight={this.getContentOffset()}
+                                headerHeight={this.getPaddingTop()}
                                 expectHeight={expectHeight}
                                 onScroll={this.getOnScroll()}
                                 onScrollBeginDrag={this._onScrollBeginDrag}
@@ -409,6 +409,12 @@ export default class NormalSceneContainer extends React.PureComponent<NormalScen
         return headerHeight
     }
 
+    getPaddingTop() {
+        const headerHeight = this.getContentOffset()
+        if (this.getIsRefreshing() && this.context.makeRoomInRefreshing) return headerHeight + this.props.refreshHeight
+        return headerHeight
+    }
+
     getContentOffset() {
         const { tabbarHeight } = this.context
         return this.getHeaderHeight() + tabbarHeight
@@ -432,6 +438,7 @@ interface SceneListComponentProps {
 class SceneListComponent extends React.PureComponent<SceneListComponentProps & ScrollViewProps>{
     render() {
         const { ContainerView, zForwardedRef, headerHeight, expectHeight, contentContainerStyle, ...rest } = this.props;
+
         return (
             <ContainerView
                 ref={zForwardedRef}
