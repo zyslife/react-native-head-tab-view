@@ -5420,7 +5420,7 @@ react-native-gesture-handler@^1.6.1:
     prop-types "^15.7.2"
 
 "react-native-head-tab-view@file:./react-native-head-tab-view":
-  version "2.1.6"
+  version "3.0.1"
 
 react-native-iphone-x-helper@^1.2.1:
   version "1.2.1"
@@ -5444,6 +5444,11 @@ react-native-screens@^2.8.0:
   resolved "https://registry.npm.taobao.org/react-native-screens/download/react-native-screens-2.10.1.tgz#06d22fae87ef0ce51c616c34a199726db1403b95"
   integrity sha1-BtIvrofvDOUcYWw0oZlybbFAO5U=
 
+react-native-scrollable-tab-view-collapsible-header@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/react-native-scrollable-tab-view-collapsible-header/-/react-native-scrollable-tab-view-collapsible-header-0.0.4.tgz#2466ede0f50166c29486062b7f919ec9aa10d0a2"
+  integrity sha512-Mjloc/YIw9UQIyqV/HRGUTTccCQsG3W/SHIb/PkpGbpPKWRkAmrKuAYv9xujdkSYcm4Z9u3kQ5BxCrkdMZ3M2g==
+
 react-native-scrollable-tab-view@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/react-native-scrollable-tab-view/-/react-native-scrollable-tab-view-1.0.0.tgz#87319896067f7bb643ecd7fba2cba4d6d8f9e18b"
@@ -5461,6 +5466,11 @@ react-native-snap-carousel@^4.0.0-beta.6:
   dependencies:
     "@types/react-addons-shallow-compare" "^0.14.22"
     react-addons-shallow-compare "15.6.2"
+
+react-native-tab-view-collapsible-header@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.npmjs.org/react-native-tab-view-collapsible-header/-/react-native-tab-view-collapsible-header-0.0.3.tgz#8deebfae92418f66539dd3a59f9f062b73c929bf"
+  integrity sha512-DLW3jHScf/AvO9RZIMFJV1qZ6CfsveqYz1jvdtfuUhINYJgnGxyh1+2pNq8QkL1JWUjpZgz3Q/7Sf96489oBxQ==
 
 react-native-tab-view@^2.15.2:
   version "2.15.2"
