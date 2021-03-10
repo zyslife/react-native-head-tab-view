@@ -2,7 +2,8 @@ import * as React from 'react';
 import {
     Animated,
     DeviceEventEmitter,
-    StyleSheet
+    StyleSheet,
+    Platform
 } from 'react-native';
 import {
     TapGestureHandler,
@@ -26,7 +27,7 @@ const defaultProps = {
     scrollEnabled: true,
     refreshHeight: 100,
 }
-
+const __IOS = Platform.OS === 'ios'
 interface GestureContainerState {
     containerTrans: Animated.Value
     childRefs: Array<React.RefObject<any>>
@@ -87,11 +88,15 @@ export default class GestureContainer<T> extends React.Component<IGestureContain
         }
     }
 
+    _stopSlideAnimation(){
+        this.headerTrans.stopAnimation()
+        this.tabviewTrans.stopAnimation()
+    }
+
     _onParentPanHandlerStateChange = (e: TapGestureHandlerStateChangeEvent) => {
         const { nativeEvent } = e
         if (nativeEvent.state === State.BEGAN || nativeEvent.state === State.ACTIVE) {
-            this.headerTrans.stopAnimation()
-            this.tabviewTrans.stopAnimation()
+            this._stopSlideAnimation()
         }
     };
 
@@ -136,33 +141,38 @@ export default class GestureContainer<T> extends React.Component<IGestureContain
         const { childRefs } = this.state
         const enabled = scrollEnabled !== false
 
-        return (
-            <TapGestureHandler
+        const contentContainer = <PanGestureHandler
+            ref={this.shipRef}
+            simultaneousHandlers={[...childRefs, this.headerRef]}
+            shouldCancelWhenOutside={false}
+            onGestureEvent={this._onGestureEvent}
+            failOffsetX={[-20, 20]}
+            activeOffsetY={[-5, 5]}
+            activeOffsetX={[-500, 500]}
+            onHandlerStateChange={this._onHandlerStateChange}
+            enabled={enabled}
+        >
+            <Animated.View style={styles.container}>
+                <Animated.View style={{ ...styles.container, transform: this.getTransform() }}>
+                    {this._renderTabViewContainer()}
+                </Animated.View>
+                {this._renderRefreshControl()}
+            </Animated.View>
+        </PanGestureHandler >
+
+        if (__IOS) {
+            return <TapGestureHandler
                 maxDist={5}
                 onHandlerStateChange={this._onParentPanHandlerStateChange}
             >
                 <Animated.View style={styles.container}>
-                    <PanGestureHandler
-                        ref={this.shipRef}
-                        simultaneousHandlers={[...childRefs, this.headerRef]}
-                        shouldCancelWhenOutside={false}
-                        onGestureEvent={this._onGestureEvent}
-                        failOffsetX={[-20, 20]}
-                        activeOffsetY={[-5, 5]}
-                        activeOffsetX={[-500, 500]}
-                        onHandlerStateChange={this._onHandlerStateChange}
-                        enabled={enabled}
-                    >
-                        <Animated.View style={styles.container}>
-                            <Animated.View style={{ ...styles.container, transform: this.getTransform() }}>
-                                {this._renderTabViewContainer()}
-                            </Animated.View>
-                            {this._renderRefreshControl()}
-                        </Animated.View>
-                    </PanGestureHandler >
+                    {contentContainer}
                 </Animated.View>
             </TapGestureHandler >
-        )
+        }
+
+        return contentContainer
+
     }
 
     makeScrollTrans() {
@@ -227,6 +237,10 @@ export default class GestureContainer<T> extends React.Component<IGestureContain
     }
 
     _onHandlerStateChange = ({ nativeEvent }: PanGestureHandlerStateChangeEvent) => {
+        if (!__IOS && nativeEvent.state === State.BEGAN) {
+            this._stopSlideAnimation()
+        }
+
         if (nativeEvent.state === State.ACTIVE) {
             DeviceEventEmitter.emit(EVENT_CONTAINER_GESTURE_ACTIVE, {})
         } else if (nativeEvent.oldState === State.ACTIVE) {
