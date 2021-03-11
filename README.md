@@ -244,6 +244,13 @@ Whether to allow the scene to slide vertically
 Does the ListView leave a space of "refreshHeight" while the ListView is pull-down.
 it defaults to true  
 
+##### `overflowPull`  _(number)_   
+It's the distance beyond the refreshHeight, the distance to continue the displacement, when the pull is long enough,  
+it defaults to 50.
+
+##### `pullExtendedCoefficient`  _(number)_   
+When the maximum drop-down distance is reached(refreshHeight+overflowPull), the refreshControl moves the distance for each pixel the finger moves The recommended number is between 0 and 1.
+
 ---  
 
 
@@ -289,6 +296,9 @@ If this height is reached, a refresh event will be triggered ï¼ˆonStartRefreshï¼
 ##### `overflowPull`  _(number)_   
 It's the distance beyond the refreshHeight, the distance to continue the displacement, when the pull is long enough,  
 it defaults to 50.
+
+##### `pullExtendedCoefficient`  _(number)_   
+When the maximum drop-down distance is reached(refreshHeight+overflowPull), the refreshControl moves the distance for each pixel the finger moves The recommended number is between 0 and 1.
 
 </details>
 

@@ -18,7 +18,8 @@ const invariant = require('invariant')
 
 const defaultProps = {
     overflowPull: 50,
-    refreshHeight: 100
+    refreshHeight: 100,
+    pullExtendedCoefficient: 0.1
 }
 
 export default class NormalSceneContainer extends React.PureComponent<NormalSceneProps & typeof defaultProps & HPageViewProps, HPageViewHocState> {
@@ -30,7 +31,6 @@ export default class NormalSceneContainer extends React.PureComponent<NormalScen
     private baseY: number = 0
     private startHeaderSnap: boolean = false
     private needTryScroll: boolean = false
-    private shouldStartRefresh: boolean = true
     private transEvent: string = ''
     private headerTransEvent: string = ''
     private dragYEvent: string = ''
@@ -88,7 +88,7 @@ export default class NormalSceneContainer extends React.PureComponent<NormalScen
     }
     //render Refresh component
     renderRefreshControl() {
-        const { isRefreshing, refreshHeight, overflowPull } = this.props;
+        const { isRefreshing, refreshHeight, overflowPull, pullExtendedCoefficient } = this.props;
         const { containerTrans, makeRoomInRefreshing } = this.context;
         if (!this.pullDownIsEnabled()) return;
         const refreshProps = {
@@ -96,13 +96,14 @@ export default class NormalSceneContainer extends React.PureComponent<NormalScen
             moveMaxDistance: this.getHeaderHeight() + refreshHeight,
             pullTransY: this.refreshTrans,
             activeTrans: containerTrans,
+            inactiveTrans: makeRoomInRefreshing ? this.scrollYTrans : undefined,
             isRefreshing,
             isActive: this.getIsActive(),
             refreshHeight,
             overflowPull,
             renderContent: this.props.renderRefreshControl,
             hideContent: this.state.hideContent,
-            inactiveTrans: makeRoomInRefreshing ? this.scrollYTrans : undefined
+            pullExtendedCoefficient
         }
 
         return (
@@ -261,8 +262,6 @@ export default class NormalSceneContainer extends React.PureComponent<NormalScen
     }
 
     syncUpdateScene = (e: any) => {
-
-        this.updateRefreshStatus(e.value)
         if (this.getIsActive()) return;
         const headHeight = this.getSlideableHeight()
         if (this.scrollYTrans._value >= headHeight) {
@@ -295,15 +294,13 @@ export default class NormalSceneContainer extends React.PureComponent<NormalScen
     tabviewDidDrag = ({ value }: { value: number }) => {
         if (!this.pullDownIsEnabled()) return;
         if (!this.getIsActive()) return;
-        if (!this.shouldStartRefresh) return;
+        if (this.scrollYTrans._value !== 0) return;
         if (this.props.isRefreshing) return;
         if (value <= 0) return;
 
         if (this.state.allowPullDown) return;
         this.setState({ allowPullDown: true }, () => {
-            if (Platform.OS === 'ios' && this.props.bounces === true) {
-                this.context.containerTrans.setValue(0)
-            }
+            this.context.containerTrans.setValue(0)
         })
     }
 
@@ -313,27 +310,16 @@ export default class NormalSceneContainer extends React.PureComponent<NormalScen
         })
     }
 
-    //judge refresh status
-    updateRefreshStatus(transValue: number) {
-        if (!this.pullDownIsEnabled()) return;
-        if (transValue > 0) {
-            this.shouldStartRefresh = false;
-        } else {
-            if (this.shouldStartRefresh === true) return
-            this.shouldStartRefresh = true;
-        }
-    }
-
     //Pull-refresh start
     _onStartRefresh = () => {
         this.props.onStartRefresh && this.props.onStartRefresh();
     }
 
     getTransformAction() {
-        const { refreshHeight, overflowPull } = this.props;
+        const { refreshHeight, overflowPull, pullExtendedCoefficient } = this.props;
 
-        if (this.getIsRefreshing()) return { transform: [{ translateY: 0 }] }
-        return pullRefreshAnimatedStyles(this.refreshTrans, refreshHeight + overflowPull)
+        if (this.getIsRefreshing()) return { transform: [{ translateY: 0 }, { translateX: 0 }] }
+        return pullRefreshAnimatedStyles(this.refreshTrans, refreshHeight + overflowPull, pullExtendedCoefficient)
     }
 
     pullDownIsEnabled() {

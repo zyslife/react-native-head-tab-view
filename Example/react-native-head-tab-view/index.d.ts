@@ -59,6 +59,17 @@ export interface CollapsibleHeaderProps {
      */
     refreshHeight?: number;
     /**
+     * It's the distance beyond the refreshHeight, the distance to continue the displacement, when the pull is long enough,
+     * it defaults to 50.
+     */
+     overflowPull?: number;
+     /**
+     * When the maximum drop-down distance(refreshHeight+overflowPull) is reached,
+     * the refreshControl moves the distance for each pixel the finger moves
+     * The recommended number is between 0 and 1.
+     */
+    pullExtendedCoefficient?: number;
+    /**
      * Does the ListView leave a space of "refreshHeight" while the ListView is pull-down.
      * it defaults to true
      */
@@ -93,6 +104,12 @@ export interface NormalSceneBaseProps extends CommonSceneProps {
      * it defaults to 50.
      */
     overflowPull?: number;
+    /**
+     * When the maximum drop-down distance(refreshHeight+overflowPull) is reached,
+     * the refreshControl moves the distance for each pixel the finger moves
+     * The recommended number is between 0 and 1.
+     */
+    pullExtendedCoefficient?: number;
 }
 
 export interface SceneConfig {

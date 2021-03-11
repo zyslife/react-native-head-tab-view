@@ -20,12 +20,13 @@ import PullRefreshView from '../refreshControl/PullRefreshView'
 import PullDownGestureContainer from '../gesture/PullDownGestureContainer'
 import SlideGestureContainer from '../gesture/SlideGestureContainer'
 
-const overflowPull = 50
 const defaultProps = {
     frozeTop: 0,
     overflowHeight: 0,
     scrollEnabled: true,
     refreshHeight: 100,
+    overflowPull: 50,
+    pullExtendedCoefficient: 0.1
 }
 const __IOS = Platform.OS === 'ios'
 interface GestureContainerState {
@@ -88,7 +89,7 @@ export default class GestureContainer<T> extends React.Component<IGestureContain
         }
     }
 
-    _stopSlideAnimation(){
+    _stopSlideAnimation() {
         this.headerTrans.stopAnimation()
         this.tabviewTrans.stopAnimation()
     }
@@ -218,8 +219,8 @@ export default class GestureContainer<T> extends React.Component<IGestureContain
 
     getTransform() {
         const { transMode } = this.state
-        const { isRefreshing, refreshHeight } = this.props
-        const animatedStyle = pullRefreshAnimatedStyles(this.tabviewRefreshTrans, refreshHeight + overflowPull)
+        const { isRefreshing, refreshHeight, overflowPull, pullExtendedCoefficient } = this.props
+        const animatedStyle = pullRefreshAnimatedStyles(this.tabviewRefreshTrans, refreshHeight + overflowPull, pullExtendedCoefficient)
 
         let transform
         if (this.props.slideAnimated) {
@@ -281,7 +282,7 @@ export default class GestureContainer<T> extends React.Component<IGestureContain
 
     //render Refresh component
     _renderRefreshControl() {
-        const { isRefreshing, onStartRefresh, refreshHeight, slideAnimated } = this.props;
+        const { isRefreshing, onStartRefresh, refreshHeight, slideAnimated, overflowPull, pullExtendedCoefficient } = this.props;
         const { containerTrans } = this.state
         if (!onStartRefresh) return;
 
@@ -294,6 +295,7 @@ export default class GestureContainer<T> extends React.Component<IGestureContain
             overflowPull,
             hideContent: false,
             renderContent: this.props.renderRefreshControl,
+            pullExtendedCoefficient
         }
 
         return (

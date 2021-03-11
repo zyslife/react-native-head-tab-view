@@ -21,6 +21,7 @@ interface Props {
     top?: number;
     moveMaxDistance?: number;
     overflowPull: number;
+    pullExtendedCoefficient: number
     isActive: boolean;
     hideContent: boolean;
     renderContent?: (refreshProps?: any) => React.ReactElement;
@@ -87,9 +88,9 @@ export default class PullRefreshView extends React.Component<PullRefreshViewProp
     }
 
     getTransform() {
-        const { refreshHeight, overflowPull, moveMaxDistance, inactiveTrans, isActive } = this.props;
+        const { refreshHeight, overflowPull, moveMaxDistance, inactiveTrans, isActive, pullExtendedCoefficient } = this.props;
         if (!this.props.isRefreshing) {
-            const animatedStyle = pullRefreshViewAnimatedStyles(this.mTransValue, refreshHeight + overflowPull)
+            const animatedStyle = pullRefreshViewAnimatedStyles(this.mTransValue, refreshHeight + overflowPull, pullExtendedCoefficient)
             return animatedStyle.transform
         }
 

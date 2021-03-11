@@ -14,6 +14,8 @@ export interface CollapsibleHeaderProps {
     onStartRefresh?: () => void;
     renderRefreshControl?: (refreshProps: RefreshControlProps) => React.ReactElement;
     refreshHeight?: number;
+    overflowPull?: number;
+    pullExtendedCoefficient?: number;
 }
 
 export interface CommonSceneProps {
@@ -25,6 +27,7 @@ export interface NormalSceneBaseProps extends CommonSceneProps {
     renderRefreshControl?: (refreshProps: RefreshControlProps) => React.ReactElement;
     refreshHeight?: number;
     overflowPull?: number;
+    pullExtendedCoefficient?: number;
     makeRoomInRefreshing?: boolean;
 }
 
@@ -122,7 +125,7 @@ export interface IHeaderContext {
     pulldownEnabled: boolean
     refHasChanged: (ref: React.RefObject<any>) => void;
     currentIndex: number
-    makeRoomInRefreshing:boolean
+    makeRoomInRefreshing: boolean
 }
 
 export interface IHeaderSlideContext {

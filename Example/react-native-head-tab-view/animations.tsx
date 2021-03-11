@@ -22,9 +22,9 @@ export function getScrollHeaderAnimatedStyles(animatedValue: Animated.Value, hea
 }
 
 
-export function pullRefreshAnimatedStyles(refreshAnimated: Animated.Value | Animated.AnimatedSubtraction, refreshHeight: number) {
-    const inputRange = [-1, 0, refreshHeight, refreshHeight + 100]
-    const outputRange = [0, 0, refreshHeight, refreshHeight + 10]
+export function pullRefreshAnimatedStyles(refreshAnimated: Animated.Value | Animated.AnimatedSubtraction, refreshHeight: number, pullExtendedCoefficient: number = 0.1) {
+    const inputRange = [-1, 0, refreshHeight, refreshHeight + 1]
+    const outputRange = [0, 0, refreshHeight, refreshHeight + pullExtendedCoefficient]
     return {
         transform: [{
             translateY: refreshAnimated.interpolate({
@@ -35,9 +35,9 @@ export function pullRefreshAnimatedStyles(refreshAnimated: Animated.Value | Anim
     }
 }
 
-export function pullRefreshViewAnimatedStyles(refreshAnimated: Animated.Value | Animated.AnimatedSubtraction, refreshHeight: number) {
-    const inputRange = [-1, 0, refreshHeight, refreshHeight + 100]
-    const outputRange = [-1, 0, refreshHeight, refreshHeight + 10]
+export function pullRefreshViewAnimatedStyles(refreshAnimated: Animated.Value | Animated.AnimatedSubtraction, refreshHeight: number, pullExtendedCoefficient: number = 0.1) {
+    const inputRange = [-1, 0, refreshHeight, refreshHeight + 1]
+    const outputRange = [-1, 0, refreshHeight, refreshHeight + pullExtendedCoefficient]
     return {
         transform: [{
             translateY: refreshAnimated.interpolate({
