@@ -88,7 +88,6 @@ export default class MainScreen extends React.PureComponent<Props, State> {
             <SafeAreaView
                 style={{ flex: 1 }}>
                 <SelectView title={'Select your tab view'} data={tabviewTypes} index={this.state.tabviewIndex} onPress={this.onTabviewSelect} makeTitle={this.makeTabViewTitle} />
-                <SelectView title={'Select the vertical slide mode'} data={slideTypes} index={this.state.slideModeIndex} onPress={this.onSlideModeSelect} makeTitle={this.makeSlideModeTitle} makeDetail={this._makeDetail} />
                 <FlatList
                     data={staticData.PageRouteData}
                     renderItem={this._renderItem}

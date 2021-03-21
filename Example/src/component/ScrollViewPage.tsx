@@ -6,25 +6,23 @@ import {
     ScrollView,
     View,
     Text,
+    RefreshControl,
+    TouchableOpacity
 } from 'react-native';
-import { HPageViewHoc } from 'react-native-head-tab-view'
+import { HScrollView } from 'react-native-head-tab-view'
 import staticData from '../config/staticData'
-import AnimatedRefreshControl from './AnimatedRefreshControl'
-const HScrollView = HPageViewHoc(ScrollView)
-const SScrollView = HPageViewHoc(ScrollView, { slideAnimated: true })
 
 interface Props {
     index: number
     isPullRefresh?: boolean
     timecount?: number
-    slideAnimated?: boolean
     tabLabel?: string
+    onPressItem?: () => void
 }
 
 const defaultProps = {
     isPullRefresh: false,
     timecount: 2000,
-    slideAnimated: false
 }
 
 interface State {
@@ -41,18 +39,22 @@ export default class ScrollViewPage extends React.PureComponent<Props & typeof d
         this.state = {
             isRefreshing: false,
         }
+
+        // setTimeout(() => {
+        //     this.setState({ isRefreshing: true })
+        // }, 3000);
     }
     private onStartRefresh = () => {
+        // setTimeout(() => {
+        // this.setState({ isRefreshing: true })
+        // }, 500);
         this.setState({ isRefreshing: true })
-
         this.mTimer = setTimeout(() => {
             this.setState({ isRefreshing: false })
         }, this.props.timecount);
     }
 
-    _renderRefreshControl = (refreshProps: any) => {
-        return <AnimatedRefreshControl {...refreshProps} />
-    }
+
 
     componentWillUnmount() {
         if (this.mTimer) {
@@ -64,27 +66,27 @@ export default class ScrollViewPage extends React.PureComponent<Props & typeof d
         const props = this.props.isPullRefresh ? {
             isRefreshing: this.state.isRefreshing,
             onStartRefresh: this.onStartRefresh,
-            renderRefreshControl: this._renderRefreshControl
         } : {}
-        const Container = this.props.slideAnimated ? SScrollView : HScrollView
 
         return (
-            <Container
+            <HScrollView
                 index={this.props.index}
                 {...props}
             >
 
-                {staticData.Page1Data.map((item, index) => {
-                    return (
-                        <View style={{ width: '100%', alignItems: 'center' }} key={'Page1_' + index}>
-                            <View style={styles.titleStyle}>
-                                <Text style={styles.sectionTitle}>{item.title}</Text>
+                {
+                    staticData.Page1Data.map((item, index) => {
+                        return (
+                            <View onPress={this.props.onPressItem} style={{ width: '100%', alignItems: 'center' }} key={'Page1_' + index}>
+                                <View style={styles.titleStyle}>
+                                    <Text style={styles.sectionTitle}>{item.title}</Text>
+                                </View>
+                                <Image style={styles.imageStyle} resizeMode={'cover'} source={item.image} />
                             </View>
-                            <Image style={styles.imageStyle} resizeMode={'cover'} source={item.image} />
-                        </View>
-                    )
-                })}
-            </Container>
+                        )
+                    })
+                }
+            </HScrollView >
         )
     }
 }
@@ -96,7 +98,7 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#FFF'
+        backgroundColor: '#fff'
     },
     sectionTitle: {
         color: '#4D4D4D',

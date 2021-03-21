@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
         width: G_WIN_WIDTH
     },
     headerStyle: {
-        backgroundColor: '#c44078',
+        backgroundColor: '#fff',
         width: '100%',
         height: HEAD_HEIGHT
     },

@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 import { TabBar } from 'react-native-tab-view'
 import { DefaultTabBar } from 'react-native-scrollable-tab-view'
-import { CollapsibleHeaderTabView as ZHeaderTabView, SlideTabView as ZSlideTabView } from 'react-native-tab-view-collapsible-header'
-import { CollapsibleHeaderTabView, SlideTabView } from 'react-native-scrollable-tab-view-collapsible-header'
+import { CollapsibleHeaderTabView as ZHeaderTabView } from 'react-native-tab-view-collapsible-header'
+import { CollapsibleHeaderTabView } from 'react-native-scrollable-tab-view-collapsible-header'
 
 import { ScrollViewPage, FlatListPage, SectionListPage } from './component'
 
@@ -42,13 +42,10 @@ export default class ExampleCustomTabbar extends React.PureComponent<any, EState
         )
     }
 
-    makeHeaderHeight = () => HEAD_HEIGHT
-
     render() {
         const Props = {
-            makeHeaderHeight: this.makeHeaderHeight,
             renderScrollHeader: this._renderScrollHeader,
-            overflowHeight: 20,
+            overflowHeight: 40,
             tabbarHeight: 60,
             modeType: this.getModeType()
         }
@@ -61,7 +58,6 @@ export default class ExampleCustomTabbar extends React.PureComponent<any, EState
 }
 
 interface Props {
-    makeHeaderHeight: () => number
     renderScrollHeader: () => React.ComponentType<any> | React.ReactElement | null;
     overflowHeight: number
     tabbarHeight: number
@@ -78,15 +74,14 @@ class DefaultTabViewContainer extends React.PureComponent<Props>{
 
     render() {
         const { modeType, ...rest } = this.props
-        const Container = modeType === SlideType.normal ? CollapsibleHeaderTabView : SlideTabView
-        return <Container
+        return <CollapsibleHeaderTabView
             {...rest}
             renderTabBar={this._renderTabBar}
         >
-            <ScrollViewPage key={'ScrollViewPage'} tabLabel={'ScrollView'} index={0} slideAnimated={this.props.modeType === SlideType.slide} />
-            <FlatListPage key={'FlatListPage'} tabLabel={'FlatList'} index={1} slideAnimated={this.props.modeType === SlideType.slide} />
-            <SectionListPage key={'SectionListPage'} tabLabel={'SectionList'} index={2} slideAnimated={this.props.modeType === SlideType.slide} />
-        </Container>
+            <ScrollViewPage key={'ScrollViewPage'} tabLabel={'ScrollView'} index={0}  />
+            <FlatListPage key={'FlatListPage'} tabLabel={'FlatList'} index={1}  />
+            <SectionListPage key={'SectionListPage'} tabLabel={'SectionList'} index={2}  />
+        </CollapsibleHeaderTabView>
     }
 }
 
@@ -106,11 +101,11 @@ class TabViewContainer extends React.PureComponent<Props, { index: number, route
         const { route } = e
 
         if (route.key == 'ScrollView') {
-            return <ScrollViewPage index={0} slideAnimated={this.props.modeType === SlideType.slide} />
+            return <ScrollViewPage index={0}  />
         } else if (route.key == 'FlatList') {
-            return <FlatListPage index={1} slideAnimated={this.props.modeType === SlideType.slide} />
+            return <FlatListPage index={1}  />
         } else if (route.key == 'SectionList') {
-            return <SectionListPage index={2} slideAnimated={this.props.modeType === SlideType.slide} />
+            return <SectionListPage index={2}  />
         }
         return null;
     }
@@ -126,8 +121,8 @@ class TabViewContainer extends React.PureComponent<Props, { index: number, route
     render() {
         const { index, routes } = this.state
         const { modeType, ...rest } = this.props
-        const Container = modeType === SlideType.normal ? ZHeaderTabView : ZSlideTabView
-        return <Container
+        
+        return <ZHeaderTabView
             {...rest}
             navigationState={{ index, routes }}
             renderScene={this._renderScene}
@@ -156,7 +151,7 @@ const styles = StyleSheet.create({
         width: G_WIN_WIDTH
     },
     headerStyle: {
-        backgroundColor: '#c44078',
+        backgroundColor: '#fff',
         width: '100%',
         height: HEAD_HEIGHT
     },

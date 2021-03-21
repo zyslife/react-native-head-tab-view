@@ -90,11 +90,18 @@ yarn add react-native-tab-view-collapsible-header
 <details>
 <summary>CollapsibleHeaderTabView</summary>  
   
+    
+- If your tabs component is react-native-scrollable-tab-view  
 ```js  
-import { CollapsibleHeaderTabView ,SlideTabView} from 'react-native-tab-view-collapsible-header' 
+import { CollapsibleHeaderTabView } from 'react-native-scrollable-tab-view-collapsible-header' 
 ```
 
-`CollapsibleHeaderTabView` and `SlideTabView` extends the props for the tabs component by adding the **CollapsibleHeaderProps**
+- If your tabs component is react-native-tab-view   
+```js
+import { CollapsibleHeaderTabView } from 'react-native-tab-view-collapsible-header' 
+```  
+
+`CollapsibleHeaderTabView` extends the props for the tabs component by adding the **CollapsibleHeaderProps**
 
 #### CollapsibleHeaderProps  
 
@@ -107,21 +114,14 @@ renderScrollHeader={()=><View style={{height:180,backgroundColor:'red'}}/>}
 ```  
 
 
-##### `makeHeaderHeight`  (require)
+##### `headerHeight`  (optional)
 
 The height of collapsible header.  
 
-```js
-<CollapsibleHeaderTabView
-    makeHeaderHeight={() => 180}
-/>
-``` 
 
-
-##### `tabbarHeight`  
+##### `tabbarHeight`  (optional)
 
 The height of collapsible tabbar  
-If this parameter is set, the initial rendering performance will be improved.  
 
 ##### `frozeTop`  
 
@@ -132,11 +132,11 @@ The height at which the top area of the Tabview is frozen
 
 Sets the upward offset distance of the TabView and TabBar  
 
-##### `makeScrollTrans`  _(scrollValue: Animated.Value) => void_   
+##### `makeScrollTrans`  _(scrollValue: Animated.ShareValue<boolean>) => void_   
 Gets the animation value of the shared collapsible header.   
 ```js 
 <CollapsibleHeaderTabView
-    makeScrollTrans={(scrollValue: Animated.Value) => {
+    makeScrollTrans={(scrollValue) => {
         this.setState({ scrollValue })
     }}
 />
@@ -151,14 +151,13 @@ Whether the TabView is refreshing
 
 ##### `renderRefreshControl`  _(() => React.ReactElement)_   
 A custom RefreshControl
-##### `refreshHeight`  _(number)_   
-If this height is reached, a refresh event will be triggered （onStartRefresh）   
-##### `scrollEnabled` _(boolean)_
-Whether to allow the scene to slide vertically  
 
-##### `makeRoomInRefreshing` _(boolean)_
-Does the ListView leave a space of "refreshHeight" while the ListView is pull-down.
-it defaults to true  
+##### `refreshHeight`  _(number)_   
+If this height is reached, a refresh event will be triggered （onStartRefresh）  
+ it defaults to 80
+ 
+##### `scrollEnabled` _(boolean)_
+Whether to allow the scene to slide vertically
 
 ---  
 

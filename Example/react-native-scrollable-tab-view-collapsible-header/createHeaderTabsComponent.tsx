@@ -1,146 +1,58 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
     StyleSheet,
-    DeviceEventEmitter,
 } from 'react-native';
-import { GestureContainer, TabViewContainerBaseProps, FitTabView, SlideFitTabView, CollapsibleHeaderProps, EVENT_TAB_ONCHANGE } from 'react-native-head-tab-view'
+import { GestureContainer, CollapsibleHeaderProps } from 'react-native-head-tab-view'
 import ScrollableTabView, { DefaultTabBar, ScrollableTabViewProperties } from 'react-native-scrollable-tab-view'
 
 type ZTabViewProps = Omit<ScrollableTabViewProperties, 'ref'> & CollapsibleHeaderProps
 type ForwardTabViewProps = ZTabViewProps & { forwardedRef: React.Ref<ScrollableTabView>, Component: typeof ScrollableTabView }
 
-export default function createHeaderTabsComponent(Component: typeof ScrollableTabView, config?: { slideAnimated: boolean }): React.ForwardRefExoticComponent<React.PropsWithoutRef<ZTabViewProps> & React.RefAttributes<ScrollableTabView>> {
+export default function createHeaderTabsComponent(Component: typeof ScrollableTabView, config?: {}): React.ForwardRefExoticComponent<React.PropsWithoutRef<ZTabViewProps> & React.RefAttributes<ScrollableTabView>> {
 
     return React.forwardRef((props: ZTabViewProps, ref) => {
-
-        if (config && config.slideAnimated) {
-            return <SlideTabView {...props} forwardedRef={ref} Component={Component} />
-        }
         return <CollapsibleHeaderTabView {...props} forwardedRef={ref} Component={Component} />
     });
 
 }
 
-class CollapsibleHeaderTabView extends React.Component<ForwardTabViewProps, { currentIndex: number }>{
+const CollapsibleHeaderTabView: React.FC<ForwardTabViewProps> = (props: ForwardTabViewProps) => {
+    const [currentIndex, setCurrentIndex] = useState(props.initialPage || 0)
 
-    constructor(props: ForwardTabViewProps) {
-        super(props)
-        this.state = {
-            currentIndex: props.initialPage || 0
-        }
+    const _onChangeTab = (e: any) => {
+        props.onChangeTab && props.onChangeTab(e)
+        if (e.i === currentIndex) return;
+        setCurrentIndex((preIndex: number) => e.i)
     }
 
-    renderTabViewContainer = (props: TabViewContainerBaseProps) => {
-        const collapsibleParams: CollapsibleHeaderProps = {
-            frozeTop: this.props.frozeTop,
-            tabbarHeight: this.props.tabbarHeight,
-            overflowHeight: this.props.overflowHeight,
-            scrollEnabled: this.props.scrollEnabled,
-            isRefreshing: this.props.isRefreshing,
-            refreshHeight: this.props.refreshHeight,
-            makeRoomInRefreshing: this.props.makeRoomInRefreshing,
-            onStartRefresh: this.props.onStartRefresh,
-            makeScrollTrans: this.props.makeScrollTrans,
-            makeHeaderHeight: this.props.makeHeaderHeight,
-            renderScrollHeader: this.props.renderScrollHeader,
-            renderRefreshControl: this.props.renderRefreshControl
-        }
-
-        return <FitTabView
-            {...collapsibleParams}
-            {...props}
-            currentIndex={this.state.currentIndex}
-            renderTabView={this.renderTabView} />
+    const _renderTabBar = (mProps: any) => {
+        if (props.renderTabBar) return props.renderTabBar(mProps)
+        return <DefaultTabBar {...mProps} style={styles.tabbarStyle} />
     }
 
-    _onChangeTab = (e: any) => {
-        this.props.onChangeTab && this.props.onChangeTab(e)
-        if (e.i === this.state.currentIndex) return;
-        this.setState({ currentIndex: e.i })
-        DeviceEventEmitter.emit(EVENT_TAB_ONCHANGE, { index: e.i })
-    }
-
-    _renderTabBar = (props: any) => {
-        if (this.props.renderTabBar) return this.props.renderTabBar(props)
-        return <DefaultTabBar {...props} style={styles.tabbarStyle} />
-    }
-
-    renderTabView = (props: {
+    const renderTabView = (mProps: {
         renderTabBarContainer: any,
     }) => {
-        const { Component } = this.props
+        const { Component } = props
         return <Component
-            ref={this.props.forwardedRef}
+            ref={props.forwardedRef}
             tabBarBackgroundColor={'transparent'}
-            {...this.props}
+            {...props}
             renderTabBar={(tabbarProps) => {
                 const newProps = { ...tabbarProps }
                 delete tabbarProps.scrollValue
-                return props.renderTabBarContainer(this._renderTabBar(newProps))
+                return mProps.renderTabBarContainer(_renderTabBar(newProps))
             }}
-            onChangeTab={this._onChangeTab}
+            onChangeTab={_onChangeTab}
         />
     }
-
-    render() {
-        return <GestureContainer
-            renderTabViewContainer={this.renderTabViewContainer}
-            {...this.props} />
-    }
+    return <GestureContainer
+        currentIndex={currentIndex}
+        renderTabView={renderTabView}
+        {...props} />
 }
 
-class SlideTabView extends React.Component<ForwardTabViewProps, { currentIndex: number }>{
-
-    constructor(props: ForwardTabViewProps) {
-        super(props)
-        this.state = {
-            currentIndex: props.initialPage || 0
-        }
-    }
-
-    renderTabViewContainer = (props: TabViewContainerBaseProps) => {
-        const collapsibleParams: CollapsibleHeaderProps = {
-            frozeTop: this.props.frozeTop,
-            overflowHeight: this.props.overflowHeight,
-            scrollEnabled: this.props.scrollEnabled,
-            isRefreshing: this.props.isRefreshing,
-            refreshHeight: this.props.refreshHeight,
-            onStartRefresh: this.props.onStartRefresh,
-            makeScrollTrans: this.props.makeScrollTrans,
-            makeHeaderHeight: this.props.makeHeaderHeight,
-            renderScrollHeader: this.props.renderScrollHeader,
-            renderRefreshControl: this.props.renderRefreshControl
-        }
-
-        return <SlideFitTabView
-            {...collapsibleParams}
-            {...props}
-            currentIndex={this.state.currentIndex}
-            renderTabView={this.renderTabView} />
-    }
-
-    _onChangeTab = (e: any) => {
-        this.props.onChangeTab && this.props.onChangeTab(e)
-        this.setState({ currentIndex: e.i })
-    }
-
-    renderTabView = () => {
-        const { Component } = this.props
-        return <Component
-            ref={this.props.forwardedRef}
-            {...this.props}
-            onChangeTab={this._onChangeTab}
-        />
-    }
-
-    render() {
-        return <GestureContainer
-            renderTabViewContainer={this.renderTabViewContainer}
-            slideAnimated={true}
-            {...this.props} />
-    }
-}
 
 const styles = StyleSheet.create({
     tabbarStyle: {

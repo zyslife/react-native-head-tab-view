@@ -1,6 +1,6 @@
 {
   "name": "react-native-head-tab-view",
-  "version": "3.0.4",
+  "version": "4.0.0-rc.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -27,7 +27,8 @@
     "collapsible-header"
   ],
   "peerDependencies": {
-    "react-native-gesture-handler": "^1.6.1"
+    "react-native-gesture-handler": "^1.6.1",
+    "react-native-reanimated": "^2.0.0"
   },
   "description": "Tab view component for React Native"
 }

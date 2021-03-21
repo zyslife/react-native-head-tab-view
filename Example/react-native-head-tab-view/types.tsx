@@ -1,21 +1,19 @@
-import * as React from 'react';
-import { Animated, ViewStyle, TextStyle, StyleProp, LayoutChangeEvent, ScrollView, FlatList, SectionList, ScrollViewProps } from 'react-native';
-
+import React, { ComponentClass } from 'react';
+import { FlatListProps, SectionListProps, ScrollViewProps } from 'react-native';
+import { default as Reanimated2 } from 'react-native-reanimated'
 export interface CollapsibleHeaderProps {
-    makeHeaderHeight: () => number;
+    headerHeight?: number
     renderScrollHeader: () => React.ComponentType<any> | React.ReactElement | null;
     tabbarHeight?: number
     frozeTop?: number;
     overflowHeight?: number;
-    makeScrollTrans?: (scrollValue: Animated.Value) => void;
+    makeScrollTrans?: (scrollValue: Reanimated2.SharedValue<number>) => void;
     headerRespond?: boolean;
     scrollEnabled?: boolean;
     isRefreshing?: boolean;
     onStartRefresh?: () => void;
     renderRefreshControl?: (refreshProps: RefreshControlProps) => React.ReactElement;
     refreshHeight?: number;
-    overflowPull?: number;
-    pullExtendedCoefficient?: number;
 }
 
 export interface CommonSceneProps {
@@ -25,124 +23,79 @@ export interface NormalSceneBaseProps extends CommonSceneProps {
     isRefreshing?: boolean;
     onStartRefresh?: () => void;
     renderRefreshControl?: (refreshProps: RefreshControlProps) => React.ReactElement;
-    refreshHeight?: number;
     overflowPull?: number;
-    pullExtendedCoefficient?: number;
-    makeRoomInRefreshing?: boolean;
 }
 
-export interface TabViewContainerBaseProps {
-    refHasChanged: (ref: React.RefObject<any>) => void
-    headerTrans: Animated.Value
-    containerTrans: Animated.Value
-    sceneScrollEnabled: boolean
-    dragY: Animated.Value
-    headerRef: React.RefObject<any>
-    shipRef: React.RefObject<any>
-    scrollEnabled: boolean
-    refreshHeight: number
-    frozeTop: number
-    overflowHeight: number
-}
-
-export interface FitTabViewBase extends Omit<CollapsibleHeaderProps, 'scrollEnabled' | 'refreshHeight' | 'frozeTop' | 'overflowHeight'>, TabViewContainerBaseProps {
-    currentIndex: number
-}
-
-export interface FitTabViewProps extends FitTabViewBase {
-    renderTabView: any
-    renderTabBar?: (tabbarProps: any) => any
-    headerTrans: Animated.Value
-}
-
-export interface SlideFitTabViewProps extends FitTabViewBase {
-    renderTabView: () => React.ReactElement
-}
 export interface IGestureContainerProps extends CollapsibleHeaderProps {
-    renderTabViewContainer: (tabViewContainer: TabViewContainerBaseProps) => React.ReactElement;
-    slideAnimated?: boolean
-}
-
-export interface ScrollHeaderProps {
-    style?: StyleProp<ViewStyle>;
-    headerTrans: Animated.Value;
-    containerTrans: Animated.Value;
-    scrollEnabled?: boolean
-    headerRef: React.RefObject<any>
-    shipRef: React.RefObject<any>
-}
-export interface SceneConfig {
-    slideAnimated?: boolean;
+    currentIndex: number
+    renderTabView: any
 }
 
 export interface RefreshControlProps {
-    refreshType: RefreshType,
-    progressAnimated: Animated.AnimatedSubtraction;
-    addProgressListener?: (observer: RefreshObserverType) => void;
-    removeProgressListener?: (observer: RefreshObserverType) => void;
+    refreshValue: Reanimated2.SharedValue<number>
+    refreshType: Reanimated2.SharedValue<string>
+    progress: Reanimated2.SharedValue<number>
 }
 
-export interface SlideSceneContainerProps extends ScrollViewProps, CommonSceneProps {
-    ContainerView: any
-    forwardedRef: any
-}
 export interface NormalSceneProps extends ScrollViewProps, NormalSceneBaseProps {
     ContainerView: any
     forwardedRef: any
 }
 
-
-export enum TransMode {
-    default,
-    pull_refresh,
-    slide_tabview,
-    unrecognized
-}
-
 export interface HPageViewProps {
     forwardedRef: React.LegacyRef<any>;
 }
-export interface HPageViewHocState {
-    hideContent: boolean
-    allowPullDown: boolean
-}
 
-export type RefreshObserverType = (progress: number) => void;
-
-export type RefreshType = 'RefreshTypePrepare' | 'RefreshTypeEnough' | 'RefreshTypeRefreshing'
+export type RefreshType = 'pullToRefresh' | 'enough' | 'prepare' | 'refreshing' | 'finish'
 
 export interface IHeaderContext {
-    isRefreshingTabView?: boolean
-    containerTrans: Animated.Value
-    sceneScrollEnabled: boolean
-    overflowHeight: number
+    tabsIsWorking: Reanimated2.SharedValue<boolean>
+    shareAnimatedValue: Reanimated2.SharedValue<number>
+    dragIndex: Reanimated2.SharedValue<number>
     frozeTop: number
     tabbarHeight: number
-    makeHeaderHeight: () => number;
-    headerTrans: Animated.Value;
-    dragY: Animated.Value;
+    headerHeight: number
+    refreshHeight: number
+    headerTrans: Reanimated2.SharedValue<number>,
     expectHeight: number;
-    pulldownEnabled: boolean
+    tabsRefreshEnabled: boolean
     refHasChanged: (ref: React.RefObject<any>) => void;
     currentIndex: number
-    makeRoomInRefreshing: boolean
+    updateSceneInfo: (e: updateSceneInfoType) => void
 }
+
+export type updateSceneInfoType = {
+    scrollRef: any
+    index: number
+    refreshTrans: Reanimated2.SharedValue<number>
+    isRefreshing: Reanimated2.SharedValue<boolean>
+    isRefreshingWithAnimation: Reanimated2.SharedValue<boolean>
+    isDragging: Reanimated2.SharedValue<boolean>
+    scrollEnabledValue: Reanimated2.SharedValue<boolean>
+    canPullRefresh: boolean
+    scrollY: Reanimated2.SharedValue<number>
+    trans: Reanimated2.SharedValue<number>
+    onRefreshStatusCallback: (isToRefresh: boolean) => void
+}
+
+export type ScrollableView<T> = ComponentClass<SectionListProps<T> | FlatListProps<T> | ScrollViewProps>
 
 export interface IHeaderSlideContext {
     refHasChanged: (ref: React.RefObject<any>) => void;
     currentIndex: number
-    containerTrans: Animated.Value
-    sceneScrollEnabled?: boolean
-}
-
-export enum PullDownStatus {
-    Cancelled,
-    Pulled,
-    Completed,
 }
 
 export enum Direction {
     top,
     horizontal,
     bottom,
+}
+
+export type ForwardRefType<T> = ((instance: T | null) => void) | React.MutableRefObject<T | null> | null
+
+export type GesturePanContext = {
+    starty: number
+    isStart: boolean
+    basyY: number
+    isDragging: boolean
 }

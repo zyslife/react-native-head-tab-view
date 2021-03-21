@@ -8,24 +8,19 @@ import {
     Text,
     TouchableOpacity
 } from 'react-native';
-import { HPageViewHoc } from 'react-native-head-tab-view'
+import { HFlatList } from 'react-native-head-tab-view'
 import staticData from '../config/staticData'
-import AnimatedRefreshControl from './AnimatedRefreshControl'
-const HFlatList = HPageViewHoc(FlatList)
-const SFlatList = HPageViewHoc(FlatList, { slideAnimated: true })
 
 interface Props {
     index: number
     isPullRefresh?: boolean
     timecount?: number
-    slideAnimated?: boolean
     tabLabel?: string
 }
 
 const defaultProps = {
     isPullRefresh: false,
     timecount: 2000,
-    slideAnimated: false
 }
 
 interface State {
@@ -54,10 +49,6 @@ export default class FlatListPage extends React.PureComponent<Props & typeof def
             signOfRefresh: true,
             data: staticData.Page2Data
         }
-    }
-
-    _renderRefreshControl = (refreshProps: any) => {
-        return <AnimatedRefreshControl {...refreshProps} />
     }
 
     componentWillUnmount() {
@@ -98,19 +89,17 @@ export default class FlatListPage extends React.PureComponent<Props & typeof def
         )
     }
     keyExtractor = (item: any, index: number) => index.toString()
-   
+
     _ref = (_ref: any) => this.mFlatlist = _ref
     render() {
         const props = this.props.isPullRefresh ? {
             isRefreshing: this.state.isRefreshing,
             onStartRefresh: this.onStartRefresh,
-            renderRefreshControl: this._renderRefreshControl
         } : {}
         const { data } = this.state;
-        const Container = this.props.slideAnimated ? SFlatList : HFlatList
 
         return (
-            <Container
+            <HFlatList
                 style={styles.container}
                 data={data}
                 renderItem={this.renderItem}

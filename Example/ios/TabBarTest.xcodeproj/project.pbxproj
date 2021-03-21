@@ -9,17 +9,17 @@
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* TabBarTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* TabBarTestTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
-		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2544059E82BB918B66540596 /* libPods-TabBarTestTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FC3730DC764F3E4929414193 /* libPods-TabBarTestTests.a */; };
+		2B3687BA6AC28DEA32DFDF05 /* libPods-TabBarTest-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 753A9F8059865A9A5C370722 /* libPods-TabBarTest-tvOSTests.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* TabBarTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* TabBarTestTests.m */; };
-		56B9E664D98F33E83B174069 /* libPods-TabBarTest-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7228D76484997DDB7192E3D4 /* libPods-TabBarTest-tvOS.a */; };
-		5C331405B8834229C9C35F86 /* libPods-TabBarTest-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9612716CA2E15105326C9730 /* libPods-TabBarTest-tvOSTests.a */; };
-		A09EAC8B372A77E02801591A /* libPods-TabBarTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D57C78640D477A60ED993469 /* libPods-TabBarTest.a */; };
+		4E5B68F75CDDC25404E952D4 /* libPods-TabBarTest-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1DCF437A8AE110613B380C /* libPods-TabBarTest-tvOS.a */; };
+		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		C15E6B02F52C55514C946EF0 /* libPods-TabBarTest-TabBarTestTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D72E95586EC8AA906F83EF9 /* libPods-TabBarTest-TabBarTestTests.a */; };
+		DE1548692BA6D6A8287C81FC /* libPods-TabBarTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 483C5DB65D397B474585BC13 /* libPods-TabBarTest.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,26 +47,26 @@
 		13B07F961A680F5B00A75B9A /* TabBarTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TabBarTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = TabBarTest/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = TabBarTest/AppDelegate.m; sourceTree = "<group>"; };
-		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TabBarTest/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TabBarTest/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = TabBarTest/main.m; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* TabBarTest-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TabBarTest-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* TabBarTest-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TabBarTest-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6357AC80FE820A40723509ED /* Pods-TabBarTestTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTestTests.debug.xcconfig"; path = "Target Support Files/Pods-TabBarTestTests/Pods-TabBarTestTests.debug.xcconfig"; sourceTree = "<group>"; };
-		6AF4AB5D6310B25054248EBF /* Pods-TabBarTest-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-TabBarTest-tvOSTests/Pods-TabBarTest-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
-		6BD9AC8F922AB739100BAB27 /* Pods-TabBarTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest.debug.xcconfig"; path = "Target Support Files/Pods-TabBarTest/Pods-TabBarTest.debug.xcconfig"; sourceTree = "<group>"; };
-		7228D76484997DDB7192E3D4 /* libPods-TabBarTest-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TabBarTest-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		771BB9EBE2B2E4926500FF55 /* Pods-TabBarTestTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTestTests.release.xcconfig"; path = "Target Support Files/Pods-TabBarTestTests/Pods-TabBarTestTests.release.xcconfig"; sourceTree = "<group>"; };
-		77AD6DFB1BDCBC20B205DEE1 /* Pods-TabBarTest-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-TabBarTest-tvOSTests/Pods-TabBarTest-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		9612716CA2E15105326C9730 /* libPods-TabBarTest-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TabBarTest-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A2408B810E3767909AC86E90 /* Pods-TabBarTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest.release.xcconfig"; path = "Target Support Files/Pods-TabBarTest/Pods-TabBarTest.release.xcconfig"; sourceTree = "<group>"; };
-		AADD691B21C8F5C1413A1AAF /* Pods-TabBarTest-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-TabBarTest-tvOS/Pods-TabBarTest-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		D302E8648FD094987451C20C /* Pods-TabBarTest-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest-tvOS.release.xcconfig"; path = "Target Support Files/Pods-TabBarTest-tvOS/Pods-TabBarTest-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		D57C78640D477A60ED993469 /* libPods-TabBarTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TabBarTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E6F71FE02EBDD3238DFEFFA /* Pods-TabBarTest-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-TabBarTest-tvOS/Pods-TabBarTest-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		483C5DB65D397B474585BC13 /* libPods-TabBarTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TabBarTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		55AADEA8F28688D03D0C41B7 /* Pods-TabBarTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest.release.xcconfig"; path = "Target Support Files/Pods-TabBarTest/Pods-TabBarTest.release.xcconfig"; sourceTree = "<group>"; };
+		62198F5D0DA24A3E56DCC387 /* Pods-TabBarTest-TabBarTestTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest-TabBarTestTests.release.xcconfig"; path = "Target Support Files/Pods-TabBarTest-TabBarTestTests/Pods-TabBarTest-TabBarTestTests.release.xcconfig"; sourceTree = "<group>"; };
+		6D72E95586EC8AA906F83EF9 /* libPods-TabBarTest-TabBarTestTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TabBarTest-TabBarTestTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		753A9F8059865A9A5C370722 /* libPods-TabBarTest-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TabBarTest-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = TabBarTest/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A1E59BF72D0234EBE13FD8F7 /* Pods-TabBarTest-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-TabBarTest-tvOSTests/Pods-TabBarTest-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		AA7BE7C286CFDC84EB9F89CB /* Pods-TabBarTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest.debug.xcconfig"; path = "Target Support Files/Pods-TabBarTest/Pods-TabBarTest.debug.xcconfig"; sourceTree = "<group>"; };
+		AC1DCF437A8AE110613B380C /* libPods-TabBarTest-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TabBarTest-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5F0677287CC2CF3DF742424 /* Pods-TabBarTest-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest-tvOS.release.xcconfig"; path = "Target Support Files/Pods-TabBarTest-tvOS/Pods-TabBarTest-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		FC3730DC764F3E4929414193 /* libPods-TabBarTestTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TabBarTestTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F05BF828EB91B7186C7EDE7E /* Pods-TabBarTest-TabBarTestTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest-TabBarTestTests.debug.xcconfig"; path = "Target Support Files/Pods-TabBarTest-TabBarTestTests/Pods-TabBarTest-TabBarTestTests.debug.xcconfig"; sourceTree = "<group>"; };
+		FAEADD8EBA62FEB40C597B83 /* Pods-TabBarTest-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabBarTest-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-TabBarTest-tvOSTests/Pods-TabBarTest-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,7 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2544059E82BB918B66540596 /* libPods-TabBarTestTests.a in Frameworks */,
+				C15E6B02F52C55514C946EF0 /* libPods-TabBarTest-TabBarTestTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,7 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A09EAC8B372A77E02801591A /* libPods-TabBarTest.a in Frameworks */,
+				DE1548692BA6D6A8287C81FC /* libPods-TabBarTest.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,7 +90,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				56B9E664D98F33E83B174069 /* libPods-TabBarTest-tvOS.a in Frameworks */,
+				4E5B68F75CDDC25404E952D4 /* libPods-TabBarTest-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -98,7 +98,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C331405B8834229C9C35F86 /* libPods-TabBarTest-tvOSTests.a in Frameworks */,
+				2B3687BA6AC28DEA32DFDF05 /* libPods-TabBarTest-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +130,7 @@
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
+				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
 			name = TabBarTest;
@@ -141,12 +141,27 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				D57C78640D477A60ED993469 /* libPods-TabBarTest.a */,
-				7228D76484997DDB7192E3D4 /* libPods-TabBarTest-tvOS.a */,
-				9612716CA2E15105326C9730 /* libPods-TabBarTest-tvOSTests.a */,
-				FC3730DC764F3E4929414193 /* libPods-TabBarTestTests.a */,
+				483C5DB65D397B474585BC13 /* libPods-TabBarTest.a */,
+				6D72E95586EC8AA906F83EF9 /* libPods-TabBarTest-TabBarTestTests.a */,
+				AC1DCF437A8AE110613B380C /* libPods-TabBarTest-tvOS.a */,
+				753A9F8059865A9A5C370722 /* libPods-TabBarTest-tvOSTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6CDE80B05576CBF9B4EBD16E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				AA7BE7C286CFDC84EB9F89CB /* Pods-TabBarTest.debug.xcconfig */,
+				55AADEA8F28688D03D0C41B7 /* Pods-TabBarTest.release.xcconfig */,
+				F05BF828EB91B7186C7EDE7E /* Pods-TabBarTest-TabBarTestTests.debug.xcconfig */,
+				62198F5D0DA24A3E56DCC387 /* Pods-TabBarTest-TabBarTestTests.release.xcconfig */,
+				2E6F71FE02EBDD3238DFEFFA /* Pods-TabBarTest-tvOS.debug.xcconfig */,
+				D5F0677287CC2CF3DF742424 /* Pods-TabBarTest-tvOS.release.xcconfig */,
+				FAEADD8EBA62FEB40C597B83 /* Pods-TabBarTest-tvOSTests.debug.xcconfig */,
+				A1E59BF72D0234EBE13FD8F7 /* Pods-TabBarTest-tvOSTests.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -164,7 +179,7 @@
 				00E356EF1AD99517003FC87E /* TabBarTestTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				9AF2617A8AD1BFD4147740D4 /* Pods */,
+				6CDE80B05576CBF9B4EBD16E /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -182,21 +197,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		9AF2617A8AD1BFD4147740D4 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				6BD9AC8F922AB739100BAB27 /* Pods-TabBarTest.debug.xcconfig */,
-				A2408B810E3767909AC86E90 /* Pods-TabBarTest.release.xcconfig */,
-				AADD691B21C8F5C1413A1AAF /* Pods-TabBarTest-tvOS.debug.xcconfig */,
-				D302E8648FD094987451C20C /* Pods-TabBarTest-tvOS.release.xcconfig */,
-				6AF4AB5D6310B25054248EBF /* Pods-TabBarTest-tvOSTests.debug.xcconfig */,
-				77AD6DFB1BDCBC20B205DEE1 /* Pods-TabBarTest-tvOSTests.release.xcconfig */,
-				6357AC80FE820A40723509ED /* Pods-TabBarTestTests.debug.xcconfig */,
-				771BB9EBE2B2E4926500FF55 /* Pods-TabBarTestTests.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -204,10 +204,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "TabBarTestTests" */;
 			buildPhases = (
-				518D66D3FA8733B9D301D00B /* [CP] Check Pods Manifest.lock */,
+				996E4ACAE9B1A77C236A246E /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
+				376D0462E6C746159D8B6DD3 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -223,12 +224,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "TabBarTest" */;
 			buildPhases = (
-				6C2E52D101DED7CAEE0F12A2 /* [CP] Check Pods Manifest.lock */,
+				2ABF207491F506E5AB2358A5 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				B0EC02781AC2F124B103BB90 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -243,7 +245,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "TabBarTest-tvOS" */;
 			buildPhases = (
-				1C31D6ACD773AF606BEF8E3D /* [CP] Check Pods Manifest.lock */,
+				36FCDF7F2D2960975E7F1E35 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F122414F3F0027D42C /* Start Packager */,
 				2D02E4771E0B4A5D006451C7 /* Sources */,
 				2D02E4781E0B4A5D006451C7 /* Frameworks */,
@@ -263,7 +265,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "TabBarTest-tvOSTests" */;
 			buildPhases = (
-				0B4CD5EB44119DF3B812F766 /* [CP] Check Pods Manifest.lock */,
+				E400E335D3D3C2E5E47473F2 /* [CP] Check Pods Manifest.lock */,
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
 				2D02E48D1E0B4A5D006451C7 /* Frameworks */,
 				2D02E48E1E0B4A5D006451C7 /* Resources */,
@@ -284,16 +286,15 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
-				ORGANIZATIONNAME = Facebook;
+				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = 8J26DXDH2A;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 37FHP4D56G;
+						DevelopmentTeam = A9QR862D4M;
+						LastSwiftMigration = 1120;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -308,10 +309,9 @@
 			};
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "TabBarTest" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);
@@ -340,8 +340,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -377,7 +377,7 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		0B4CD5EB44119DF3B812F766 /* [CP] Check Pods Manifest.lock */ = {
+		2ABF207491F506E5AB2358A5 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -392,14 +392,28 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-TabBarTest-tvOSTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-TabBarTest-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		1C31D6ACD773AF606BEF8E3D /* [CP] Check Pods Manifest.lock */ = {
+		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native Code And Images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		36FCDF7F2D2960975E7F1E35 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -421,21 +435,25 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
+		376D0462E6C746159D8B6DD3 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TabBarTest-TabBarTestTests/Pods-TabBarTest-TabBarTestTests-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
 			);
-			name = "Bundle React Native Code And Images";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TabBarTest-TabBarTestTests/Pods-TabBarTest-TabBarTestTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
-		518D66D3FA8733B9D301D00B /* [CP] Check Pods Manifest.lock */ = {
+		996E4ACAE9B1A77C236A246E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -450,14 +468,32 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-TabBarTestTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-TabBarTest-TabBarTestTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6C2E52D101DED7CAEE0F12A2 /* [CP] Check Pods Manifest.lock */ = {
+		B0EC02781AC2F124B103BB90 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TabBarTest/Pods-TabBarTest-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TabBarTest/Pods-TabBarTest-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E400E335D3D3C2E5E47473F2 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -472,7 +508,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-TabBarTest-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-TabBarTest-tvOSTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -569,31 +605,18 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		13B07FB11A68108700A75B9A /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				13B07FB21A68108700A75B9A /* Base */,
-			);
-			name = LaunchScreen.xib;
-			path = TabBarTest;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6357AC80FE820A40723509ED /* Pods-TabBarTestTests.debug.xcconfig */;
+			baseConfigurationReference = F05BF828EB91B7186C7EDE7E /* Pods-TabBarTest-TabBarTestTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = 8J26DXDH2A;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = TabBarTestTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -608,13 +631,12 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 771BB9EBE2B2E4926500FF55 /* Pods-TabBarTestTests.release.xcconfig */;
+			baseConfigurationReference = 62198F5D0DA24A3E56DCC387 /* Pods-TabBarTest-TabBarTestTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = 8J26DXDH2A;
 				INFOPLIST_FILE = TabBarTestTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -629,12 +651,13 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6BD9AC8F922AB739100BAB27 /* Pods-TabBarTest.debug.xcconfig */;
+			baseConfigurationReference = AA7BE7C286CFDC84EB9F89CB /* Pods-TabBarTest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 37FHP4D56G;
+				DEVELOPMENT_TEAM = A9QR862D4M;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = TabBarTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -642,19 +665,22 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.test.TabBarTestDemoApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = TabBarTest;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A2408B810E3767909AC86E90 /* Pods-TabBarTest.release.xcconfig */;
+			baseConfigurationReference = 55AADEA8F28688D03D0C41B7 /* Pods-TabBarTest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 37FHP4D56G;
+				DEVELOPMENT_TEAM = A9QR862D4M;
 				INFOPLIST_FILE = TabBarTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -662,15 +688,16 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.test.TabBarTestDemoApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = TabBarTest;
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AADD691B21C8F5C1413A1AAF /* Pods-TabBarTest-tvOS.debug.xcconfig */;
+			baseConfigurationReference = 2E6F71FE02EBDD3238DFEFFA /* Pods-TabBarTest-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -688,17 +715,17 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.TabBarTest-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.TabBarTest-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.2;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Debug;
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D302E8648FD094987451C20C /* Pods-TabBarTest-tvOS.release.xcconfig */;
+			baseConfigurationReference = D5F0677287CC2CF3DF742424 /* Pods-TabBarTest-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -716,17 +743,17 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.TabBarTest-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.TabBarTest-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.2;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Release;
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6AF4AB5D6310B25054248EBF /* Pods-TabBarTest-tvOSTests.debug.xcconfig */;
+			baseConfigurationReference = FAEADD8EBA62FEB40C597B83 /* Pods-TabBarTest-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -743,7 +770,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.TabBarTest-tvOSTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.TabBarTest-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TabBarTest-tvOS.app/TabBarTest-tvOS";
@@ -753,7 +780,7 @@
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 77AD6DFB1BDCBC20B205DEE1 /* Pods-TabBarTest-tvOSTests.release.xcconfig */;
+			baseConfigurationReference = A1E59BF72D0234EBE13FD8F7 /* Pods-TabBarTest-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -770,7 +797,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.TabBarTest-tvOSTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.TabBarTest-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TabBarTest-tvOS.app/TabBarTest-tvOS";
@@ -782,6 +809,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -824,7 +852,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
+					"\"$(inherited)\"",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -835,6 +869,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -870,7 +905,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
+					"\"$(inherited)\"",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;

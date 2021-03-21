@@ -5,5 +5,3 @@ import { ScrollableTabViewProperties } from 'react-native-scrollable-tab-view'
 type ZTabViewProps = Omit<ScrollableTabViewProperties, 'ref'> & CollapsibleHeaderProps
 
 export class CollapsibleHeaderTabView extends React.Component<ZTabViewProps>{ }
-
-export class SlideTabView extends React.Component<ZTabViewProps>{ }

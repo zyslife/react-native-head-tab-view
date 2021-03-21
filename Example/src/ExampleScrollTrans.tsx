@@ -9,8 +9,8 @@ import {
     Alert
 } from 'react-native';
 
-import { CollapsibleHeaderTabView as ZHeaderTabView, SlideTabView as ZSlideTabView } from 'react-native-tab-view-collapsible-header'
-import { CollapsibleHeaderTabView, SlideTabView } from 'react-native-scrollable-tab-view-collapsible-header'
+import { CollapsibleHeaderTabView as ZHeaderTabView } from 'react-native-tab-view-collapsible-header'
+import { CollapsibleHeaderTabView } from 'react-native-scrollable-tab-view-collapsible-header'
 import { styles } from './styles'
 import { ScrollViewPage, FlatListPage, SectionListPage } from './component'
 
@@ -94,7 +94,7 @@ export default class ExampleScrollTrans extends React.PureComponent<any, EState>
                         },
                     ], borderRadius: IMG_WH * 0.5
                 }}>
-                    <TouchableOpacity style={{ flex: 1 }} onPress={()=>{
+                    <TouchableOpacity style={{ flex: 1 }} onPress={() => {
                         Alert.alert('click')
                     }}>
                         <Image source={image1} style={{ flex: 1 }} />
@@ -146,11 +146,8 @@ export default class ExampleScrollTrans extends React.PureComponent<any, EState>
         }, TIMECOUNT);
     }
 
-    makeHeaderHeight = () => HEAD_HEIGHT
-
     render() {
         const Props = {
-            makeHeaderHeight: this.makeHeaderHeight,
             renderScrollHeader: this._renderScrollHeader,
             makeScrollTrans: this._makeScrollTrans,
             frozeTop: FROZE_TOP,
@@ -169,7 +166,6 @@ export default class ExampleScrollTrans extends React.PureComponent<any, EState>
 
 
 interface Props {
-    makeHeaderHeight: () => number
     renderScrollHeader: () => React.ComponentType<any> | React.ReactElement | null;
     makeScrollTrans: (scrollValue: Animated.Value) => void;
     frozeTop: number
@@ -180,14 +176,13 @@ class DefaultTabViewContainer extends React.PureComponent<Props>{
 
     render() {
         const { modeType, ...rest } = this.props
-        const Container = modeType === SlideType.normal ? CollapsibleHeaderTabView : SlideTabView
-        return <Container
+        return <CollapsibleHeaderTabView
             {...rest}
         >
-            <ScrollViewPage key={'ScrollViewPage'} tabLabel={'ScrollView'} index={0} slideAnimated={this.props.modeType === SlideType.slide} />
-            <FlatListPage key={'FlatListPage'} tabLabel={'FlatList'} index={1} slideAnimated={this.props.modeType === SlideType.slide} />
-            <SectionListPage key={'SectionListPage'} tabLabel={'SectionList'} index={2} slideAnimated={this.props.modeType === SlideType.slide} />
-        </Container>
+            <ScrollViewPage key={'ScrollViewPage'} tabLabel={'ScrollView'} index={0} />
+            <FlatListPage key={'FlatListPage'} tabLabel={'FlatList'} index={1} />
+            <SectionListPage key={'SectionListPage'} tabLabel={'SectionList'} index={2} />
+        </CollapsibleHeaderTabView>
     }
 }
 
@@ -207,11 +202,11 @@ class TabViewContainer extends React.PureComponent<Props, { index: number, route
         const { route } = e
 
         if (route.key == 'ScrollView') {
-            return <ScrollViewPage index={0} isPullRefresh={true} slideAnimated={this.props.modeType === SlideType.slide} />
+            return <ScrollViewPage index={0} isPullRefresh={true} />
         } else if (route.key == 'FlatList') {
-            return <FlatListPage index={1} isPullRefresh={true} slideAnimated={this.props.modeType === SlideType.slide} />
+            return <FlatListPage index={1} isPullRefresh={true} />
         } else if (route.key == 'SectionList') {
-            return <SectionListPage index={2} isPullRefresh={true} slideAnimated={this.props.modeType === SlideType.slide} />
+            return <SectionListPage index={2} isPullRefresh={true} />
         }
         return null;
     }
@@ -224,8 +219,8 @@ class TabViewContainer extends React.PureComponent<Props, { index: number, route
         const { index, routes } = this.state
 
         const { modeType, ...rest } = this.props
-        const Container = modeType === SlideType.normal ? ZHeaderTabView : ZSlideTabView
-        return <Container
+        
+        return <ZHeaderTabView
             {...rest}
             navigationState={{ index, routes }}
             renderScene={this._renderScene}

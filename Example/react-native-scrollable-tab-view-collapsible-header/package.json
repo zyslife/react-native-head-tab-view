@@ -1,6 +1,6 @@
 {
   "name": "react-native-scrollable-tab-view-collapsible-header",
-  "version": "0.0.5",
+  "version": "1.0.0-rc3",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -26,7 +26,7 @@
     "collapsible-header"
   ],
   "peerDependencies": {
-    "react-native-head-tab-view": "^3.0.0"
+    "react-native-head-tab-view": "^4.0.0"
   },
   "description": "Extend react-native-scrollable-tab-view to have shared collapsible headers"
 }
