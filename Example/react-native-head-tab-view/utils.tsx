@@ -58,7 +58,7 @@ export const toEndSlide = ({
 }) => {
     'worklet'
     ctx.starty = 0
-    transValue.value = withDecay({ velocity: velocityY, deceleration: 0.998, clamp: [0, Number.MAX_VALUE] }, (finished) => {
+    transValue.value = withDecay({ velocity: velocityY, deceleration: 0.997, clamp: [0, Number.MAX_VALUE] }, (finished) => {
         isActive.value = false
     })
 }
@@ -66,25 +66,19 @@ export const toEndSlide = ({
 export const onActiveRefreshImpl = ({
     isRefreshing,
     isRefreshingWithAnimation,
-    isTabRefresh = false,
     transRefreshing,
     refreshHeight,
     shareAnimatedValue,
-    tabsTrans,
-    dragIndex,
-    currentIndex,
-    isDragging
+    isDragging,
+    onReadyToActive,
 }: {
-    isTabRefresh?: boolean
     isRefreshingWithAnimation: Animated.SharedValue<boolean>
     isRefreshing: Animated.SharedValue<boolean>
     isDragging: Animated.SharedValue<boolean>
     transRefreshing: Animated.SharedValue<number>
     shareAnimatedValue: Animated.SharedValue<number>
-    tabsTrans: Animated.SharedValue<number>
-    dragIndex: Animated.SharedValue<number>
-    currentIndex: number
     refreshHeight: number
+    onReadyToActive: (isPulling: boolean) => number
 }) => {
     'worklet'
     return (event: PanGestureHandlerGestureEvent['nativeEvent'], ctx: GesturePanContext) => {
@@ -92,17 +86,14 @@ export const onActiveRefreshImpl = ({
         if (isRefreshing.value !== isRefreshingWithAnimation.value) return
         if (isRefreshing.value) {
             const getStartY = () => {
-                dragIndex.value = currentIndex
-                return isTabRefresh ? refreshHeight - tabsTrans.value + shareAnimatedValue.value : shareAnimatedValue.value
+                return onReadyToActive(false)
             }
 
             toRunSlide({ transValue: transRefreshing, translationY: event.translationY, isActive: isDragging, ctx, getStartY })
-            return
         } else {
             if (shareAnimatedValue.value !== 0 || event.translationY <= 0) return
             if (isDragging.value === false) {
-                ctx.basyY = event.translationY
-                dragIndex.value = currentIndex
+                ctx.basyY = onReadyToActive(true)
                 isDragging.value = true
                 return
             }
@@ -165,23 +156,14 @@ export const animateToRefresh = ({
     isRefreshing: Animated.SharedValue<boolean>,
     isRefreshingWithAnimation: Animated.SharedValue<boolean>,
     isToRefresh: boolean,
-    destPoi:number
+    destPoi: number
 }) => {
     'worklet'
-
-    if (isToRefresh === true) {
-        if (isRefreshing.value === true) return;
-        transRefreshing.value = withTiming(destPoi, undefined, (finished) => {
-            isRefreshingWithAnimation.value = isToRefresh
-        })
-    } else {
-        if (isRefreshing.value === false && transRefreshing.value === destPoi) return
-
-        transRefreshing.value = withTiming(destPoi, undefined, () => {
-            isRefreshingWithAnimation.value = isToRefresh
-        })
-    }
+    if (isToRefresh === true && isRefreshing.value === true) return
+    if (isToRefresh === false && isRefreshing.value === false && transRefreshing.value === destPoi) return
 
     isRefreshing.value = isToRefresh
-
+    transRefreshing.value = withTiming(destPoi, undefined, (finished) => {
+        isRefreshingWithAnimation.value = isToRefresh
+    })
 }

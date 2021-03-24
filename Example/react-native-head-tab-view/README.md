@@ -1,6 +1,6 @@
 # React Native Head Tab View
 
-:tada::tada::tada: v4.0.0-rc.0 has been released, I hope you can help me test and collect questions.
+:tada::tada::tada: v4.0.0-rc.1 has been released, I hope you can help me test and collect questions.
 In this version, there is a big change. All animations will run on the UI thread, which will make the components much smoother. Unfortunately, the version requiring React Native is greater than 0.62.2. Because we rely on `react-native-reanimated2.0`, that's what it requires.  
 
 Here are some changes and optimizations.
@@ -173,8 +173,6 @@ yarn add react-native-tab-view-collapsible-header
 1. react-native-gesture-handler [Refer to the official documentation](https://github.com/software-mansion/react-native-gesture-handler)  
 1. react-native-reanimated [Refer to the official documentation](https://github.com/software-mansion/react-native-reanimated)
 
-## I want to say  
-Thank you to everyone who uses this library. It keeps me going.
 
 ---
 ## Documentation
@@ -187,11 +185,14 @@ Thank you to everyone who uses this library. It keeps me going.
 ```js  
 import { CollapsibleHeaderTabView } from 'react-native-scrollable-tab-view-collapsible-header' 
 ```
+[jump to](https://github.com/zyslife/react-native-scrollable-tab-view-collapsible-header)
 
 - If your tabs component is react-native-tab-view   
 ```js
 import { CollapsibleHeaderTabView } from 'react-native-tab-view-collapsible-header' 
 ```  
+[jump to](https://github.com/zyslife/react-native-tab-view-collapsible-header)
+
 
 `CollapsibleHeaderTabView` extends the props for the tabs component by adding the **CollapsibleHeaderProps**
 
@@ -284,3 +285,11 @@ it defaults to 50.
 
 </details>
 
+## Tips.
+1. If you are not planning to upgrade to RN0.62 in the near future, you can use the v3 version.
+2. You may encounter problems with `React-Native-Reanimated2.0` when you first start using V4.
+> [Refer to the official documentation](https://github.com/software-mansion/react-native-reanimated).
+I'm sure you'll think this is easy
+
+## I want to say  
+Thank you to everyone who uses this library. It keeps me going.

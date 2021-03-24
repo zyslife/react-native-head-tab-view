@@ -84,10 +84,11 @@ export interface SceneConfig {
 
 }
 
+export type RefreshType = 'pullToRefresh' | 'enough' | 'prepare' | 'refreshing' | 'finish'
 
 export interface RefreshControlProps {
     refreshValue: Reanimated2.SharedValue<number>
-    refreshType: Reanimated2.SharedValue<string>
+    refreshType: Reanimated2.SharedValue<RefreshType>
     progress: Reanimated2.SharedValue<number>
 }
 
@@ -106,5 +107,4 @@ export interface IGestureContainerProps {
     renderTabView: any
 }
 
-export type RefreshType = 'pullToRefresh' | 'enough' | 'prepare' | 'refreshing' | 'finish'
 

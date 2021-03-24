@@ -8,6 +8,7 @@ import {
 import {
     TapGestureHandler,
     PanGestureHandler,
+    TapGestureHandlerGestureEvent
 } from 'react-native-gesture-handler';
 import { HeaderContext } from './HeaderContext'
 import RefreshControlContainer from './RefreshControlContainer'
@@ -42,7 +43,8 @@ const GestureContainer: React.FC<IGestureContainerProps> = (
         tabbarHeight: initTabbarHeight = 49,
         headerHeight: initHeaderHeight = 0,
         renderScrollHeader,
-        renderTabView
+        renderTabView,
+        renderRefreshControl: _renderRefreshControl
     }
 ) => {
     //shareAnimatedValue
@@ -59,6 +61,7 @@ const GestureContainer: React.FC<IGestureContainerProps> = (
     const headerRef: React.RefObject<any> = React.useRef();
     //header slide
     const isSlidingHeader: Animated.SharedValue<boolean> = useSharedValue(false)
+    const slideIndex = useSharedValue(currentIndex)
     const headerTrans = useSharedValue(0)
     //pull-refresh(tabs)
     const isDragging = useSharedValue(false)
@@ -122,12 +125,6 @@ const GestureContainer: React.FC<IGestureContainerProps> = (
         return getTabsIsRefreshing(isStrict) || getSceneIsRefreshing(isStrict)
     }, [getTabsIsRefreshing, getSceneIsRefreshing])
 
-    const stopScrollView = () => {
-        'worklet'
-        if (getIsRefreshing(false)) return
-        mScrollTo(childScrollRef[currentIndex], 0, childScrollYTrans[currentIndex].value + 0.01, false)
-    }
-
     const animateTabsToRefresh = useCallback((isToRefresh: boolean) => {
         'worklet'
         if (isToRefresh) {
@@ -150,10 +147,17 @@ const GestureContainer: React.FC<IGestureContainerProps> = (
         }
     }, [_isRefreshing, refreshHeight])
 
+    const stopScrollView = () => {
+        'worklet'
+        if (getIsRefreshing(false)) return
+        mScrollTo(childScrollRef[currentIndex], 0, childScrollYTrans[currentIndex].value + 0.01, false)
+    }
 
     const stopAllAnimation = useCallback(() => {
         'worklet'
         cancelAnimation(headerTrans)
+        slideIndex.value = -1
+        dragIndex.value = -1
         if (getTabsIsRefreshing(true)) {
             cancelAnimation(tabsRefreshTrans)
         }
@@ -187,12 +191,12 @@ const GestureContainer: React.FC<IGestureContainerProps> = (
 
     }, [getTabsIsRefreshing, getSceneIsRefreshing, calcHeight, shareAnimatedValue, childScrollRef, childScrollYTrans, sceneIsRefreshing, sceneIsRefreshingWithAnimation])
 
-    const tapGestureHandler = useAnimatedGestureHandler({
+    const tapGestureHandler = useAnimatedGestureHandler<TapGestureHandlerGestureEvent>({
         onStart: () => {
             stopAllAnimation()
         }
     })
-    const tapHeaderGestureHandler = useAnimatedGestureHandler({
+    const tapHeaderGestureHandler = useAnimatedGestureHandler<TapGestureHandlerGestureEvent>({
         onStart: () => {
             stopScrollView()
         }
@@ -232,16 +236,22 @@ const GestureContainer: React.FC<IGestureContainerProps> = (
         onActive: (event, ctx: GesturePanContext) => {
             if (!tabsHasRefresh() && !sceneHasRefresh()) return
 
+            const onReadyToActive = (isPulling: boolean) => {
+
+                dragIndex.value = currentIndex
+                if (isPulling) {
+                    return event.translationY
+                } else {
+                    return onStartRefresh ? refreshHeight - tabsTrans.value + childScrollYTrans[currentIndex].value : childScrollYTrans[currentIndex].value
+                }
+            }
             onStartRefresh ? onActiveRefreshImpl({
-                isTabRefresh: true,
                 isRefreshing: tabsIsRefreshing,
                 isRefreshingWithAnimation: tabsIsRefreshingWithAnimation,
                 transRefreshing: tabsRefreshTrans,
                 refreshHeight,
                 shareAnimatedValue: childScrollYTrans[currentIndex],
-                tabsTrans,
-                dragIndex,
-                currentIndex,
+                onReadyToActive,
                 isDragging
             })(event, ctx) : onActiveRefreshImpl({
                 isRefreshing: sceneIsRefreshing[currentIndex],
@@ -249,9 +259,7 @@ const GestureContainer: React.FC<IGestureContainerProps> = (
                 transRefreshing: sceneRefreshTrans[currentIndex],
                 refreshHeight,
                 shareAnimatedValue: childScrollYTrans[currentIndex],
-                tabsTrans,
-                dragIndex,
-                currentIndex,
+                onReadyToActive,
                 isDragging: sceneIsDragging[currentIndex]
             })(event, ctx)
         },
@@ -293,11 +301,15 @@ const GestureContainer: React.FC<IGestureContainerProps> = (
                 translationY: event.translationY,
                 isActive: isSlidingHeader,
                 ctx,
-                getStartY: () => shareAnimatedValue.value + event.translationY
+                getStartY: () => {
+                    slideIndex.value = currentIndex
+                    return childScrollYTrans[currentIndex].value + event.translationY
+                }
             })
         },
         onEnd: (event, ctx: GesturePanContext) => {
             if (!sceneScrollEnabledValue[currentIndex].value) return
+            if (isSlidingHeader.value === false) return
             toEndSlide({
                 transValue: headerTrans,
                 velocityY: -event.velocityY,
@@ -328,6 +340,7 @@ const GestureContainer: React.FC<IGestureContainerProps> = (
                 opacityValue={opacityValue}
                 isRefreshing={tabsIsRefreshing}
                 isRefreshingWithAnimation={tabsIsRefreshingWithAnimation}
+                renderContent={_renderRefreshControl}
             />
         )
     }
@@ -372,7 +385,6 @@ const GestureContainer: React.FC<IGestureContainerProps> = (
         return tabsRefreshTrans.value < refreshHeight && shareAnimatedValue.value !== 0 && dragIndex.value === currentIndex && (isDragging.value || tabsIsRefreshingWithAnimation.value)
     }, (isStart) => {
         if (!isStart) return
-
         mScrollTo(childScrollRef[currentIndex], 0, 0, false)
     }, [refreshHeight, onStartRefresh, currentIndex, childScrollRef])
 
@@ -389,7 +401,7 @@ const GestureContainer: React.FC<IGestureContainerProps> = (
 
     //slide header
     useAnimatedReaction(() => {
-        return isSlidingHeader.value && headerTrans.value >= 0
+        return headerTrans.value >= 0 && slideIndex.value === currentIndex
     }, (start) => {
         if (!start) return
         if (!childScrollRef[currentIndex]) return;
@@ -483,7 +495,6 @@ const GestureContainer: React.FC<IGestureContainerProps> = (
 
     const contentContainer = <HeaderContext.Provider value={{
         shareAnimatedValue,
-        dragIndex,
         headerTrans,
         tabbarHeight,
         expectHeight: headerHeight + Math.floor(tabviewHeight),

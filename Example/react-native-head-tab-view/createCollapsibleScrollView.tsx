@@ -42,6 +42,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         onScrollBeginDrag,
         ContainerView,
         isRefreshing: _isRefreshing = false,
+        renderRefreshControl: _renderRefreshControl,
         ...restProps
     }
 ) => {
@@ -55,7 +56,6 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         currentIndex,
         updateSceneInfo,
         tabsIsWorking,
-        dragIndex,
         refreshHeight
     } = useSceneContext()
 
@@ -71,6 +71,9 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
     const isRefreshingWithAnimation = useSharedValue(_isRefreshing);
     const isDragging: { value: boolean } = useSharedValue(false);
     const { opacityValue, syncInitialPosition } = useSyncInitialPosition(_scrollView)
+    const calcHeight = useMemo(() => {
+        return tabbarHeight + headerHeight
+    }, [tabbarHeight, headerHeight])
 
     const scrollEnabledValue = useDerivedValue(() => {
         return !isDragging.value && !tabsIsWorking.value && !isRefreshing.value && !isRefreshingWithAnimation.value
@@ -114,15 +117,16 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
             })
             onStartRefresh && onStartRefresh()
         } else {
+            const destPoi = shareAnimatedValue.value > headerHeight + refreshHeight ? shareAnimatedValue.value : shareAnimatedValue.value + refreshHeight
             animateToRefresh({
                 transRefreshing: refreshTrans,
                 isRefreshing,
                 isRefreshingWithAnimation,
-                destPoi: shareAnimatedValue.value + refreshHeight,
+                destPoi,
                 isToRefresh: false
             })
         }
-    }, [currentIndex, onStartRefresh, refreshHeight])
+    }, [currentIndex, onStartRefresh, refreshHeight, calcHeight])
 
     useEffect(() => {
         refHasChanged && refHasChanged(panRef)
@@ -142,13 +146,12 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
                 isRefreshingWithAnimation,
                 canPullRefresh: onStartRefresh !== undefined,
                 scrollY,
-                trans,
                 isDragging,
                 scrollEnabledValue,
                 onRefreshStatusCallback
             })
         }
-    }, [_scrollView, index, refreshTrans, isRefreshing, isRefreshingWithAnimation, onStartRefresh, scrollY, trans, isDragging, onRefreshStatusCallback])
+    }, [_scrollView, index, refreshTrans, isRefreshing, isRefreshingWithAnimation, onStartRefresh, scrollY, isDragging, onRefreshStatusCallback])
 
 
     useEffect(() => {
@@ -156,9 +159,11 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
             setListViewScrollEnabled(false)
             return
         }
-        requestAnimationFrame(() => {
-            setListViewScrollEnabled(true)
-        })
+        if (scrollEnabledValue.value) {
+            requestAnimationFrame(() => {
+                setListViewScrollEnabled(true)
+            })
+        }
     }, [isActive])
 
     //adjust the scene size
@@ -240,7 +245,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         if (!onStartRefresh) return;
         return (
             <RefreshControlContainer
-                top={headerHeight + tabbarHeight}
+                top={calcHeight}
                 refreshHeight={refreshHeight}
                 overflowPull={overflowPull}
                 refreshValue={trans}
@@ -248,6 +253,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
                 opacityValue={opacityValue}
                 isRefreshing={isRefreshing}
                 isRefreshingWithAnimation={isRefreshingWithAnimation}
+                renderContent={_renderRefreshControl}
             />
         )
     }
@@ -282,7 +288,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
                     onContentSizeChange={_onContentSizeChange}
                     currentIndex={currentIndex}
                     bounces={bouncesEnabled}
-                    headerHeight={headerHeight + tabbarHeight}
+                    headerHeight={calcHeight}
                     expectHeight={expectHeight}
                     scrollEnabledValue={scrollEnabledValue}
                     {...restProps}
@@ -318,7 +324,7 @@ const SceneListComponentP: React.FC<SceneListComponentProps & ScrollViewProps> =
         return {
             scrollEnabled: scrollEnabledValue.value
         }
-    }, [scrollEnabledValue])
+    }, [scrollEnabledValue, currentIndex])
 
     return <NativeViewGestureHandler
         ref={panRef}

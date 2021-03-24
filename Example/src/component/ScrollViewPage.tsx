@@ -39,15 +39,8 @@ export default class ScrollViewPage extends React.PureComponent<Props & typeof d
         this.state = {
             isRefreshing: false,
         }
-
-        // setTimeout(() => {
-        //     this.setState({ isRefreshing: true })
-        // }, 3000);
     }
     private onStartRefresh = () => {
-        // setTimeout(() => {
-        // this.setState({ isRefreshing: true })
-        // }, 500);
         this.setState({ isRefreshing: true })
         this.mTimer = setTimeout(() => {
             this.setState({ isRefreshing: false })
@@ -77,7 +70,7 @@ export default class ScrollViewPage extends React.PureComponent<Props & typeof d
                 {
                     staticData.Page1Data.map((item, index) => {
                         return (
-                            <View onPress={this.props.onPressItem} style={{ width: '100%', alignItems: 'center' }} key={'Page1_' + index}>
+                            <View style={{ width: '100%', alignItems: 'center' }} key={'Page1_' + index}>
                                 <View style={styles.titleStyle}>
                                     <Text style={styles.sectionTitle}>{item.title}</Text>
                                 </View>

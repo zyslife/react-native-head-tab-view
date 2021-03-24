@@ -23,7 +23,7 @@ interface RefreshControlContainerProps {
     isRefreshing: Animated.SharedValue<boolean>
     isRefreshingWithAnimation: Animated.SharedValue<boolean>
     transValue?: Animated.SharedValue<number>
-    renderContent?: (refreshProps: any) => React.ReactElement
+    renderContent?: (refreshProps: RefreshControlProps) => React.ReactElement
 }
 
 const RefreshControlContainer: React.FC<RefreshControlContainerProps> = ({
@@ -171,6 +171,8 @@ const styles = StyleSheet.create({
     textStyle: {
         color: '#26323F',
         marginTop: 10,
-        fontSize: 17
+        fontSize: 17,
+        width:100,
+        textAlign:'center'
     }
 })

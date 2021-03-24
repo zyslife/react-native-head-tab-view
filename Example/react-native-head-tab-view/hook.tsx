@@ -71,7 +71,6 @@ export const useSceneInfo = () => {
     const [sceneCanPullRefresh, setSceneCanPullRefresh] = useState<{ [index: number]: boolean }>({})
     const [sceneRefreshCallBack, setSceneRefreshCallBack] = useState<{ [index: number]: (isToRefresh: boolean) => void }>({})
 
-    // const updateSceneInfo = ({
     const updateSceneInfo = useCallback(({
         index,
         scrollRef,
@@ -80,7 +79,6 @@ export const useSceneInfo = () => {
         isRefreshing,
         isRefreshingWithAnimation,
         refreshTrans,
-        trans,
         isDragging,
         scrollEnabledValue,
         onRefreshStatusCallback
@@ -111,7 +109,7 @@ export const useSceneInfo = () => {
                 return { ..._p, [index]: refreshTrans }
             })
         }
-      
+
         if (canPullRefresh !== sceneCanPullRefresh[index]) {
             setSceneCanPullRefresh(_p => {
                 return { ..._p, [index]: canPullRefresh }
@@ -132,17 +130,17 @@ export const useSceneInfo = () => {
                 return { ..._p, [index]: onRefreshStatusCallback }
             })
         }
-    },[])
-        return {
-            childScrollRef,
-            sceneRefreshTrans,
-            childScrollYTrans,
-            sceneIsRefreshing,
-            sceneIsDragging,
-            sceneCanPullRefresh,
-            sceneRefreshCallBack,
-            sceneScrollEnabledValue,
-            sceneIsRefreshingWithAnimation,
-            updateSceneInfo
-        }
+    }, [])
+    return {
+        childScrollRef,
+        sceneRefreshTrans,
+        childScrollYTrans,
+        sceneIsRefreshing,
+        sceneIsDragging,
+        sceneCanPullRefresh,
+        sceneRefreshCallBack,
+        sceneScrollEnabledValue,
+        sceneIsRefreshingWithAnimation,
+        updateSceneInfo
+    }
 }

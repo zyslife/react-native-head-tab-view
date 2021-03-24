@@ -8,7 +8,7 @@ import MainScreen from './MainScreen'
 import ExampleBasic from './ExampleBasic'
 import ExampleCustomTabbar from './ExampleCustomTabbar'
 import ExampleWithPullRefresh from './ExampleWithPullRefresh'
-// import ExampleScrollTrans from './ExampleScrollTrans'
+import ExampleScrollTrans from './ExampleScrollTrans'
 import ExampleCarouselHeader from './ExampleCarouselHeader'
 import ExampleWithTabViewPullRefresh from './ExampleWithTabViewPullRefresh'
 
@@ -50,10 +50,10 @@ export default class Example extends React.PureComponent {
                         component={ExampleWithTabViewPullRefresh}
                         options={{ title: 'ExampleWithTabViewPullRefresh' }}
                     />
-                    {/* <Stack.Screen
+                    <Stack.Screen
                         name="ExampleScrollTrans"
                         component={ExampleScrollTrans}
-                    /> */}
+                    />
                     <Stack.Screen
                         name="ExampleCarouselHeader"
                         component={ExampleCarouselHeader}

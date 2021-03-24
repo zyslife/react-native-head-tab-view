@@ -51,7 +51,6 @@ export type RefreshType = 'pullToRefresh' | 'enough' | 'prepare' | 'refreshing' 
 export interface IHeaderContext {
     tabsIsWorking: Reanimated2.SharedValue<boolean>
     shareAnimatedValue: Reanimated2.SharedValue<number>
-    dragIndex: Reanimated2.SharedValue<number>
     frozeTop: number
     tabbarHeight: number
     headerHeight: number
@@ -74,7 +73,6 @@ export type updateSceneInfoType = {
     scrollEnabledValue: Reanimated2.SharedValue<boolean>
     canPullRefresh: boolean
     scrollY: Reanimated2.SharedValue<number>
-    trans: Reanimated2.SharedValue<number>
     onRefreshStatusCallback: (isToRefresh: boolean) => void
 }
 
