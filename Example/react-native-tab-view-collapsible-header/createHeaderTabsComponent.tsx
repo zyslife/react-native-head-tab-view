@@ -1,6 +1,6 @@
 import { TabView, TabViewProps, Route, TabBar } from 'react-native-tab-view';
-import React from 'react';
-import { GestureContainer, CollapsibleHeaderProps } from 'react-native-head-tab-view'
+import React, { useEffect, useRef } from 'react';
+import { GestureContainer, CollapsibleHeaderProps, GestureContainerRef } from 'react-native-head-tab-view'
 
 type ZTabViewProps<T extends Route> = Partial<TabViewProps<T>> &
     Pick<TabViewProps<T>, 'onIndexChange' | 'navigationState' | 'renderScene'> & CollapsibleHeaderProps
@@ -14,6 +14,12 @@ export default function createHeaderTabsComponent<T extends Route>(Component: ty
 }
 
 function CollapsibleHeaderTabView<T extends Route>(props: ForwardTabViewProps<T>): any {
+    const mRef = useRef<GestureContainerRef>()
+    const initialPageRef = useRef(props.navigationState.index)
+    
+    useEffect(() => {
+        mRef.current && mRef.current.setCurrentIndex(props.navigationState.index)
+    }, [props.navigationState.index])
 
     const _renderTabBar = (tabbarProps: any) => {
         if (props.renderTabBar) {
@@ -24,7 +30,6 @@ function CollapsibleHeaderTabView<T extends Route>(props: ForwardTabViewProps<T>
 
     const renderTabView = (e: { renderTabBarContainer: any }) => {
         const { Component } = props
-
         return <Component
             ref={props.forwardedRef}
             {...props}
@@ -32,7 +37,8 @@ function CollapsibleHeaderTabView<T extends Route>(props: ForwardTabViewProps<T>
     }
 
     return <GestureContainer
-        currentIndex={props.navigationState.index}
+        ref={mRef}
+        initialPage={initialPageRef.current}
         renderTabView={renderTabView}
         {...props} />
 }

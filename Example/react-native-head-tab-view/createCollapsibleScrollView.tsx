@@ -12,6 +12,7 @@ import { NormalSceneProps, HPageViewProps } from './types'
 import { useSceneContext, useSharedScrollableRef, useSyncInitialPosition } from './hook'
 import { mScrollTo, animateToRefresh } from './utils'
 import Animated, {
+    runOnJS,
     useDerivedValue,
     useAnimatedScrollHandler,
     useSharedValue,
@@ -53,13 +54,11 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         expectHeight,
         tabsRefreshEnabled,
         refHasChanged,
-        currentIndex,
+        curIndexValue,
         updateSceneInfo,
         tabsIsWorking,
         refreshHeight
     } = useSceneContext()
-
-    const isActive = useMemo(() => index === currentIndex, [index, currentIndex])
 
     const _scrollView = useSharedScrollableRef<ScrollView>(forwardedRef)
     const panRef = useRef();
@@ -86,11 +85,11 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
 
     const updateShareValue = useCallback((value: number) => {
         'worklet'
-        if (currentIndex !== index) return
+        if (curIndexValue.value !== index) return
         //Avoid causing updates to the ShareAnimatedValue after the drop-down has finished
         if (isRefreshing.value !== isRefreshingWithAnimation.value) return;
         shareAnimatedValue.value = value
-    }, [currentIndex, shareAnimatedValue, index, isRefreshing.value, isRefreshingWithAnimation.value])
+    }, [curIndexValue.value, shareAnimatedValue, index, isRefreshing.value, isRefreshingWithAnimation.value])
 
     const onScrollAnimateEvent = useAnimatedScrollHandler(
         {
@@ -102,7 +101,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
                 updateScrollYTrans(moveY)
                 updateShareValue(moveY)
             },
-        }, [currentIndex, updateShareValue, updateScrollYTrans, isRefreshingWithAnimation]
+        }, [curIndexValue, updateShareValue, updateScrollYTrans, isRefreshingWithAnimation]
     )
 
 
@@ -113,9 +112,9 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
                 isRefreshing,
                 isRefreshingWithAnimation,
                 destPoi: 0,
-                isToRefresh: true
+                isToRefresh: true,
+                onStartRefresh
             })
-            onStartRefresh && onStartRefresh()
         } else {
             const destPoi = shareAnimatedValue.value > headerHeight + refreshHeight ? shareAnimatedValue.value : shareAnimatedValue.value + refreshHeight
             animateToRefresh({
@@ -126,7 +125,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
                 isToRefresh: false
             })
         }
-    }, [currentIndex, onStartRefresh, refreshHeight, calcHeight])
+    }, [onStartRefresh, refreshHeight, calcHeight])
 
     useEffect(() => {
         refHasChanged && refHasChanged(panRef)
@@ -154,17 +153,25 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
     }, [_scrollView, index, refreshTrans, isRefreshing, isRefreshingWithAnimation, onStartRefresh, scrollY, isDragging, onRefreshStatusCallback])
 
 
-    useEffect(() => {
-        if (isActive === false) {
-            setListViewScrollEnabled(false)
-            return
-        }
-        if (scrollEnabledValue.value) {
+    /**
+     * We used the alternative method to operate the nativeProps 
+     * because there might be a bug with useAnimatedprops on early mount
+     */
+    const setListViewScrollEnabled = (scrollEnabled: boolean) => {
+        if (scrollEnabled) {
             requestAnimationFrame(() => {
-                setListViewScrollEnabled(true)
+                _scrollView && _scrollView.current && _scrollView.current.setNativeProps({ scrollEnabled });
             })
+        } else {
+            _scrollView && _scrollView.current && _scrollView.current.setNativeProps({ scrollEnabled });
         }
-    }, [isActive])
+    }
+
+    useAnimatedReaction(() => {
+        return curIndexValue.value
+    }, (curIndex) => {
+        runOnJS(setListViewScrollEnabled)(index === curIndex)
+    }, [curIndexValue, index])
 
     //adjust the scene size
     const _onContentSizeChange = useCallback((contentWidth: number, contentHeight: number) => {
@@ -185,19 +192,18 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
     }, [_isRefreshing, onRefreshStatusCallback])
 
     useAnimatedReaction(() => {
-        return { mTrans: refreshTrans.value }
-    }, ({ mTrans }) => {
+        return refreshTrans.value
+    }, (mTrans) => {
         trans.value = Math.max(refreshHeight - mTrans, 0)
-    })
+    }, [refreshTrans, refreshHeight])
 
     useAnimatedReaction(() => {
         return isRefreshing.value === false && isRefreshingWithAnimation.value === true && refreshTrans
     }, (isStart) => {
         if (!isStart) return
-
         if (realY.value === refreshTrans.value - refreshHeight) return
         mScrollTo(_scrollView, 0, refreshTrans.value - refreshHeight, false)
-    })
+    }, [isRefreshing, isRefreshingWithAnimation, refreshTrans, refreshHeight])
 
     useAnimatedReaction(() => {
         return refreshTrans.value <= refreshHeight && (isDragging.value || (isRefreshing.value && isRefreshingWithAnimation.value))
@@ -211,7 +217,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
             updateScrollYTrans(refreshTrans.value);
             updateShareValue(refreshTrans.value)
         }
-    }, [_scrollView, updateShareValue, currentIndex, updateScrollYTrans])
+    }, [refreshTrans, refreshHeight, isDragging, isRefreshing, isRefreshingWithAnimation, _scrollView, updateShareValue, updateScrollYTrans])
 
     useAnimatedReaction(() => {
         return refreshTrans.value > refreshHeight && isRefreshing.value && isRefreshingWithAnimation.value
@@ -221,7 +227,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
             mScrollTo(_scrollView, 0, refreshTrans.value - refreshHeight, false)
         }
 
-    }, [_scrollView, refreshHeight, currentIndex])
+    }, [refreshTrans, refreshHeight, isRefreshing, isRefreshingWithAnimation, _scrollView])
 
     const translateY = useDerivedValue(() => {
         return interpolate(
@@ -268,13 +274,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         }
     })
 
-    /**
-     * We used the alternative method to operate the nativeProps 
-     * because there might be a bug with useAnimatedprops on early mount
-     */
-    const setListViewScrollEnabled = (scrollEnabled: boolean) => {
-        _scrollView && _scrollView.current && _scrollView.current.setNativeProps({ scrollEnabled });
-    }
+
 
     return (
         <Animated.View style={[styles.container, sceneStyle]}>
@@ -286,7 +286,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
                     zForwardedRef={_scrollView}
                     onScroll={onScrollAnimateEvent}
                     onContentSizeChange={_onContentSizeChange}
-                    currentIndex={currentIndex}
+                    curIndexValue={curIndexValue}
                     bounces={bouncesEnabled}
                     headerHeight={calcHeight}
                     expectHeight={expectHeight}
@@ -306,7 +306,7 @@ interface SceneListComponentProps {
     zForwardedRef: any
     headerHeight: number
     expectHeight: number
-    currentIndex: number
+    curIndexValue: Animated.SharedValue<number>
     scrollEnabledValue: Animated.SharedValue<boolean>
 }
 
@@ -317,14 +317,14 @@ const SceneListComponentP: React.FC<SceneListComponentProps & ScrollViewProps> =
     headerHeight,
     expectHeight,
     scrollEnabledValue,
-    currentIndex,
+    curIndexValue,
     ...rest
 }) => {
     const animatedProps = useAnimatedProps(() => {
         return {
             scrollEnabled: scrollEnabledValue.value
         }
-    }, [scrollEnabledValue, currentIndex])
+    }, [scrollEnabledValue, curIndexValue])
 
     return <NativeViewGestureHandler
         ref={panRef}

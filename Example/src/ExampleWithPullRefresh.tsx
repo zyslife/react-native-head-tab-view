@@ -21,7 +21,7 @@ interface EState {
     routes: any[]
 }
 
-const HEAD_HEIGHT = 300
+const HEAD_HEIGHT = 180
 export default class ExampleWithPullRefresh extends React.PureComponent<any, EState> {
 
     getType(): TabViewType {

@@ -27,9 +27,11 @@ export interface NormalSceneBaseProps extends CommonSceneProps {
 }
 
 export interface IGestureContainerProps extends CollapsibleHeaderProps {
-    currentIndex: number
+    initialPage: number
     renderTabView: any
+    forwardedRef: any
 }
+
 
 export interface RefreshControlProps {
     refreshValue: Reanimated2.SharedValue<number>
@@ -59,7 +61,7 @@ export interface IHeaderContext {
     expectHeight: number;
     tabsRefreshEnabled: boolean
     refHasChanged: (ref: React.RefObject<any>) => void;
-    currentIndex: number
+    curIndexValue: Reanimated2.SharedValue<number>
     updateSceneInfo: (e: updateSceneInfoType) => void
 }
 
@@ -78,10 +80,6 @@ export type updateSceneInfoType = {
 
 export type ScrollableView<T> = ComponentClass<SectionListProps<T> | FlatListProps<T> | ScrollViewProps>
 
-export interface IHeaderSlideContext {
-    refHasChanged: (ref: React.RefObject<any>) => void;
-    currentIndex: number
-}
 
 export enum Direction {
     top,

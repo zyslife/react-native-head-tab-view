@@ -7,7 +7,7 @@ export interface CollapsibleHeaderProps {
     /**
      * render the collapsible header
      */
-     renderScrollHeader: () => React.ComponentType<any> | React.ReactElement | null;
+    renderScrollHeader: () => React.ComponentType<any> | React.ReactElement | null;
     /**
      * The height of collapsible header
      */
@@ -100,11 +100,18 @@ export const HScrollView: HScrollViewType
 export const HFlatList: HFlatListType
 export const HSectionList: HSectionListType
 
-export declare class GestureContainer extends React.Component<IGestureContainerProps>{ }
 
-export interface IGestureContainerProps {
-    currentIndex: number
+
+export interface IGestureContainerProps extends CollapsibleHeaderProps {
+    initialPage: number
     renderTabView: any
 }
+
+export type GestureContainerRef = {
+    setCurrentIndex: (index: number) => void;
+} | undefined
+
+export const GestureContainer: React.ForwardRefExoticComponent<React.PropsWithoutRef<IGestureContainerProps> & React.RefAttributes<GestureContainerRef>>
+
 
 

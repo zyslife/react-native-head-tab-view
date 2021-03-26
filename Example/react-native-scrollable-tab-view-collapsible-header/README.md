@@ -79,7 +79,15 @@ yarn add react-native-scrollable-tab-view-collapsible-header
 ```
 
 
-### 
+## Version
+
+|       react-native-head-tab-view       |          react-native-scrollable-tab-view          |    react-native-tab-view-collapsible-header   |
+| :--------------: | :--------------------: | :--------------------: |
+| v1 ~ v2 | - | - |
+|   v3   | v0 | v0 |
+|   v4-rc.1   | v1 | v1 |
+|   v4-rc.2   | v2 | v2 |
+
 
 
 ---

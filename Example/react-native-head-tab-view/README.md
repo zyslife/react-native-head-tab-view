@@ -1,6 +1,6 @@
 # React Native Head Tab View
 
-:tada::tada::tada: v4.0.0-rc.1 has been released, I hope you can help me test and collect questions.
+:tada::tada::tada: v4.0.0-rc.2 has been released, I hope you can help me test and collect questions.
 In this version, there is a big change. All animations will run on the UI thread, which will make the components much smoother. Unfortunately, the version requiring React Native is greater than 0.62.2. Because we rely on `react-native-reanimated2.0`, that's what it requires.  
 
 Here are some changes and optimizations.
@@ -32,22 +32,34 @@ For detailed usage, please refer to [Example](https://github.com/zyslife/react-n
 
 ## Features  
 
-#### v4.0  
+#### v4.0.0-rc  
 - **Fix for TAB slider stuttering when dragging headers**
-- **Optimized pull-down refresh for easier expansion and better performance**  
+- **Optimized pull-down refresh for easier expansion and better performance** 
+>#### dependencies:
+>1.react-native-gesture-handler  
+>2.react-native-reanimated
 
-###### v1.0
-- Scrollable tabs
-- All Tab pages share collapsible headers
-- Collapsible Headers controls the slide of the Tabview in the vertical direction
-- Collapsible Headers can respond to an event 
+
+###### v3.0
+- Support for extension of other Tabs components, support for shared collapsible headers
+- The built-in tabs component is discarded
+>#### dependencies:
+>1.react-native-gesture-handler  
+
 ###### v2.0
 - Add a pull-down refresh for the Tab page（v2.0~）
 - Add a pull-down refresh for the Tabview（v2.0.6~）
 - Add the new slide mode to Collapsible Headers and Tabview（v2.1.0~）
-###### v3.0
-- Support for extension of other Tabs components, support for shared collapsible headers
-- The built-in tabs component is discarded
+###### v1.0
+- Built-in Scrollable tabs
+- All Tab pages share collapsible headers
+- Collapsible Headers controls the slide of the Tabview in the vertical direction
+- Collapsible Headers can respond to an event 
+>#### dependencies:
+>1.react-native-gesture-handler  
+>2.@react-native-community/viewpager
+
+
   
 
 ## Demo
@@ -167,6 +179,14 @@ yarn add react-native-scrollable-tab-view-collapsible-header
 yarn add react-native-tab-view-collapsible-header
 ```
 
+## Version
+
+|       react-native-head-tab-view       |          react-native-scrollable-tab-view          |    react-native-tab-view-collapsible-header   |
+| :--------------: | :--------------------: | :--------------------: |
+| v1 ~ v2 | - | - |
+|   v3   | v0 | v0 |
+|   v4-rc.1   | v1 | v1 |
+|   v4-rc.2   | v2 | v2 |
 
 ## Linking    
 
@@ -182,16 +202,19 @@ yarn add react-native-tab-view-collapsible-header
   
     
 - If your tabs component is react-native-scrollable-tab-view  
+>You need to add [this dependency library](https://github.com/zyslife/react-native-scrollable-tab-view-collapsible-header)
 ```js  
 import { CollapsibleHeaderTabView } from 'react-native-scrollable-tab-view-collapsible-header' 
 ```
-[jump to](https://github.com/zyslife/react-native-scrollable-tab-view-collapsible-header)
+
 
 - If your tabs component is react-native-tab-view   
+>You need to add [this dependency library](https://github.com/zyslife/react-native-tab-view-collapsible-header)
+
 ```js
 import { CollapsibleHeaderTabView } from 'react-native-tab-view-collapsible-header' 
 ```  
-[jump to](https://github.com/zyslife/react-native-tab-view-collapsible-header)
+
 
 
 `CollapsibleHeaderTabView` extends the props for the tabs component by adding the **CollapsibleHeaderProps**

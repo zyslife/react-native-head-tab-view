@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import {
     StyleSheet,
 } from 'react-native';
-import { GestureContainer, CollapsibleHeaderProps } from 'react-native-head-tab-view'
+import { GestureContainer, CollapsibleHeaderProps, GestureContainerRef } from 'react-native-head-tab-view'
 import ScrollableTabView, { DefaultTabBar, ScrollableTabViewProperties } from 'react-native-scrollable-tab-view'
 
 type ZTabViewProps = Omit<ScrollableTabViewProperties, 'ref'> & CollapsibleHeaderProps
@@ -18,12 +18,10 @@ export default function createHeaderTabsComponent(Component: typeof ScrollableTa
 }
 
 const CollapsibleHeaderTabView: React.FC<ForwardTabViewProps> = (props: ForwardTabViewProps) => {
-    const [currentIndex, setCurrentIndex] = useState(props.initialPage || 0)
-
+    const mRef = useRef<GestureContainerRef>()
     const _onChangeTab = (e: any) => {
         props.onChangeTab && props.onChangeTab(e)
-        if (e.i === currentIndex) return;
-        setCurrentIndex((preIndex: number) => e.i)
+        mRef.current && mRef.current.setCurrentIndex(e.i)
     }
 
     const _renderTabBar = (mProps: any) => {
@@ -48,7 +46,8 @@ const CollapsibleHeaderTabView: React.FC<ForwardTabViewProps> = (props: ForwardT
         />
     }
     return <GestureContainer
-        currentIndex={currentIndex}
+        ref={mRef}
+        initialPage={props.initialPage || 0}
         renderTabView={renderTabView}
         {...props} />
 }

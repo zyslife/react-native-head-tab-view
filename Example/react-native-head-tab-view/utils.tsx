@@ -5,6 +5,7 @@ import {
 import Animated, {
     withDecay,
     withTiming,
+    runOnJS
 } from 'react-native-reanimated'
 import { GesturePanContext } from './types'
 
@@ -151,18 +152,23 @@ export const animateToRefresh = ({
     isRefreshingWithAnimation,
     isToRefresh,
     destPoi,
+    onStartRefresh,
 }: {
     transRefreshing: Animated.SharedValue<number>,
     isRefreshing: Animated.SharedValue<boolean>,
     isRefreshingWithAnimation: Animated.SharedValue<boolean>,
     isToRefresh: boolean,
-    destPoi: number
+    destPoi: number,
+    onStartRefresh?: () => void
 }) => {
     'worklet'
     if (isToRefresh === true && isRefreshing.value === true) return
     if (isToRefresh === false && isRefreshing.value === false && transRefreshing.value === destPoi) return
-
     isRefreshing.value = isToRefresh
+    if (isToRefresh && onStartRefresh) {
+        runOnJS(onStartRefresh)()
+    }
+    
     transRefreshing.value = withTiming(destPoi, undefined, (finished) => {
         isRefreshingWithAnimation.value = isToRefresh
     })
