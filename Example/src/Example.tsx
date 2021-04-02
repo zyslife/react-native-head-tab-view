@@ -8,7 +8,7 @@ import MainScreen from './MainScreen'
 import ExampleBasic from './ExampleBasic'
 import ExampleCustomTabbar from './ExampleCustomTabbar'
 import ExampleWithPullRefresh from './ExampleWithPullRefresh'
-import ExampleScrollTrans from './ExampleScrollTrans'
+import ExampleHeaderAnimated from './ExampleHeaderAnimated'
 import ExampleCarouselHeader from './ExampleCarouselHeader'
 import ExampleWithTabViewPullRefresh from './ExampleWithTabViewPullRefresh'
 
@@ -23,7 +23,6 @@ export default class Example extends React.PureComponent {
                 <Stack.Navigator
                     initialRouteName="MainScreen"
                     // headerMode={'none'}
-                    // 页面共享的配置
                     screenOptions={getScreenOptions()}>
                     <Stack.Screen
                         name="MainScreen"
@@ -51,8 +50,8 @@ export default class Example extends React.PureComponent {
                         options={{ title: 'ExampleWithTabViewPullRefresh' }}
                     />
                     <Stack.Screen
-                        name="ExampleScrollTrans"
-                        component={ExampleScrollTrans}
+                        name="ExampleHeaderAnimated"
+                        component={ExampleHeaderAnimated}
                     />
                     <Stack.Screen
                         name="ExampleCarouselHeader"

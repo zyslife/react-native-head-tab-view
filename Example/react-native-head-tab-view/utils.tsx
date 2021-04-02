@@ -17,9 +17,7 @@ export function mScrollTo(
 ) {
     'worklet';
     if (!ref) return;
-    let scrollY = y
-
-    Animated.scrollTo(ref, x, scrollY, animated)
+    Animated.scrollTo(ref, x, y, animated)
 }
 
 export const toRunSlide = ({
@@ -84,6 +82,7 @@ export const onActiveRefreshImpl = ({
     'worklet'
     return (event: PanGestureHandlerGestureEvent['nativeEvent'], ctx: GesturePanContext) => {
         'worklet';
+      
         if (isRefreshing.value !== isRefreshingWithAnimation.value) return
         if (isRefreshing.value) {
             const getStartY = () => {
@@ -127,7 +126,6 @@ export const onEndRefreshImpl = ({
         isDragging.value = false
         if (isRefreshing.value !== isRefreshingWithAnimation.value) return
         if (isRefreshing.value) {
-            ctx.isStart = false
             toEndSlide({
                 transValue: transRefreshing,
                 velocityY: -event.velocityY,
@@ -168,7 +166,11 @@ export const animateToRefresh = ({
     if (isToRefresh && onStartRefresh) {
         runOnJS(onStartRefresh)()
     }
-    
+
+    if (transRefreshing.value === destPoi) {
+        isRefreshingWithAnimation.value = isToRefresh
+        return
+    }
     transRefreshing.value = withTiming(destPoi, undefined, (finished) => {
         isRefreshingWithAnimation.value = isToRefresh
     })

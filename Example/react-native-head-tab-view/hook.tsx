@@ -7,6 +7,8 @@ import Animated, {
     useSharedValue,
     runOnUI,
     withTiming,
+    useDerivedValue,
+    interpolate
 } from 'react-native-reanimated'
 
 export const useSceneContext = () => {
@@ -39,25 +41,22 @@ export const useSyncInitialPosition = (_scrollView: any) => {
     const opacityValue = useSharedValue(0)
     const { shareAnimatedValue, headerHeight, frozeTop } = useSceneContext()
 
-    const syncInitialPosition = useCallback(() => {
+    const syncInitialPosition = useCallback((position: number) => {
         if (!needTryScroll.current) return;
         needTryScroll.current = false;
         const calcH = headerHeight - frozeTop
-        const scrollValue = shareAnimatedValue.value > calcH ? calcH : shareAnimatedValue.value
-
+        let scrollValue = Math.min(position, calcH)
+        
         runOnUI(mScrollTo)(_scrollView, 0, scrollValue, false)
-
         requestAnimationFrame(() => {
             opacityValue.value = withTiming(1)
         })
     }, [shareAnimatedValue, headerHeight])
 
-    return useMemo(() => {
-        return {
-            opacityValue,
-            syncInitialPosition
-        }
-    }, [syncInitialPosition])
+    return {
+        opacityValue,
+        syncInitialPosition
+    }
 }
 
 export const useSceneInfo = () => {
@@ -143,4 +142,24 @@ export const useSceneInfo = () => {
         sceneIsRefreshingWithAnimation,
         updateSceneInfo
     }
+}
+
+export const useRefreshDerivedValue = ({
+    refreshHeight,
+    overflowPull,
+    animatedValue,
+    pullExtendedCoefficient
+}: {
+    refreshHeight: number
+    overflowPull: number
+    animatedValue: Animated.SharedValue<number>
+    pullExtendedCoefficient: number
+}) => {
+    return useDerivedValue(() => {
+        return interpolate(
+            animatedValue.value,
+            [0, refreshHeight + overflowPull, refreshHeight + overflowPull + 1],
+            [0, refreshHeight + overflowPull, refreshHeight + overflowPull + pullExtendedCoefficient],
+        )
+    })
 }

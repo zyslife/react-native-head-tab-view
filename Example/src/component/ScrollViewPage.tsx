@@ -14,14 +14,14 @@ import staticData from '../config/staticData'
 
 interface Props {
     index: number
-    isPullRefresh?: boolean
+    refreshEnabled?: boolean
     timecount?: number
     tabLabel?: string
     onPressItem?: () => void
 }
 
 const defaultProps = {
-    isPullRefresh: false,
+    refreshEnabled: false,
     timecount: 2000,
 }
 
@@ -56,17 +56,15 @@ export default class ScrollViewPage extends React.PureComponent<Props & typeof d
     }
 
     render() {
-        const props = this.props.isPullRefresh ? {
+        const props = this.props.refreshEnabled ? {
             isRefreshing: this.state.isRefreshing,
             onStartRefresh: this.onStartRefresh,
         } : {}
-
         return (
             <HScrollView
                 index={this.props.index}
                 {...props}
             >
-
                 {
                     staticData.Page1Data.map((item, index) => {
                         return (

@@ -53,6 +53,17 @@ export interface CollapsibleHeaderProps {
      * defaults to 80
      */
     refreshHeight?: number;
+    /**
+     * It's the distance beyond the refreshHeight, the distance to continue the displacement, when the pull is long enough,
+     * it defaults to 50.
+     */
+    overflowPull?: number;
+    /**
+     * When the maximum drop-down distance(refreshHeight+overflowPull) is reached,
+     * the refreshControl moves the distance for each pixel the finger moves
+     * The recommended number is between 0 and 1.
+     */
+    pullExtendedCoefficient?: number;
 }
 
 
@@ -73,11 +84,6 @@ export interface NormalSceneBaseProps extends CommonSceneProps {
      * A custom RefreshControl for scene
      */
     renderRefreshControl?: (refreshProps: RefreshControlProps) => React.ReactElement;
-    /**
-     * It's the distance beyond the refreshHeight, the distance to continue the displacement, when the pull is long enough,
-     * it defaults to 50.
-     */
-    overflowPull?: number;
 }
 
 export interface SceneConfig {

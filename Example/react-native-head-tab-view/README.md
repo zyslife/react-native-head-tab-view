@@ -35,6 +35,8 @@ For detailed usage, please refer to [Example](https://github.com/zyslife/react-n
 #### v4.0.0-rc  
 - **Fix for TAB slider stuttering when dragging headers**
 - **Optimized pull-down refresh for easier expansion and better performance** 
+- **When switching tabbars, the scene is no longer re-rendered**
+
 >#### dependencies:
 >1.react-native-gesture-handler  
 >2.react-native-reanimated
@@ -268,12 +270,19 @@ Whether the TabView is refreshing
 ##### `renderRefreshControl`  _(() => React.ReactElement)_   
 A custom RefreshControl
 
+##### `scrollEnabled` _(boolean)_
+Whether to allow the scene to slide vertically  
+
 ##### `refreshHeight`  _(number)_   
 If this height is reached, a refresh event will be triggered （onStartRefresh）  
  it defaults to 80
- 
-##### `scrollEnabled` _(boolean)_
-Whether to allow the scene to slide vertically
+
+##### `overflowPull`  _(number)_   
+It's the distance beyond the refreshHeight, the distance to continue the displacement, when the pull is long enough,  
+it defaults to 50.
+
+##### `pullExtendedCoefficient`  _(number)_   
+When the maximum drop-down distance is reached(refreshHeight+overflowPull), the refreshControl moves the distance for each pixel the finger moves The recommended number is between 0 and 1.
 
 ---  
 
@@ -302,9 +311,7 @@ Whether the scene is refreshing
 ##### `renderRefreshControl`  _(() => React.ReactElement)_   
 A custom RefreshControl for scene
 
-##### `overflowPull`  _(number)_   
-It's the distance beyond the refreshHeight, the distance to continue the displacement, when the pull is long enough,  
-it defaults to 50.
+
 
 </details>
 

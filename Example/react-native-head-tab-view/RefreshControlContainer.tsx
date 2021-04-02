@@ -13,7 +13,8 @@ import Animated, {
     interpolate,
     useAnimatedReaction,
 } from 'react-native-reanimated'
-import { RefreshControlProps ,RefreshType} from './types'
+import { RefreshControlProps, RefreshType } from './types'
+import { useRefreshDerivedValue } from './hook'
 interface RefreshControlContainerProps {
     top: number
     refreshHeight: number
@@ -22,7 +23,7 @@ interface RefreshControlContainerProps {
     refreshValue: Animated.SharedValue<number>
     isRefreshing: Animated.SharedValue<boolean>
     isRefreshingWithAnimation: Animated.SharedValue<boolean>
-    transValue?: Animated.SharedValue<number>
+    pullExtendedCoefficient: number
     renderContent?: (refreshProps: RefreshControlProps) => React.ReactElement
 }
 
@@ -32,9 +33,9 @@ const RefreshControlContainer: React.FC<RefreshControlContainerProps> = ({
     overflowPull,
     opacityValue,
     refreshValue,
-    transValue,
     isRefreshing,
     isRefreshingWithAnimation,
+    pullExtendedCoefficient,
     renderContent
 }) => {
     const refreshType: { value: RefreshType } = useSharedValue('pullToRefresh')
@@ -42,20 +43,12 @@ const RefreshControlContainer: React.FC<RefreshControlContainerProps> = ({
         if (isRefreshingWithAnimation.value) return 1
         return Math.min(refreshValue.value / refreshHeight, 1)
     })
-    const tranYValue = useDerivedValue(() => {
-        if (transValue) {
-            return interpolate(
-                refreshValue.value - transValue.value,
-                [0, refreshHeight + overflowPull, refreshHeight + overflowPull + 10],
-                [0, refreshHeight + overflowPull, refreshHeight + overflowPull + 1],
-            )
-        }
 
-        return interpolate(
-            refreshValue.value,
-            [0, refreshHeight + overflowPull, refreshHeight + overflowPull + 10],
-            [0, refreshHeight + overflowPull, refreshHeight + overflowPull + 1],
-        )
+    const tranYValue = useRefreshDerivedValue({
+        animatedValue: refreshValue,
+        refreshHeight,
+        overflowPull,
+        pullExtendedCoefficient
     })
 
     useAnimatedReaction(() => {
@@ -170,7 +163,7 @@ const styles = StyleSheet.create({
     },
     textStyle: {
         color: '#26323F',
-        marginTop: 10,
+        marginTop: 5,
         fontSize: 17,
         width:100,
         textAlign:'center'

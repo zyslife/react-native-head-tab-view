@@ -14,6 +14,8 @@ export interface CollapsibleHeaderProps {
     onStartRefresh?: () => void;
     renderRefreshControl?: (refreshProps: RefreshControlProps) => React.ReactElement;
     refreshHeight?: number;
+    overflowPull?: number;
+    pullExtendedCoefficient?: number;
 }
 
 export interface CommonSceneProps {
@@ -23,7 +25,6 @@ export interface NormalSceneBaseProps extends CommonSceneProps {
     isRefreshing?: boolean;
     onStartRefresh?: () => void;
     renderRefreshControl?: (refreshProps: RefreshControlProps) => React.ReactElement;
-    overflowPull?: number;
 }
 
 export interface IGestureContainerProps extends CollapsibleHeaderProps {
@@ -57,6 +58,8 @@ export interface IHeaderContext {
     tabbarHeight: number
     headerHeight: number
     refreshHeight: number
+    overflowPull: number
+    pullExtendedCoefficient: number
     headerTrans: Reanimated2.SharedValue<number>,
     expectHeight: number;
     tabsRefreshEnabled: boolean
@@ -91,7 +94,5 @@ export type ForwardRefType<T> = ((instance: T | null) => void) | React.MutableRe
 
 export type GesturePanContext = {
     starty: number
-    isStart: boolean
     basyY: number
-    isDragging: boolean
 }

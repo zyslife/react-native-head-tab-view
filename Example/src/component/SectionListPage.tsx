@@ -12,13 +12,13 @@ import staticData from '../config/staticData'
 
 interface Props {
     index: number
-    isPullRefresh?: boolean
+    refreshEnabled?: boolean
     timecount?: number
     tabLabel?: string
 }
 
 const defaultProps = {
-    isPullRefresh: false,
+    refreshEnabled: false,
     timecount: 2000,
 }
 
@@ -79,7 +79,7 @@ export default class SectionListPage extends React.PureComponent<Props & typeof 
     keyExtractor = (item: any, index: number) => index.toString()
 
     render() {
-        const props = this.props.isPullRefresh ? {
+        const props = this.props.refreshEnabled ? {
             isRefreshing: this.state.isRefreshing,
             onStartRefresh: this.onStartRefresh,
         } : {}

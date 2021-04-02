@@ -3,16 +3,17 @@ import React, { useState, useMemo } from 'react';
 import {
     View,
     Dimensions,
+    Text
 } from 'react-native';
 import { RefreshControlProps } from 'react-native-head-tab-view'
 import Animated, { useSharedValue, useAnimatedStyle, useDerivedValue, interpolate, Extrapolate } from 'react-native-reanimated'
-import { CollapsibleHeaderTabView as ZHeaderTabView } from 'react-native-tab-view-collapsible-header'
-import { CollapsibleHeaderTabView } from 'react-native-scrollable-tab-view-collapsible-header'
 import { styles } from './styles'
-import { ScrollViewPage, FlatListPage, SectionListPage, CustomRefreshControl } from './component'
+import { CustomRefreshControl } from './component'
+import { ScrollableTabViewContainer, TabViewContainer } from './component/TabViewBase'
+
 
 import staticData from './config/staticData'
-import { TabViewType, SlideType } from './types'
+import { TabViewType } from './types'
 
 const G_WIN_WIDTH = Dimensions.get('window').width
 const G_WIN_HEIGHT = Dimensions.get('window').height
@@ -32,7 +33,7 @@ const marginTop = (HEAD_HEIGHT - IMG_WH - title_h - MARGIN_V * 2 - detail_h) * 0
 const TIMECOUNT = 2000
 
 
-const ExampleScrollTrans: React.FC<any> = (props) => {
+const ExampleHeaderAnimated: React.FC<any> = (props) => {
 
     const [scrollTrans, setScrollTrans] = useState(useSharedValue(0))
     const [isRefreshing, setIsRefreshing] = useState(false)
@@ -119,9 +120,12 @@ const ExampleScrollTrans: React.FC<any> = (props) => {
             <Animated.Text style={[{ fontSize: 18, color: '#26323F', marginTop: MARGIN_V, lineHeight: LINE_HEIGHT }, titleStyle]}>
                 Good luck!
             </Animated.Text>
-            <Animated.Text style={[{ fontSize: 16, textAlign: 'center', width: G_WIN_WIDTH - MARGIN_H - IMG_WH, height: LINE_COUNT * LINE_HEIGHT, color: '#596C80', marginTop: MARGIN_V, lineHeight: LINE_HEIGHT }, detailStyle]}>
+            <Animated.View style={[{ height: detail_h, justifyContent: 'center', alignItems: 'center', width: G_WIN_WIDTH - MARGIN_H - IMG_WH, marginTop: MARGIN_V }, detailStyle]}>
+            <Text style={[{ fontSize: 16, textAlign: 'center', color: '#596C80', lineHeight: LINE_HEIGHT }]}>
                 {detail}
-            </Animated.Text>
+            </Text>
+            </Animated.View>
+            
         </View>
     }
 
@@ -146,84 +150,24 @@ const ExampleScrollTrans: React.FC<any> = (props) => {
         renderScrollHeader,
         makeScrollTrans,
         frozeTop: FROZE_TOP,
-        modeType: props.route.params.mode,
         onStartRefresh: onStartRefresh,
         renderRefreshControl,
         isRefreshing,
     }
     return (
         <View style={styles.container}>
-            {props.route.params.type === TabViewType.default ? <DefaultTabViewContainer {...Props} /> : <TabViewContainer {...Props} />}
+            {
+                props.route.params.type === TabViewType.default ?
+                    <ScrollableTabViewContainer
+                        {...Props} /> :
+                    <TabViewContainer
+                        {...Props}
+                    />
+            }
         </View>
     )
 }
 
-export default ExampleScrollTrans
+export default ExampleHeaderAnimated
 
-
-interface Props {
-    renderScrollHeader: () => React.ComponentType<any> | React.ReactElement | null;
-    makeScrollTrans: (scrollValue: Animated.SharedValue<number>) => void;
-    frozeTop: number
-    modeType: SlideType
-}
-
-class DefaultTabViewContainer extends React.PureComponent<Props>{
-
-    render() {
-        const { modeType, ...rest } = this.props
-        return <CollapsibleHeaderTabView
-            {...rest}
-        >
-            <ScrollViewPage key={'ScrollViewPage'} tabLabel={'ScrollView'} index={0} />
-            <FlatListPage key={'FlatListPage'} tabLabel={'FlatList'} index={1} />
-            <SectionListPage key={'SectionListPage'} tabLabel={'SectionList'} index={2} />
-        </CollapsibleHeaderTabView>
-    }
-}
-
-class TabViewContainer extends React.PureComponent<Props, { index: number, routes: { key: string, title: string }[] }>{
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            index: 0,
-            routes: [
-                { key: 'ScrollView', title: 'ScrollView' },
-                { key: 'FlatList', title: 'FlatList' },
-                { key: 'SectionList', title: 'SectionList' },
-            ]
-        }
-    }
-    _renderScene = (e) => {
-        const { route } = e
-
-        if (route.key == 'ScrollView') {
-            return <ScrollViewPage index={0} isPullRefresh={true} />
-        } else if (route.key == 'FlatList') {
-            return <FlatListPage index={1} isPullRefresh={true} />
-        } else if (route.key == 'SectionList') {
-            return <SectionListPage index={2} isPullRefresh={true} />
-        }
-        return null;
-    }
-
-    setIndex = (index: number) => {
-        this.setState({ index })
-    }
-
-    render() {
-        const { index, routes } = this.state
-
-        const { modeType, ...rest } = this.props
-
-        return <ZHeaderTabView
-            {...rest}
-            navigationState={{ index, routes }}
-            renderScene={this._renderScene}
-            onIndexChange={this.setIndex}
-            initialLayout={styles.tabviewLayout}
-            lazy={true}
-        />
-    }
-}
 

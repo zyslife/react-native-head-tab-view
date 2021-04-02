@@ -13,13 +13,13 @@ import staticData from '../config/staticData'
 
 interface Props {
     index: number
-    isPullRefresh?: boolean
+    refreshEnabled?: boolean
     timecount?: number
     tabLabel?: string
 }
 
 const defaultProps = {
-    isPullRefresh: false,
+    refreshEnabled: false,
     timecount: 2000,
 }
 
@@ -77,14 +77,12 @@ export default class FlatListPage extends React.PureComponent<Props & typeof def
 
     renderFooterComponent = () => {
         return (
-            <TouchableOpacity onPress={() => {
+            <TouchableOpacity style={{ height: 50, width: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={() => {
                 if (this.mFlatlist) {
-                    this.mFlatlist.getNode().scrollToOffset({ offset: 0, animated: true })
+                    this.mFlatlist.scrollToOffset({ offset: 0, animated: true })
                 }
             }}>
-                <View style={{ height: 50, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={styles.titleStyle}>回到顶部</Text>
-                </View>
+                <Text style={styles.titleStyle}>scrollTo Top</Text>
             </TouchableOpacity>
         )
     }
@@ -92,12 +90,11 @@ export default class FlatListPage extends React.PureComponent<Props & typeof def
 
     _ref = (_ref: any) => this.mFlatlist = _ref
     render() {
-        const props = this.props.isPullRefresh ? {
+        const props = this.props.refreshEnabled ? {
             isRefreshing: this.state.isRefreshing,
             onStartRefresh: this.onStartRefresh,
         } : {}
         const { data } = this.state;
-
         return (
             <HFlatList
                 style={styles.container}
@@ -119,8 +116,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
     },
     titleStyle: {
-        height: 40,
-        width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#FFF'

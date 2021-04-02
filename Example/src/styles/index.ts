@@ -1,12 +1,7 @@
 
-import React from 'react';
 import {
-    View,
     StyleSheet,
     Dimensions,
-    TouchableOpacity,
-    Image,
-    Text,
     Platform
 } from 'react-native';
 const G_WIN_WIDTH = Dimensions.get('window').width;
@@ -16,6 +11,12 @@ const HEAD_HEIGHT = G_WIN_HEIGHT * 0.7
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#fff'
+    },
+    tabbarStyle: {
+        height: 60,
+        borderTopLeftRadius: 14,
+        borderTopRightRadius: 14,
         backgroundColor: '#fff'
     },
     tabbarBtn: {

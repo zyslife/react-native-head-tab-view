@@ -12,21 +12,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 interface Props {
     navigation: any;
 }
-import { TabViewType, SlideType } from './types'
+import { TabViewType } from './types'
 import staticData from './config/staticData'
 interface State {
     tabviewTypes: TabViewType[];
     tabviewIndex: number;
-    slideTypes: SlideType[];
     slideModeIndex: number;
 }
 export default class MainScreen extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            tabviewTypes: [TabViewType.default, TabViewType.tabview],
+            tabviewTypes: [TabViewType.tabview, TabViewType.default],
             tabviewIndex: 0,
-            slideTypes: [SlideType.normal, SlideType.slide],
             slideModeIndex: 0
         }
     }
@@ -40,7 +38,7 @@ export default class MainScreen extends React.PureComponent<Props, State> {
 
     _renderItem = ({ item }: { item: { title: string, description: string, page: string } }) => {
         return <TouchableOpacity style={styles.itemStyle} onPress={() => {
-            this.props.navigation.navigate(item.page, { type: this.state.tabviewTypes[this.state.tabviewIndex], mode: this.state.slideTypes[this.state.slideModeIndex] })
+            this.props.navigation.navigate(item.page, { type: this.state.tabviewTypes[this.state.tabviewIndex] })
         }}>
             <Text style={styles.titleStyle}>{item.title}</Text>
             <Text style={styles.detail}>{item.description}</Text>
@@ -60,30 +58,8 @@ export default class MainScreen extends React.PureComponent<Props, State> {
         }
     }
 
-    makeSlideModeTitle(type: SlideType) {
-        switch (type) {
-            case SlideType.normal:
-                return 'normal'
-            case SlideType.slide:
-                return 'slide'
-            default:
-                return ''
-        }
-    }
-
-    _makeDetail(type: SlideType) {
-        switch (type) {
-            case SlideType.normal:
-                return "Change the header's translateY"
-            case SlideType.slide:
-                return 'Take the tabs and headers as a whole and change their translateY'
-            default:
-                return ''
-        }
-    }
-
     render() {
-        const { tabviewTypes, slideTypes } = this.state
+        const { tabviewTypes } = this.state
         return (
             <SafeAreaView
                 style={{ flex: 1 }}>

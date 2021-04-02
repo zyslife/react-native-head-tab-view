@@ -12,7 +12,7 @@ import {
 } from 'react-native-gesture-handler';
 import { HeaderContext } from './HeaderContext'
 import RefreshControlContainer from './RefreshControlContainer'
-import { useSceneInfo } from './hook'
+import { useSceneInfo, useRefreshDerivedValue } from './hook'
 import { IGestureContainerProps, GesturePanContext } from './types'
 import { mScrollTo, toEndSlide, toRunSlide, onActiveRefreshImpl, onEndRefreshImpl, animateToRefresh } from './utils'
 
@@ -28,12 +28,13 @@ import Animated, {
     useAnimatedReaction,
     runOnJS,
 } from 'react-native-reanimated'
-const overflowPull = 50
 const __IOS = Platform.OS === 'ios'
 
 const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerProps> = (
     {
         refreshHeight = 80,
+        pullExtendedCoefficient = 0.1,
+        overflowPull = 50,
         overflowHeight = 0,
         scrollEnabled = true,
         frozeTop = 0,
@@ -69,8 +70,8 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
     const isDragging = useSharedValue(false)
     const tabsTrans = useSharedValue(0)
     const tabsRefreshTrans = useSharedValue(refreshHeight)
-    const tabsIsRefreshing = useSharedValue(_isRefreshing)
-    const tabsIsRefreshingWithAnimation = useSharedValue(_isRefreshing)
+    const tabsIsRefreshing = useSharedValue(false)
+    const tabsIsRefreshingWithAnimation = useSharedValue(false)
     const dragIndex = useSharedValue(curIndexValue.value)
     //scene
     const {
@@ -90,7 +91,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         return isDragging.value || tabsIsRefreshing.value || tabsIsRefreshingWithAnimation.value
     })
 
-    const calcHeight = useMemo(() => headerHeight - frozeTop, [headerHeight])
+    const calcHeight = useMemo(() => headerHeight - frozeTop, [headerHeight, frozeTop])
 
     const tabsHasRefresh = useCallback(() => {
         'worklet'
@@ -148,7 +149,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
                 isToRefresh: false
             })
         }
-    }, [_isRefreshing, refreshHeight])
+    }, [_isRefreshing, refreshHeight, onStartRefresh])
 
     const stopScrollView = () => {
         'worklet'
@@ -349,6 +350,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
                 opacityValue={opacityValue}
                 isRefreshing={tabsIsRefreshing}
                 isRefreshingWithAnimation={tabsIsRefreshingWithAnimation}
+                pullExtendedCoefficient={pullExtendedCoefficient}
                 renderContent={_renderRefreshControl}
             />
         )
@@ -373,7 +375,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         if (overflowHeight > event.nativeEvent.layout.height) {
             console.warn('【react-native-head-tab-view】The overflowHeight must be less than the height of the tabbar')
         }
-        if (Math.abs(tabbarHeight - event.nativeEvent.layout.height) <= 1) return;
+        if (Math.abs(tabbarHeight - event.nativeEvent.layout.height) < 1) return;
 
         setTabbarHeight(event.nativeEvent.layout.height)
     }, [tabbarHeight, overflowHeight])
@@ -410,13 +412,13 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
 
     //slide header
     useAnimatedReaction(() => {
-        return headerTrans.value >= 0 && slideIndex.value === curIndexValue.value
+        return headerTrans.value >= 0 && slideIndex.value === curIndexValue.value && isSlidingHeader.value
     }, (start) => {
         if (!start) return
         if (!childScrollRef[curIndexValue.value]) return;
         if (childScrollYTrans[curIndexValue.value].value === headerTrans.value) return
         mScrollTo(childScrollRef[curIndexValue.value], 0, headerTrans.value, false)
-    }, [headerTrans, slideIndex, curIndexValue, childScrollRef, childScrollYTrans])
+    }, [headerTrans, slideIndex, curIndexValue, childScrollRef, childScrollYTrans, isSlidingHeader])
 
     const headerTransValue = useDerivedValue(() => {
         return interpolate(
@@ -437,12 +439,11 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         }
     })
 
-    const translateYValue = useDerivedValue(() => {
-        return interpolate(
-            tabsTrans.value,
-            [0, refreshHeight + overflowPull, refreshHeight + overflowPull + 10],
-            [0, refreshHeight + overflowPull, refreshHeight + overflowPull + 1],
-        )
+    const translateYValue = useRefreshDerivedValue({
+        animatedValue: tabsTrans,
+        refreshHeight,
+        overflowPull,
+        pullExtendedCoefficient
     })
 
     const animateStyle = useAnimatedStyle(() => {
@@ -508,11 +509,13 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         shareAnimatedValue,
         headerTrans,
         tabbarHeight,
-        expectHeight: headerHeight + Math.floor(tabviewHeight),
+        expectHeight: headerHeight + Math.floor(tabviewHeight) - frozeTop,
         tabsIsWorking,
         tabsRefreshEnabled: onStartRefresh !== undefined,
         headerHeight,
         refreshHeight,
+        overflowPull,
+        pullExtendedCoefficient,
         refHasChanged,
         curIndexValue,
         frozeTop,
