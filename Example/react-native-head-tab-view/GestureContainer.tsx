@@ -84,6 +84,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         sceneRefreshCallBack,
         sceneScrollEnabledValue,
         sceneIsRefreshingWithAnimation,
+        sceneIsLosingMomentum,
         updateSceneInfo
     } = useSceneInfo()
 
@@ -154,7 +155,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
     const stopScrollView = () => {
         'worklet'
         if (getIsRefreshing(false)) return
-        mScrollTo(childScrollRef[curIndexValue.value], 0, childScrollYTrans[curIndexValue.value].value + 0.01, false)
+        mScrollTo(childScrollRef[curIndexValue.value], 0, childScrollYTrans[curIndexValue.value].value + 0.1, false)
     }
 
     const stopAllAnimation = useCallback(() => {
@@ -299,6 +300,9 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
                 isSlidingHeader.value = false
                 return
             }
+            //Now stop the ScrollView with the stopScrollView function
+            //However, this approach may fail on Android, so disable Slide at this point
+            if (sceneIsLosingMomentum[curIndexValue.value].value) return
             toRunSlide({
                 transValue: headerTrans,
                 translationY: event.translationY,
@@ -376,7 +380,6 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
             console.warn('【react-native-head-tab-view】The overflowHeight must be less than the height of the tabbar')
         }
         if (Math.abs(tabbarHeight - event.nativeEvent.layout.height) < 1) return;
-
         setTabbarHeight(event.nativeEvent.layout.height)
     }, [tabbarHeight, overflowHeight])
 
@@ -417,6 +420,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         if (!start) return
         if (!childScrollRef[curIndexValue.value]) return;
         if (childScrollYTrans[curIndexValue.value].value === headerTrans.value) return
+
         mScrollTo(childScrollRef[curIndexValue.value], 0, headerTrans.value, false)
     }, [headerTrans, slideIndex, curIndexValue, childScrollRef, childScrollYTrans, isSlidingHeader])
 
@@ -509,7 +513,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         shareAnimatedValue,
         headerTrans,
         tabbarHeight,
-        expectHeight: headerHeight + Math.floor(tabviewHeight) - frozeTop,
+        expectHeight: Math.floor(headerHeight + tabviewHeight - frozeTop),
         tabsIsWorking,
         tabsRefreshEnabled: onStartRefresh !== undefined,
         headerHeight,

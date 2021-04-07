@@ -35,11 +35,11 @@ export const toRunSlide = ({
 }) => {
     'worklet'
 
-    const starty = getStartY()
+    
     if (isActive.value === false) {
+        const starty = getStartY()
         ctx.starty = starty
         isActive.value = true
-        return
     }
     transValue.value = Math.max(-translationY + ctx.starty, 0)
 }
@@ -82,7 +82,7 @@ export const onActiveRefreshImpl = ({
     'worklet'
     return (event: PanGestureHandlerGestureEvent['nativeEvent'], ctx: GesturePanContext) => {
         'worklet';
-      
+
         if (isRefreshing.value !== isRefreshingWithAnimation.value) return
         if (isRefreshing.value) {
             const getStartY = () => {

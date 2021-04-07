@@ -4,12 +4,12 @@ import {
     Platform,
     StyleSheet,
     ScrollView,
-    ScrollViewProps
+    ScrollViewProps,
 } from 'react-native';
 import RefreshControlContainer from './RefreshControlContainer'
 import { NativeViewGestureHandler } from 'react-native-gesture-handler';
 import { NormalSceneProps, HPageViewProps } from './types'
-import { useSceneContext, useSharedScrollableRef, useSyncInitialPosition, useRefreshDerivedValue } from './hook'
+import { useSceneContext, useSharedScrollableRef, useSyncInitialPosition, useRefreshDerivedValue, useVerifyProps } from './hook'
 import { mScrollTo, animateToRefresh } from './utils'
 import Animated, {
     runOnJS,
@@ -17,8 +17,6 @@ import Animated, {
     useAnimatedScrollHandler,
     useSharedValue,
     useAnimatedStyle,
-    useAnimatedProps,
-    interpolate,
     useAnimatedReaction,
 } from 'react-native-reanimated'
 const __IOS = Platform.OS === 'ios'
@@ -46,6 +44,9 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         ...restProps
     }
 ) => {
+    if (onScroll !== undefined) {
+        console.warn("Please do not assign onScroll")
+    }
     const {
         shareAnimatedValue = useSharedValue(0),
         tabbarHeight,
@@ -70,6 +71,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
     const isRefreshing = useSharedValue(false);
     const isRefreshingWithAnimation = useSharedValue(false);
     const isDragging: { value: boolean } = useSharedValue(false);
+    const isLosingMomentum: { value: boolean } = useSharedValue(false);
     const { opacityValue, syncInitialPosition } = useSyncInitialPosition(_scrollView)
     const calcHeight = useMemo(() => {
         return tabbarHeight + headerHeight
@@ -124,6 +126,12 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
                 updateScrollYTrans(moveY)
                 updateShareValue(moveY)
             },
+            onMomentumBegin: () => {
+                isLosingMomentum.value = true
+            },
+            onMomentumEnd: () => {
+                isLosingMomentum.value = false
+            }
         }, [curIndexValue, updateShareValue, updateScrollYTrans, isRefreshingWithAnimation]
     )
 
@@ -170,6 +178,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
                 scrollY,
                 isDragging,
                 scrollEnabledValue,
+                isLosingMomentum,
                 onRefreshStatusCallback
             })
         }
@@ -281,12 +290,9 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         }
     })
 
-
-
     return (
         <Animated.View style={[styles.container, sceneStyle]}>
             <Animated.View style={[styles.container, animatedStyle]}>
-
                 <MemoList
                     panRef={panRef}
                     ContainerView={ContainerView}
@@ -296,7 +302,6 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
                     bounces={bouncesEnabled}
                     headerHeight={calcHeight}
                     expectHeight={expectHeight}
-                    scrollEnabledValue={scrollEnabledValue}
                     {...restProps}
                 />
             </Animated.View>
@@ -312,18 +317,30 @@ interface SceneListComponentProps {
     zForwardedRef: any
     headerHeight: number
     expectHeight: number
-    scrollEnabledValue: Animated.SharedValue<boolean>
 }
 
-const SceneListComponentP: React.FC<SceneListComponentProps & ScrollViewProps> = ({
+const SceneListComponent: React.FC<SceneListComponentProps & ScrollViewProps> = ({
     panRef,
     ContainerView,
     zForwardedRef,
     headerHeight,
     expectHeight,
-    scrollEnabledValue,
+    scrollEventThrottle,
+    directionalLockEnabled,
+    contentContainerStyle,
+    scrollIndicatorInsets,
     ...rest
 }) => {
+    
+    const {
+        contentContainerStyle: _contentContainerStyle,
+        scrollIndicatorInsets: _scrollIndicatorInsets
+    } = useVerifyProps({
+        scrollEventThrottle,
+        directionalLockEnabled,
+        contentContainerStyle,
+        scrollIndicatorInsets
+    })
 
     return <NativeViewGestureHandler
         ref={panRef}
@@ -332,17 +349,14 @@ const SceneListComponentP: React.FC<SceneListComponentProps & ScrollViewProps> =
             ref={zForwardedRef}
             scrollEventThrottle={16}
             directionalLockEnabled
-            automaticallyAdjustContentInsets={false}
-            overScrollMode={'never'}
-            contentContainerStyle={{ paddingTop: headerHeight, minHeight: expectHeight }}
-            scrollIndicatorInsets={{ top: headerHeight }}
-            bouncesZoom={false}
+            contentContainerStyle={[{ paddingTop: headerHeight, minHeight: expectHeight }, _contentContainerStyle]}
+            scrollIndicatorInsets={{ top: headerHeight, ..._scrollIndicatorInsets }}
             {...rest}
         />
     </NativeViewGestureHandler>
 }
 
-const MemoList = memo(SceneListComponentP)
+const MemoList = memo(SceneListComponent)
 
 const styles = StyleSheet.create({
     container: {

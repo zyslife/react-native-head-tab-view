@@ -78,6 +78,7 @@ export type updateSceneInfoType = {
     scrollEnabledValue: Reanimated2.SharedValue<boolean>
     canPullRefresh: boolean
     scrollY: Reanimated2.SharedValue<number>
+    isLosingMomentum: Reanimated2.SharedValue<boolean>
     onRefreshStatusCallback: (isToRefresh: boolean) => void
 }
 
