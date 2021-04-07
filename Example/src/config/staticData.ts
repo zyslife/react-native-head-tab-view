@@ -4,7 +4,7 @@ export default {
         { title: 'ExampleCustomTabbar.', description: 'The example contains the usage of a custom tabbar', page: 'ExampleCustomTabbar' },
         { title: 'ExampleWithPullRefresh.', description: 'Make each Tab page allow pull-down refreshes', page: 'ExampleWithPullRefresh' },
         { title: 'ExampleWithTabViewPullRefresh.', description: 'Let the tabs component allow a drop-down refresh', page: 'ExampleWithTabViewPullRefresh' },
-        { title: 'ExampleScrollTrans.', description: 'Get scrollTrans using the makeScrollTrans function', page: 'ExampleScrollTrans' },
+        { title: 'ExampleHeaderAnimated.', description: 'Get scrollTrans using the makeScrollTrans function', page: 'ExampleHeaderAnimated' },
         { title: 'ExampleCarouselHeader.', description: "The header contains the Carousel component", page: 'ExampleCarouselHeader' },
     ],
 
