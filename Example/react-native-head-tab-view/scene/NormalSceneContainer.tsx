@@ -352,7 +352,7 @@ export default class NormalSceneContainer extends React.PureComponent<NormalScen
     fitSceneHeight(contentHeight: number) {
         const { expectHeight } = this.context;
 
-        if (contentHeight >= expectHeight) {
+        if (Math.ceil(contentHeight) >= expectHeight) {
             this.syncInitialPosition();
         }
     }

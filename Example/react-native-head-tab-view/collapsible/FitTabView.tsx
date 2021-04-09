@@ -84,7 +84,6 @@ export default class FitTabView extends React.Component<Props, FitTabViewState> 
             console.warn('【react-native-head-tab-view】The overflowHeight must be less than the height of the tabbar')
         }
 
-        if (Math.abs(this.state.tabbarHeight - event.nativeEvent.layout.height) <= 1) return;
         this.setState({ tabbarHeight: event.nativeEvent.layout.height })
     }
     containerOnLayout = (event: LayoutChangeEvent) => {
