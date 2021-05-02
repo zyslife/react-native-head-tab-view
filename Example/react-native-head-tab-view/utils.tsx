@@ -35,7 +35,7 @@ export const toRunSlide = ({
 }) => {
     'worklet'
 
-    
+
     if (isActive.value === false) {
         const starty = getStartY()
         ctx.starty = starty
@@ -174,4 +174,24 @@ export const animateToRefresh = ({
     transRefreshing.value = withTiming(destPoi, undefined, (finished) => {
         isRefreshingWithAnimation.value = isToRefresh
     })
+}
+
+//Once the slide is complete, scroll to the folded or unfolded state
+export const snapAfterGlideOver = ({
+    sceneRef,
+    shareAnimatedValue,
+    headerHeight,
+    frozeTop
+}: {
+    sceneRef: any,
+    shareAnimatedValue: Animated.SharedValue<number>,
+    headerHeight: number,
+    frozeTop: number
+}) => {
+    'worklet'
+    const calcH = headerHeight - frozeTop
+    if (shareAnimatedValue.value > calcH) return
+    const poi = shareAnimatedValue.value < calcH * 0.5 ? 0 : calcH
+    if (shareAnimatedValue.value === poi) return;
+    mScrollTo(sceneRef, 0, poi, true)
 }

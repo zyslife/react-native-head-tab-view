@@ -16,6 +16,8 @@ export interface CollapsibleHeaderProps {
     refreshHeight?: number;
     overflowPull?: number;
     pullExtendedCoefficient?: number;
+    enableSnap?: boolean
+    snapWaitduration?: number
 }
 
 export interface CommonSceneProps {
@@ -53,6 +55,8 @@ export type RefreshType = 'pullToRefresh' | 'enough' | 'prepare' | 'refreshing' 
 
 export interface IHeaderContext {
     tabsIsWorking: Reanimated2.SharedValue<boolean>
+    isTouchTabs: Reanimated2.SharedValue<boolean>
+    isTouchTabsPrev: Reanimated2.SharedValue<boolean>
     shareAnimatedValue: Reanimated2.SharedValue<number>
     frozeTop: number
     tabbarHeight: number
@@ -66,6 +70,8 @@ export interface IHeaderContext {
     refHasChanged: (ref: React.RefObject<any>) => void;
     curIndexValue: Reanimated2.SharedValue<number>
     updateSceneInfo: (e: updateSceneInfoType) => void
+    enableSnap: boolean
+    snapWaitduration: number
 }
 
 export type updateSceneInfoType = {

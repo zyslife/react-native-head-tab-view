@@ -37,6 +37,8 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         overflowPull = 50,
         overflowHeight = 0,
         scrollEnabled = true,
+        enableSnap = false,
+        snapWaitduration = 50,
         frozeTop = 0,
         isRefreshing: _isRefreshing = false,
         initialPage,
@@ -52,7 +54,9 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
     //shareAnimatedValue
     const shareAnimatedValue = useSharedValue(0)
     const curIndexValue = useSharedValue(initialPage)
-
+    //snap
+    const isTouchTabsPrev: Animated.SharedValue<boolean> = useSharedValue(false)
+    const isTouchTabs: Animated.SharedValue<boolean> = useSharedValue(false)
     //layout
     const [tabbarHeight, setTabbarHeight] = useState(initTabbarHeight)
     const [tabviewHeight, setTabviewHeight] = useState(0)
@@ -62,6 +66,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
     const [childRefs, setChildRefs] = useState<React.RefObject<any>[]>([])
     const shipRef: React.RefObject<any> = React.useRef();
     const headerRef: React.RefObject<any> = React.useRef();
+    const innerTapRef: React.RefObject<any> = React.useRef();
     //header slide
     const isSlidingHeader: Animated.SharedValue<boolean> = useSharedValue(false)
     const slideIndex = useSharedValue(curIndexValue.value)
@@ -160,6 +165,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
 
     const stopAllAnimation = useCallback(() => {
         'worklet'
+        isTouchTabs.value = true
         cancelAnimation(headerTrans)
         slideIndex.value = -1
         dragIndex.value = -1
@@ -201,6 +207,14 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
             stopAllAnimation()
         }
     })
+
+    const onHandlerStateChange = (event: any) => {
+        //Recognize as a click event
+        if (event.nativeEvent.state === 4) {
+            isTouchTabs.value = false
+        }
+    }
+
     const tapHeaderGestureHandler = useAnimatedGestureHandler<TapGestureHandlerGestureEvent>({
         onStart: () => {
             stopScrollView()
@@ -236,6 +250,9 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
             if (!__IOS) {
                 stopAllAnimation()
             }
+        },
+        onFinish: () => {
+            isTouchTabs.value = false
         },
         onActive: (event, ctx: GesturePanContext) => {
             if (!tabsHasRefresh() && !sceneHasRefresh()) return
@@ -415,13 +432,13 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
 
     //slide header
     useAnimatedReaction(() => {
-        return headerTrans.value >= 0 && slideIndex.value === curIndexValue.value && isSlidingHeader.value
+        return headerTrans && slideIndex.value === curIndexValue.value && isSlidingHeader.value
     }, (start) => {
         if (!start) return
         if (!childScrollRef[curIndexValue.value]) return;
         if (childScrollYTrans[curIndexValue.value].value === headerTrans.value) return
 
-        mScrollTo(childScrollRef[curIndexValue.value], 0, headerTrans.value, false)
+        mScrollTo(childScrollRef[curIndexValue.value], 0, headerTrans.value || 0, false)
     }, [headerTrans, slideIndex, curIndexValue, childScrollRef, childScrollYTrans, isSlidingHeader])
 
     const headerTransValue = useDerivedValue(() => {
@@ -477,7 +494,13 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         >
             <Animated.View style={styles.container}>
                 <View onLayout={headerOnLayout}>
-                    {renderScrollHeader ? renderScrollHeader() : null}
+                    {
+                        React.isValidElement(renderScrollHeader) ? (
+                            renderScrollHeader
+                        ) : (
+                            renderScrollHeader()
+                        )
+                    }
                 </View>
                 <Animated.View style={{ transform: [{ translateY: -overflowHeight }] }} onLayout={tabbarOnLayout}>
                     {children}
@@ -487,6 +510,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         if (__IOS) {
             tabbarContainer = <TapGestureHandler
                 maxDist={5}
+                ref={innerTapRef}
                 onGestureEvent={tapHeaderGestureHandler}
             >
                 <Animated.View style={styles.container}>
@@ -515,6 +539,8 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         tabbarHeight,
         expectHeight: Math.floor(headerHeight + tabviewHeight - frozeTop),
         tabsIsWorking,
+        isTouchTabs,
+        isTouchTabsPrev,
         tabsRefreshEnabled: onStartRefresh !== undefined,
         headerHeight,
         refreshHeight,
@@ -524,6 +550,8 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         curIndexValue,
         frozeTop,
         updateSceneInfo,
+        enableSnap,
+        snapWaitduration
     }}>
         <PanGestureHandler
             ref={shipRef}
@@ -547,7 +575,9 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
     if (__IOS) {
         return <TapGestureHandler
             maxDist={5}
+            simultaneousHandlers={[innerTapRef, shipRef, ...childRefs]}
             onGestureEvent={tapGestureHandler}
+            onHandlerStateChange={onHandlerStateChange}
         >
             <Animated.View style={styles.container}>
                 {contentContainer}

@@ -91,7 +91,7 @@ export const useSceneInfo = () => {
                 return { ...preChildRef, [index]: scrollRef }
             })
         }
-        if (isLosingMomentum && childScrollRef[index] !== isLosingMomentum) {
+        if (isLosingMomentum && sceneIsLosingMomentum[index] !== isLosingMomentum) {
             setSceneIsScrolling(preChildRef => {
                 return { ...preChildRef, [index]: isLosingMomentum }
             })

@@ -64,6 +64,17 @@ export interface CollapsibleHeaderProps {
      * The recommended number is between 0 and 1.
      */
     pullExtendedCoefficient?: number;
+    /**
+     * When it stops sliding, it automatically switches to the folded and expanded states.
+     * it defaults to false.
+     */
+    enableSnap?: boolean;
+    /**
+     * This property is valid when enableSnap is true.
+     * The duration between the time the finger leaves the screen and the snap begins.
+     * it defaults to false.
+     */
+    snapWaitduration?: number
 }
 
 
