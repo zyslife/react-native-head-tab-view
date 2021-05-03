@@ -12,33 +12,24 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 interface Props {
     navigation: any;
 }
-import { TabViewType } from './types'
+import { TabViewType, EnableSnapType } from './types'
 import staticData from './config/staticData'
 interface State {
-    tabviewTypes: TabViewType[];
-    tabviewIndex: number;
-    slideModeIndex: number;
+    configIndexs: number[]
 }
 export default class MainScreen extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            tabviewTypes: [TabViewType.tabview, TabViewType.default],
-            tabviewIndex: 0,
-            slideModeIndex: 0
+            configIndexs: [0, 0]
         }
     }
 
-    onTabviewSelect = (index: number) => {
-        this.setState({ tabviewIndex: index })
-    }
-    onSlideModeSelect = (index: number) => {
-        this.setState({ slideModeIndex: index })
-    }
-
     _renderItem = ({ item }: { item: { title: string, description: string, page: string } }) => {
+
         return <TouchableOpacity style={styles.itemStyle} onPress={() => {
-            this.props.navigation.navigate(item.page, { type: this.state.tabviewTypes[this.state.tabviewIndex] })
+            const { configIndexs } = this.state
+            this.props.navigation.navigate(item.page, { configIndexs })
         }}>
             <Text style={styles.titleStyle}>{item.title}</Text>
             <Text style={styles.detail}>{item.description}</Text>
@@ -47,23 +38,23 @@ export default class MainScreen extends React.PureComponent<Props, State> {
 
     _keyExtractor = (item: any, index: number) => index + ''
 
-    makeTabViewTitle(type: TabViewType) {
-        switch (type) {
-            case TabViewType.default:
-                return 'react-native-scrollable-tab-view'
-            case TabViewType.tabview:
-                return 'react-native-tab-view'
-            default:
-                return ''
-        }
-    }
-
     render() {
-        const { tabviewTypes } = this.state
+
         return (
             <SafeAreaView
                 style={{ flex: 1 }}>
-                <SelectView title={'Select your tab view'} data={tabviewTypes} index={this.state.tabviewIndex} onPress={this.onTabviewSelect} makeTitle={this.makeTabViewTitle} />
+                {staticData.homeConfig.map((item, index) => <SelectView key={'SELECT_' + index} title={item.sectionTitle} data={item.data} index={this.state.configIndexs[index]} onPress={(mI: number) => {
+                    this.setState((preState) => {
+                        return {
+                            configIndexs: preState.configIndexs.map((el, ii) => {
+                                if (ii === index) {
+                                    return mI
+                                }
+                                return el
+                            })
+                        }
+                    })
+                }} />)}
                 <FlatList
                     data={staticData.PageRouteData}
                     renderItem={this._renderItem}
@@ -74,29 +65,16 @@ export default class MainScreen extends React.PureComponent<Props, State> {
     }
 }
 
-interface SelectViewProps<T> {
+interface SelectViewProps {
     title: string
-    data: T[]
+    data: { type: TabViewType | EnableSnapType, title: string }[]
     onPress: (index: number) => void
-    makeTitle: (type: T) => string
-    makeDetail?: (type: T) => string
     index: number
 }
-class SelectView<T> extends React.PureComponent<SelectViewProps<T>> {
-    renderContent() {
-        const { data, index, makeTitle } = this.props;
-        return data.map((item, mIndex) => {
-            const isSelect = mIndex === index
-            return <TouchableOpacity style={styles.selectBtn} key={'SelectView_' + mIndex} onPress={() => {
-                this.props.onPress && this.props.onPress(mIndex)
-            }}>
-                <View style={{ marginRight: 5, borderRadius: 5, width: 10, height: 10, borderWidth: 1, borderColor: isSelect ? '#FFD321' : '#888', backgroundColor: isSelect ? '#FFD321' : 'transparent' }} />
-                <Text>{makeTitle(item)}</Text>
-            </TouchableOpacity>
-        })
-    }
+class SelectView extends React.PureComponent<SelectViewProps> {
+
     render() {
-        const { title, data, index, makeTitle, makeDetail } = this.props;
+        const { title, data, index } = this.props;
 
         return (
             <View style={styles.selectContainer}>
@@ -104,15 +82,15 @@ class SelectView<T> extends React.PureComponent<SelectViewProps<T>> {
                 {
                     data.map((item, mIndex) => {
                         const isSelect = mIndex === index
-                        const detail = makeDetail ? makeDetail(item) : undefined
+
                         return <View key={'SelectView_' + mIndex}>
                             <TouchableOpacity style={styles.selectBtn} onPress={() => {
                                 this.props.onPress && this.props.onPress(mIndex)
                             }}>
                                 <View style={{ marginRight: 5, borderRadius: 5, width: 10, height: 10, borderWidth: 1, borderColor: isSelect ? '#FFD321' : '#888', backgroundColor: isSelect ? '#FFD321' : 'transparent' }} />
-                                <Text>{makeTitle(item)}</Text>
+                                <Text>{item.title}</Text>
                             </TouchableOpacity>
-                            {detail ? <Text style={styles.description}>{detail}</Text> : null}
+                            {/* {detail ? <Text style={styles.description}>{detail}</Text> : null} */}
                         </View>
                     })
                 }

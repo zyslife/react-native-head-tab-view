@@ -10,7 +10,7 @@ import Animated, { useSharedValue, useAnimatedStyle, useDerivedValue, interpolat
 import { styles } from './styles'
 import { CustomRefreshControl } from './component'
 import { ScrollableTabViewContainer, TabViewContainer } from './component/TabViewBase'
-
+import { useHomeConfig } from './hook'
 
 import staticData from './config/staticData'
 import { TabViewType } from './types'
@@ -34,7 +34,7 @@ const TIMECOUNT = 2000
 
 
 const ExampleHeaderAnimated: React.FC<any> = (props) => {
-
+    const { tabviewType, enableSnap } = useHomeConfig(props)
     const [scrollTrans, setScrollTrans] = useState(useSharedValue(0))
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [headerImage, setHeaderImage] = useState(staticData.DetailImg)
@@ -153,11 +153,12 @@ const ExampleHeaderAnimated: React.FC<any> = (props) => {
         onStartRefresh: onStartRefresh,
         renderRefreshControl,
         isRefreshing,
+        enableSnap
     }
     return (
         <View style={styles.container}>
             {
-                props.route.params.type === TabViewType.default ?
+                tabviewType === TabViewType.default ?
                     <ScrollableTabViewContainer
                         {...Props} /> :
                     <TabViewContainer

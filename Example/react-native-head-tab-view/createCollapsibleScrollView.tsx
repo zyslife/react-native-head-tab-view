@@ -131,7 +131,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         if (isTouchTabs.value === false && needSnap.value === true) {
             isScrolling.value = 1
             isScrolling.value = withTiming(0, { duration: snapWaitduration }, (isFinished) => {
-
+                
                 if (isFinished && isTouchTabs.value === false) {
                     needSnap.value = false
                     snapAfterGlideOver({
@@ -144,7 +144,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
                 }
             })
         }
-    }, [isTouchTabs.value, needSnap.value, isScrolling.value, _scrollView, shareAnimatedValue, headerHeight, frozeTop, enableSnap, snapWaitduration])
+    }, [isTouchTabs.value, curIndexValue.value, index, needSnap.value, isScrolling.value, _scrollView, shareAnimatedValue, headerHeight, frozeTop, enableSnap, snapWaitduration])
 
     const onScrollAnimateEvent = useAnimatedScrollHandler(
         {

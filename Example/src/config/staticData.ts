@@ -1,3 +1,5 @@
+import { TabViewType, EnableSnapType } from '../types'
+
 export default {
     PageRouteData: [
         { title: 'ExampleBasic.', description: 'A simple example', page: 'ExampleBasic' },
@@ -6,6 +8,20 @@ export default {
         { title: 'ExampleWithTabViewPullRefresh.', description: 'Let the tabs component allow a drop-down refresh', page: 'ExampleWithTabViewPullRefresh' },
         { title: 'ExampleHeaderAnimated.', description: 'Get scrollTrans using the makeScrollTrans function', page: 'ExampleHeaderAnimated' },
         { title: 'ExampleCarouselHeader.', description: "The header contains the Carousel component", page: 'ExampleCarouselHeader' },
+    ],
+    homeConfig: [
+        {
+            sectionTitle: 'Select your tab view', data: [
+                { type: TabViewType.tabview, title: 'react-native-tab-view' },
+                { type: TabViewType.default, title: 'react-native-scrollable-tab-view' },
+            ]
+        },
+        {
+            sectionTitle: 'Select the value of enableSnap in props', data: [
+                { type: EnableSnapType.disableSnap, title: 'false' },
+                { type: EnableSnapType.enableSnap, title: 'true' },
+            ]
+        }
     ],
 
     refreshImg: require('../resource/refresh.png'),

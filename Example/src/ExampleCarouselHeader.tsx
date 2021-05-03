@@ -13,6 +13,8 @@ import Carousel from 'react-native-snap-carousel';
 import staticData from './config/staticData'
 import { styles } from './styles'
 import { TabViewType } from './types'
+import { useHomeConfig } from './hook'
+
 const TIMECOUNT = 1000
 const SUB_TITLE = "It's a little long here."
 const SUB_TITLE2 = "It's SUB_TITLE2"
@@ -25,6 +27,7 @@ const ExampleCarouselHeader: React.FC<any> = (props) => {
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [title, setTitle] = useState('Hello World!')
     const [refreshCount, setRefreshCount] = useState(0)
+    const { tabviewType, enableSnap } = useHomeConfig(props)
 
     const _renderCarouselItem = ({ item, index }: any) => {
 
@@ -74,12 +77,13 @@ const ExampleCarouselHeader: React.FC<any> = (props) => {
         renderScrollHeader: _renderScrollHeader,
         tabsRefreshEnabled: true,
         onStartRefresh: onStartRefresh,
-        isRefreshing: isRefreshing
+        isRefreshing: isRefreshing,
+        enableSnap
     }
     return (
         <View style={styles.container}>
             {
-                props.route.params.type === TabViewType.default ?
+                tabviewType === TabViewType.default ?
                     <ScrollableTabViewContainer
                         {...Props} /> :
                     <TabViewContainer

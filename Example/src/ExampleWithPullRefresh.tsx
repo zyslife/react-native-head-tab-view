@@ -5,19 +5,19 @@ import {
 } from 'react-native';
 import { ScrollableTabViewContainer, TabViewContainer } from './component/TabViewBase'
 import { TabViewType } from './types'
-
+import { useHomeConfig } from './hook'
 import { styles } from './styles'
 
 const ExampleWithPullRefresh: React.FC<any> = (props) => {
-
+    const { tabviewType, enableSnap } = useHomeConfig(props)
     return (
         <View style={styles.container}>
             {
-                props.route.params.type === TabViewType.default ?
+                tabviewType === TabViewType.default ?
                     <ScrollableTabViewContainer
-                        sceneRefreshEnabled={true} /> :
+                        sceneRefreshEnabled={true} enableSnap={enableSnap}/> :
                     <TabViewContainer
-                        sceneRefreshEnabled={true} />
+                        sceneRefreshEnabled={true} enableSnap={enableSnap}/>
             }
         </View>
     )

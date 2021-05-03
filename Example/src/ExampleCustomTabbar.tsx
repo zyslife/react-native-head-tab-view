@@ -8,8 +8,10 @@ import { DefaultTabBar } from 'react-native-scrollable-tab-view'
 import { ScrollableTabViewContainer, TabViewContainer } from './component/TabViewBase'
 import { styles } from './styles'
 import { TabViewType } from './types'
+import { useHomeConfig } from './hook'
 
 const ExampleCustomTabbar: React.FC<any> = (props) => {
+    const { tabviewType, enableSnap } = useHomeConfig(props)
 
     const _renderScrollableTabBar = (tabbarProps: any) => {
         return <DefaultTabBar
@@ -25,12 +27,13 @@ const ExampleCustomTabbar: React.FC<any> = (props) => {
     const Props = {
         overflowHeight: 20,
         tabbarHeight: 60,
+        enableSnap
     }
 
     return (
         <View style={styles.container}>
             {
-                props.route.params.type === TabViewType.default ?
+                tabviewType === TabViewType.default ?
                     <ScrollableTabViewContainer
                         renderTabBar={_renderScrollableTabBar}
                         {...Props} /> :
