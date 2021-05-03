@@ -56,7 +56,6 @@ export type RefreshType = 'pullToRefresh' | 'enough' | 'prepare' | 'refreshing' 
 export interface IHeaderContext {
     tabsIsWorking: Reanimated2.SharedValue<boolean>
     isTouchTabs: Reanimated2.SharedValue<boolean>
-    isTouchTabsPrev: Reanimated2.SharedValue<boolean>
     shareAnimatedValue: Reanimated2.SharedValue<number>
     frozeTop: number
     tabbarHeight: number

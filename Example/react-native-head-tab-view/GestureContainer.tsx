@@ -38,7 +38,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         overflowHeight = 0,
         scrollEnabled = true,
         enableSnap = false,
-        snapWaitduration = 50,
+        snapWaitduration = 500,
         frozeTop = 0,
         isRefreshing: _isRefreshing = false,
         initialPage,
@@ -55,7 +55,6 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
     const shareAnimatedValue = useSharedValue(0)
     const curIndexValue = useSharedValue(initialPage)
     //snap
-    const isTouchTabsPrev: Animated.SharedValue<boolean> = useSharedValue(false)
     const isTouchTabs: Animated.SharedValue<boolean> = useSharedValue(false)
     //layout
     const [tabbarHeight, setTabbarHeight] = useState(initTabbarHeight)
@@ -540,7 +539,6 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         expectHeight: Math.floor(headerHeight + tabviewHeight - frozeTop),
         tabsIsWorking,
         isTouchTabs,
-        isTouchTabsPrev,
         tabsRefreshEnabled: onStartRefresh !== undefined,
         headerHeight,
         refreshHeight,
