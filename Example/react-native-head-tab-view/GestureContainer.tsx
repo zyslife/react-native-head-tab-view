@@ -38,7 +38,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         overflowHeight = 0,
         scrollEnabled = true,
         enableSnap = false,
-        snapWaitduration = 500,
+        scrollingCheckDuration = 50,
         frozeTop = 0,
         isRefreshing: _isRefreshing = false,
         initialPage,
@@ -549,7 +549,8 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         frozeTop,
         updateSceneInfo,
         enableSnap,
-        snapWaitduration
+        scrollingCheckDuration,
+        isSlidingHeader
     }}>
         <PanGestureHandler
             ref={shipRef}

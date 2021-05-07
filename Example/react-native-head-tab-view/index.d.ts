@@ -70,11 +70,11 @@ export interface CollapsibleHeaderProps {
      */
     enableSnap?: boolean;
     /**
-     * This property is valid when enableSnap is true.
-     * The duration between the time the finger leaves the screen and the snap begins.
-     * it defaults to false.
+     * The amount of time between the onScroll function being called.
+     * (When the interval is longer than scrollingCheckDuration, I think scrolling has stopped)
+     * it defaults to 50ms.
      */
-    snapWaitduration?: number
+    scrollingCheckDuration?: number
 }
 
 

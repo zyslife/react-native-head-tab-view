@@ -58,12 +58,13 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         curIndexValue,
         tabsIsWorking,
         isTouchTabs,
+        isSlidingHeader,
         refreshHeight,
         overflowPull,
         frozeTop,
         pullExtendedCoefficient,
         enableSnap,
-        snapWaitduration,
+        scrollingCheckDuration,
         refHasChanged,
         updateSceneInfo
     } = useSceneContext()
@@ -74,6 +75,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
     const trans = useSharedValue(0);
     const refreshTrans = useSharedValue(refreshHeight);
     const isTouchTabsPrev = useSharedValue(false);
+    const isSlidingHeaderPrev = useSharedValue(false);
     const isRefreshing = useSharedValue(false);
     const isRefreshingWithAnimation = useSharedValue(false);
     const isDragging: { value: boolean } = useSharedValue(false);
@@ -93,6 +95,16 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
             && !isRefreshingWithAnimation.value
             && curIndexValue.value === index
     })
+
+    const canSnapFunc = () => {
+        'worklet'
+        return needSnap.value &&
+            !isTouchTabs.value &&
+            !isSlidingHeader.value &&
+            !isRefreshing.value &&
+            !isRefreshingWithAnimation.value &&
+            !tabsIsWorking.value
+    }
 
     const refreshValue = useDerivedValue(() => {
         if (isRefreshing.value && isRefreshingWithAnimation.value) {
@@ -124,15 +136,15 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         shareAnimatedValue.value = value
     }, [curIndexValue.value, shareAnimatedValue, index, isRefreshing.value, isRefreshingWithAnimation.value])
 
-    const beginSnap = useCallback(() => {
+    const tryToSnap = useCallback(() => {
         'worklet'
         if (!enableSnap) return;
         cancelAnimation(isScrolling)
-        if (isTouchTabs.value === false && needSnap.value === true) {
+        if (canSnapFunc()) {
             isScrolling.value = 1
-            isScrolling.value = withTiming(0, { duration: snapWaitduration }, (isFinished) => {
+            isScrolling.value = withTiming(0, { duration: scrollingCheckDuration }, (isFinished) => {
 
-                if (isFinished && isTouchTabs.value === false) {
+                if (isFinished && canSnapFunc()) {
                     needSnap.value = false
                     snapAfterGlideOver({
                         sceneRef: _scrollView,
@@ -140,11 +152,10 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
                         headerHeight,
                         frozeTop
                     })
-
                 }
             })
         }
-    }, [isTouchTabs.value, needSnap.value, isScrolling.value, _scrollView, shareAnimatedValue, headerHeight, frozeTop, enableSnap, snapWaitduration])
+    }, [isScrolling.value, _scrollView, needSnap, shareAnimatedValue, headerHeight, frozeTop, enableSnap, scrollingCheckDuration])
 
     const onScrollAnimateEvent = useAnimatedScrollHandler(
         {
@@ -153,19 +164,18 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
                 let moveY = Math.max(event.contentOffset.y, 0)
 
                 if (isRefreshingWithAnimation.value || isRefreshing.value) return
-                beginSnap()
+                tryToSnap()
                 moveY = isRefreshing.value && isRefreshingWithAnimation.value ? moveY + refreshHeight : moveY
                 updateScrollYTrans(moveY)
                 updateShareValue(moveY)
             },
-
             onMomentumBegin: () => {
                 isLosingMomentum.value = true
             },
             onMomentumEnd: () => {
                 isLosingMomentum.value = false
             }
-        }, [curIndexValue, updateShareValue, updateScrollYTrans, isRefreshingWithAnimation, beginSnap]
+        }, [curIndexValue, updateShareValue, updateScrollYTrans, isRefreshingWithAnimation, tryToSnap]
     )
 
 
@@ -237,23 +247,29 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         isInitial.current = false
     }, [_isRefreshing, onRefreshStatusCallback, isInitial])
 
-    //snap
+    //Finger off the screen
     useAnimatedReaction(() => {
         return isTouchTabs.value !== isTouchTabsPrev.value && enableSnap
     }, (result) => {
         if (!result) return;
         isTouchTabsPrev.value = isTouchTabs.value
         if (isTouchTabs.value === true) return
-        //EnableSnap is not enabled when you pull down to refresh
-        if (isRefreshing.value === false &&
-            isRefreshingWithAnimation.value === false &&
-            tabsIsWorking.value === false) {
-            needSnap.value = true
-            beginSnap()
-        }
 
+        needSnap.value = true
+        tryToSnap()
+    }, [isTouchTabs, isTouchTabsPrev, tryToSnap, enableSnap])
 
-    }, [isTouchTabs, isTouchTabsPrev, isRefreshing, isRefreshingWithAnimation, tabsIsWorking, beginSnap, enableSnap])
+    //Slide header over
+    useAnimatedReaction(() => {
+        return isSlidingHeader.value !== isSlidingHeaderPrev.value && enableSnap
+    }, (result) => {
+        if (!result) return;
+        isSlidingHeaderPrev.value = isSlidingHeader.value
+        if (isSlidingHeader.value === true) return
+
+        needSnap.value = true
+        tryToSnap()
+    }, [isSlidingHeader, isSlidingHeaderPrev, tryToSnap, enableSnap])
 
     useAnimatedReaction(() => {
         return refreshTrans.value

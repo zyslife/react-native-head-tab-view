@@ -17,7 +17,7 @@ export interface CollapsibleHeaderProps {
     overflowPull?: number;
     pullExtendedCoefficient?: number;
     enableSnap?: boolean
-    snapWaitduration?: number
+    scrollingCheckDuration?: number
 }
 
 export interface CommonSceneProps {
@@ -56,6 +56,7 @@ export type RefreshType = 'pullToRefresh' | 'enough' | 'prepare' | 'refreshing' 
 export interface IHeaderContext {
     tabsIsWorking: Reanimated2.SharedValue<boolean>
     isTouchTabs: Reanimated2.SharedValue<boolean>
+    isSlidingHeader: Reanimated2.SharedValue<boolean>
     shareAnimatedValue: Reanimated2.SharedValue<number>
     frozeTop: number
     tabbarHeight: number
@@ -70,7 +71,7 @@ export interface IHeaderContext {
     curIndexValue: Reanimated2.SharedValue<number>
     updateSceneInfo: (e: updateSceneInfoType) => void
     enableSnap: boolean
-    snapWaitduration: number
+    scrollingCheckDuration: number
 }
 
 export type updateSceneInfoType = {
