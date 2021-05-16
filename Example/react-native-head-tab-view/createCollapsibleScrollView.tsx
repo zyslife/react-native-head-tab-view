@@ -231,7 +231,8 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
     const _onContentSizeChange = useCallback((contentWidth: number, contentHeight: number) => {
         onContentSizeChange && onContentSizeChange(contentWidth, contentHeight)
 
-        if (contentHeight >= expectHeight) {
+        //Some mobile phones measure less than their actual height. And the difference in height is not more than a pixel
+        if (Math.ceil(contentHeight) >= expectHeight) {
             syncInitialPosition(isRefreshing.value ? shareAnimatedValue.value - refreshHeight : shareAnimatedValue.value);
         }
     }, [onContentSizeChange, syncInitialPosition, expectHeight, isRefreshing, refreshTrans, shareAnimatedValue])
