@@ -1,6 +1,6 @@
 # React Native Head Tab View
 
-:tada::tada::tada: v4.0.0-rc.6 has been released, I hope you can help me test and collect questions.
+:tada::tada::tada: v4.0.0-rc.9 has been released, I hope you can help me test and collect questions.
 In this version, there is a big change. All animations will run on the UI thread, which will make the components much smoother. Unfortunately, the version requiring React Native is greater than 0.62.0. Because we rely on `react-native-reanimated2.0`, that's what it requires.  
 
 Here are some changes and optimizations.
