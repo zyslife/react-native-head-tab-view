@@ -9,7 +9,9 @@ import Animated, {
     runOnUI,
     withTiming,
     useDerivedValue,
-    interpolate
+    interpolate,
+    useAnimatedReaction,
+    runOnJS
 } from 'react-native-reanimated'
 
 export const useSceneContext = () => {
@@ -60,7 +62,9 @@ export const useSyncInitialPosition = (_scrollView: any) => {
     }
 }
 
-export const useSceneInfo = () => {
+export const useSceneInfo = (curIndexValue: Animated.SharedValue<number>) => {
+    //Are all the fields on the scene ready
+    const sceneIsReady = Animated.useSharedValue<{ [index: number]: boolean }>({})
     const [sceneScrollEnabledValue, setSceneScrollEnabledValue] = useState<{ [index: number]: Animated.SharedValue<boolean> }>({})
     const [childScrollYTrans, setChildScrollYTrans] = useState<{ [index: number]: Animated.SharedValue<number> }>({})
     const [childScrollRef, setChildScrollRef] = useState<{ [index: number]: any }>({})
@@ -138,6 +142,34 @@ export const useSceneInfo = () => {
             })
         }
     }, [])
+
+    const aArray = [childScrollRef, sceneRefreshTrans, childScrollYTrans, sceneIsRefreshing, sceneIsDragging, sceneCanPullRefresh, sceneRefreshCallBack, sceneScrollEnabledValue, sceneIsRefreshingWithAnimation, sceneIsLosingMomentum]
+    const updateIsReady = useCallback(() => {
+        const mIndex = curIndexValue.value
+        if (sceneIsReady.value[mIndex]) return
+
+        sceneIsReady.value = {
+            ...sceneIsReady.value,
+            [mIndex]: aArray.every(item => item.hasOwnProperty(mIndex))
+        }
+    }, [curIndexValue, sceneIsReady, ...aArray])
+
+    //We should call function updateIsReady when the elements in the aArray change
+    useEffect(() => {
+        updateIsReady()
+    }, [updateIsReady, ...aArray])
+    
+    /**
+     * If all of the elements in the Aarray have changed, the tabIndex is switched. 
+     * At this point the above useEffect will not be called again, 
+     * and we will have to call the updateisReady function again.
+     */
+    useAnimatedReaction(() => {
+        return curIndexValue.value
+    }, () => {
+        runOnJS(updateIsReady)()
+    }, [updateIsReady])
+
     return {
         childScrollRef,
         sceneRefreshTrans,
@@ -149,6 +181,7 @@ export const useSceneInfo = () => {
         sceneScrollEnabledValue,
         sceneIsRefreshingWithAnimation,
         sceneIsLosingMomentum,
+        sceneIsReady,
         updateSceneInfo
     }
 }

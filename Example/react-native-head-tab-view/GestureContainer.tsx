@@ -89,8 +89,9 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
         sceneScrollEnabledValue,
         sceneIsRefreshingWithAnimation,
         sceneIsLosingMomentum,
+        sceneIsReady,
         updateSceneInfo
-    } = useSceneInfo()
+    } = useSceneInfo(curIndexValue)
 
     const tabsIsWorking = useDerivedValue(() => {
         return isDragging.value || tabsIsRefreshing.value || tabsIsRefreshingWithAnimation.value
@@ -158,12 +159,14 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
 
     const stopScrollView = () => {
         'worklet'
+        if (!sceneIsReady.value[curIndexValue.value]) return
         if (getIsRefreshing(false)) return
         mScrollTo(childScrollRef[curIndexValue.value], 0, childScrollYTrans[curIndexValue.value].value + 0.1, false)
     }
 
     const stopAllAnimation = useCallback(() => {
         'worklet'
+        if (!sceneIsReady.value[curIndexValue.value]) return
         isTouchTabs.value = true
         cancelAnimation(headerTrans)
         slideIndex.value = -1
@@ -254,6 +257,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
             isTouchTabs.value = false
         },
         onActive: (event, ctx: GesturePanContext) => {
+            if (!sceneIsReady.value[curIndexValue.value]) return
             if (!tabsHasRefresh() && !sceneHasRefresh()) return
 
             const onReadyToActive = (isPulling: boolean) => {
@@ -284,6 +288,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
             })(event, ctx)
         },
         onEnd: (event, ctx: GesturePanContext) => {
+            if (!sceneIsReady.value[curIndexValue.value]) return
             if (!tabsHasRefresh() && !sceneHasRefresh()) return
 
             onStartRefresh ? onEndRefreshImpl({
@@ -312,6 +317,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
             }
         },
         onActive: (event, ctx: GesturePanContext) => {
+            if (!sceneIsReady.value[curIndexValue.value]) return
             if (!sceneScrollEnabledValue[curIndexValue.value].value) {
                 isSlidingHeader.value = false
                 return
@@ -331,6 +337,7 @@ const GestureContainer: React.ForwardRefRenderFunction<any, IGestureContainerPro
             })
         },
         onEnd: (event, ctx: GesturePanContext) => {
+            if (!sceneIsReady.value[curIndexValue.value]) return
             if (!sceneScrollEnabledValue[curIndexValue.value].value) return
             if (isSlidingHeader.value === false) return
             toEndSlide({
