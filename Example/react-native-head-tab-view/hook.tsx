@@ -64,7 +64,7 @@ export const useSyncInitialPosition = (_scrollView: any) => {
 
 export const useSceneInfo = (curIndexValue: Animated.SharedValue<number>) => {
     //Are all the fields on the scene ready
-    const sceneIsReady = Animated.useSharedValue<{ [index: number]: boolean }>({})
+    const sceneIsReady = useSharedValue<{ [index: number]: boolean }>({})
     const [sceneScrollEnabledValue, setSceneScrollEnabledValue] = useState<{ [index: number]: Animated.SharedValue<boolean> }>({})
     const [childScrollYTrans, setChildScrollYTrans] = useState<{ [index: number]: Animated.SharedValue<number> }>({})
     const [childScrollRef, setChildScrollRef] = useState<{ [index: number]: any }>({})

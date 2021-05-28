@@ -5,7 +5,8 @@ import {
 import Animated, {
     withDecay,
     withTiming,
-    runOnJS
+    runOnJS,
+    scrollTo
 } from 'react-native-reanimated'
 import { GesturePanContext } from './types'
 
@@ -17,7 +18,7 @@ export function mScrollTo(
 ) {
     'worklet';
     if (!ref) return;
-    Animated.scrollTo(ref, x, y, animated)
+    scrollTo(ref, x, y, animated)
 }
 
 export const toRunSlide = ({
