@@ -96,8 +96,8 @@ export const useSceneInfo = (curIndexValue: Animated.SharedValue<number>) => {
             })
         }
         if (isLosingMomentum && sceneIsLosingMomentum[index] !== isLosingMomentum) {
-            setSceneIsScrolling(preChildRef => {
-                return { ...preChildRef, [index]: isLosingMomentum }
+            setSceneIsScrolling(_p => {
+                return { ..._p, [index]: isLosingMomentum }
             })
         }
         if (isRefreshing !== sceneIsRefreshing[index]) {
@@ -148,9 +148,12 @@ export const useSceneInfo = (curIndexValue: Animated.SharedValue<number>) => {
         const mIndex = curIndexValue.value
         if (sceneIsReady.value[mIndex]) return
 
-        sceneIsReady.value = {
-            ...sceneIsReady.value,
-            [mIndex]: aArray.every(item => item.hasOwnProperty(mIndex))
+        const isReady = aArray.every(item => item.hasOwnProperty(mIndex))
+        if (isReady) {
+            sceneIsReady.value = {
+                ...sceneIsReady.value,
+                [mIndex]: isReady
+            }
         }
     }, [curIndexValue, sceneIsReady, ...aArray])
 
@@ -158,7 +161,7 @@ export const useSceneInfo = (curIndexValue: Animated.SharedValue<number>) => {
     useEffect(() => {
         updateIsReady()
     }, [updateIsReady, ...aArray])
-    
+
     /**
      * If all of the elements in the Aarray have changed, the tabIndex is switched. 
      * At this point the above useEffect will not be called again, 
