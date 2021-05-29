@@ -113,15 +113,11 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         return trans.value - shareAnimatedValue.value
     })
 
-    const setListViewScrollEnabled = (scrollEnabled: boolean) => {
-        _scrollView && _scrollView.current && _scrollView.current.setNativeProps({ scrollEnabled });
-    }
-
     useAnimatedReaction(() => {
         return scrollEnabledValue.value
     }, (mScrollEnabled) => {
-        runOnJS(setListViewScrollEnabled)(mScrollEnabled)
-    }, [scrollEnabledValue])
+        _scrollView && _scrollView.current && _scrollView.current.setNativeProps({ scrollEnabled: mScrollEnabled });
+    }, [scrollEnabledValue, _scrollView])
 
     const updateScrollYTrans = useCallback((value: number) => {
         'worklet'
