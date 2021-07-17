@@ -1,6 +1,6 @@
 # React Native Head Tab View
 
-:tada::tada::tada: v4.0.0-rc.11 has been released, I hope you can help me test and collect questions.
+:tada::tada::tada: v4.0.0-rc.12 has been released, I hope you can help me test and collect questions.
 In this version, there is a big change. All animations will run on the UI thread, which will make the components much smoother. Unfortunately, the version requiring React Native is greater than 0.62.0. Because we rely on `react-native-reanimated2.0`, that's what it requires.  
 
 Here are some changes and optimizations.
@@ -209,12 +209,12 @@ yarn add react-native-tab-view-collapsible-header
 
 ## Version
 
-| react-native-head-tab-view | react-native-scrollable-tab-view | react-native-tab-view-collapsible-header |
-| :------------------------: | :------------------------------: | :--------------------------------------: |
-|          v1 ~ v2           |                -                 |                    -                     |
-|             v3             |                v0                |                    v0                    |
-|          v4-rc.1           |                v1                |                    v1                    |
-|          v4-rc.2~          |                v2                |                    v2                    |
+| react-native-head-tab-view | react-native-scrollable-tab-view-collapsible-header | react-native-tab-view-collapsible-header |
+| :------------------------: | :-------------------------------------------------: | :--------------------------------------: |
+|          v1 ~ v2           |                          -                          |                    -                     |
+|             v3             |                         v0                          |                    v0                    |
+|          v4-rc.1           |                         v1                          |                    v1                    |
+|          v4-rc.2~          |                         v2                          |                    v2                    |
 
 ## Linking    
 
@@ -228,6 +228,8 @@ yarn add react-native-tab-view-collapsible-header
 
 <details>
 <summary>CollapsibleHeaderTabView</summary>  
+
+
 
 
 
@@ -336,6 +338,8 @@ When the maximum drop-down distance is reached(refreshHeight+overflowPull), the 
 
 
 
+
+
 ##### `index`  _(number)_   (require)  
 
 The number of the screen.  
@@ -357,6 +361,10 @@ Whether the scene is refreshing
 ##### `renderRefreshControl`  _(() => React.ComponentType<any> | React.ReactElement | null)_   
 
 A custom RefreshControl for scene
+
+##### `renderLoadingView` _((headerHeight: number) => React.ReactElement)_  
+
+You can provide a LoadingView when the scene is transparent until the height of the onContentSizeRange callback is less than minHeight.
 
 ##### `enableSnap` _(boolean)_ 
 

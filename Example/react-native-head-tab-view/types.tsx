@@ -27,6 +27,7 @@ export interface NormalSceneBaseProps extends CommonSceneProps {
     isRefreshing?: boolean;
     onStartRefresh?: () => void;
     renderRefreshControl?: (refreshProps: RefreshControlProps) => React.ReactElement;
+    renderLoadingView?: (headerHeight: number) => React.ReactElement;
 }
 
 export interface IGestureContainerProps extends CollapsibleHeaderProps {

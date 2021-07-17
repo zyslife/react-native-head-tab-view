@@ -40,6 +40,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         onStartRefresh,
         onContentSizeChange,
         onScrollBeginDrag,
+        renderLoadingView,
         ContainerView,
         isRefreshing: _isRefreshing = false,
         renderRefreshControl: _renderRefreshControl,
@@ -226,7 +227,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
     //adjust the scene size
     const _onContentSizeChange = useCallback((contentWidth: number, contentHeight: number) => {
         onContentSizeChange && onContentSizeChange(contentWidth, contentHeight)
-
+        
         //Some mobile phones measure less than their actual height. And the difference in height is not more than a pixel
         if (Math.ceil(contentHeight) >= expectHeight) {
             syncInitialPosition(isRefreshing.value ? shareAnimatedValue.value - refreshHeight : shareAnimatedValue.value);
@@ -355,22 +356,29 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
     })
 
     return (
-        <Animated.View style={[styles.container, sceneStyle]}>
-            <Animated.View style={[styles.container, animatedStyle]}>
-                <MemoList
-                    panRef={panRef}
-                    ContainerView={ContainerView}
-                    zForwardedRef={_scrollView}
-                    onScroll={onScrollAnimateEvent}
-                    onContentSizeChange={_onContentSizeChange}
-                    bounces={bouncesEnabled}
-                    headerHeight={calcHeight}
-                    expectHeight={expectHeight}
-                    {...restProps}
-                />
+        <Animated.View style={[styles.container]}>
+            {opacityValue.value !== 1 && renderLoadingView ?
+                <Animated.View style={StyleSheet.absoluteFill}>
+                    {renderLoadingView(headerHeight)}
+                </Animated.View> : null}
+            <Animated.View style={[styles.container, sceneStyle]}>
+                <Animated.View style={[styles.container, animatedStyle]}>
+                    <MemoList
+                        panRef={panRef}
+                        ContainerView={ContainerView}
+                        zForwardedRef={_scrollView}
+                        onScroll={onScrollAnimateEvent}
+                        onContentSizeChange={_onContentSizeChange}
+                        bounces={bouncesEnabled}
+                        headerHeight={calcHeight}
+                        expectHeight={expectHeight}
+                        {...restProps}
+                    />
+                </Animated.View>
+                {renderRefreshControl()}
             </Animated.View>
-            {renderRefreshControl()}
         </Animated.View>
+
     )
 
 }

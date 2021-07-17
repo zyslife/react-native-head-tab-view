@@ -95,6 +95,11 @@ export interface NormalSceneBaseProps extends CommonSceneProps {
      * A custom RefreshControl for scene
      */
     renderRefreshControl?: (refreshProps: RefreshControlProps) => React.ReactElement;
+    /**
+     * You can provide a LoadingView 
+     * when the scene is transparent until the height of the onContentSizeRange callback is less than minHeight.
+     */
+    renderLoadingView?: (headerHeight: number) => React.ReactElement;
 }
 
 export interface SceneConfig {
