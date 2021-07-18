@@ -1,6 +1,6 @@
 # React Native Head Tab View
 
-:tada::tada::tada: v4.0.0-rc.12 has been released, I hope you can help me test and collect questions.
+:tada::tada::tada: v4.0.0-rc.13 has been released, I hope you can help me test and collect questions.
 In this version, there is a big change. All animations will run on the UI thread, which will make the components much smoother. Unfortunately, the version requiring React Native is greater than 0.62.0. Because we rely on `react-native-reanimated2.0`, that's what it requires.  
 
 Here are some changes and optimizations.
@@ -233,7 +233,8 @@ yarn add react-native-tab-view-collapsible-header
 
 
 
-​    
+
+
 
 - If your tabs component is react-native-scrollable-tab-view  
 
@@ -243,15 +244,13 @@ yarn add react-native-tab-view-collapsible-header
 >import { CollapsibleHeaderTabView } from 'react-native-scrollable-tab-view-collapsible-header' 
 >```
 
-```
-- If your tabs component is react-native-tab-view   
->You need to add [this dependency library](https://github.com/zyslife/react-native-tab-view-collapsible-header)
+- If your tabs component is react-native-tab-view 
 
-​```js
-import { CollapsibleHeaderTabView } from 'react-native-tab-view-collapsible-header' 
-```
-
-
+> You need to add [this dependency library](https://github.com/zyslife/react-native-tab-view-collapsible-header)
+>
+> ```javascript
+> import { CollapsibleHeaderTabView } from 'react-native-tab-view-collapsible-header' 
+> ```
 
 `CollapsibleHeaderTabView` extends the props for the tabs component by adding the **CollapsibleHeaderProps**
 
@@ -335,6 +334,7 @@ When the maximum drop-down distance is reached(refreshHeight+overflowPull), the 
 
 <details>
 <summary>HScrollView \ HFlatList \ HSectionList</summary>  
+
 
 
 
