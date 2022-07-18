@@ -34,7 +34,6 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
     {
         index,
         bounces,
-        scrollEnabled = true,
         forwardedRef,
         onScroll,
         onStartRefresh,
