@@ -1,10 +1,12 @@
-import React, { memo, useCallback, useEffect, useRef, useMemo } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useMemo, useState } from 'react';
 import { ScrollableView } from './types'
 import {
     Platform,
     StyleSheet,
     ScrollView,
     ScrollViewProps,
+    View,
+    LayoutChangeEvent,
 } from 'react-native';
 import RefreshControlContainer from './RefreshControlContainer'
 import { NativeViewGestureHandler } from 'react-native-gesture-handler';
@@ -19,7 +21,9 @@ import Animated, {
     useAnimatedStyle,
     useAnimatedReaction,
     withTiming,
-    cancelAnimation
+    cancelAnimation,
+    Extrapolate,
+    interpolate
 } from 'react-native-reanimated'
 const __IOS = Platform.OS === 'ios'
 
@@ -44,6 +48,8 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         ContainerView,
         isRefreshing: _isRefreshing = false,
         renderRefreshControl: _renderRefreshControl,
+        //@ts-ignore This for header list inside tab to animated for bug sticky header section list
+        ListHeaderComponent,
         ...restProps
     }
 ) => {
@@ -84,6 +90,7 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
     const { opacityValue, syncInitialPosition } = useSyncInitialPosition(_scrollView)
     const needSnap = useSharedValue(false)
     const isScrolling = useSharedValue(0)
+    const [headerMemoListHeight, setHeaderMemoListHeight] = useState(0);
     const calcHeight = useMemo(() => {
         return tabbarHeight + headerHeight
     }, [tabbarHeight, headerHeight])
@@ -308,7 +315,6 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         if (realY.value !== refreshTrans.value - refreshHeight) {
             mScrollTo(_scrollView, 0, refreshTrans.value - refreshHeight, false)
         }
-
     }, [refreshTrans, refreshHeight, isRefreshing, isRefreshingWithAnimation, _scrollView])
 
     const translateY = useRefreshDerivedValue({
@@ -349,9 +355,30 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
         return __IOS && !tabsRefreshEnabled && onStartRefresh === undefined
     }, [tabsRefreshEnabled, onStartRefresh])
 
+    const onLayoutHeaderList = useCallback((event: LayoutChangeEvent) => {
+        setHeaderMemoListHeight(event.nativeEvent.layout.height)
+    }, [])
+
+    const _ListHeaderComponent = (
+        <View onLayout={onLayoutHeaderList}>
+            {ListHeaderComponent}
+        </View>
+    );
+    
+
     const sceneStyle = useAnimatedStyle(() => {
+        const inputRange = [calcHeight, calcHeight + headerMemoListHeight];
+        const outputRange = [0, tabbarHeight];
+        const translateY = interpolate(
+            scrollY.value,
+            inputRange,
+            outputRange,
+            Extrapolate.CLAMP
+        )    
+
         return {
             opacity: opacityValue.value,
+            transform: [ { translateY } ]
         }
     })
 
@@ -364,6 +391,8 @@ const SceneComponent: React.FC<NormalSceneProps & HPageViewProps> = (
             <Animated.View style={[styles.container, sceneStyle]}>
                 <Animated.View style={[styles.container, animatedStyle]}>
                     <MemoList
+                        //@ts-ignore This for header list inside tab to animated for bug sticky header section list
+                        ListHeaderComponent={_ListHeaderComponent}
                         panRef={panRef}
                         ContainerView={ContainerView}
                         zForwardedRef={_scrollView}
